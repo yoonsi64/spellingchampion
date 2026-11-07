@@ -1178,7 +1178,7 @@ html.nospeak .mlist li{padding:10px 0}
                 zh:"Chinese meaning", ko:"Korean meaning", say:"(optional) how the voice should say it",
                 syl:"(optional) how Build it splits a long word, e.g. thor-ough-ness" }
    rhymes:  [cue, [three options], answer]   (Rhyme time; the cue must be a different word from the answer)
-   sort:    [{sound:"short a", spell:"a", words:[...]}]   (Sound sort)
+   sort:    [{sound:"short a", spell:"a", words:[...], say:"(optional) how the voice says the sound"}]   (Sound sort; write a_e for a-consonant-e)
    abc:     five words to put in reverse ABC order
    proof:   passages to correct (10 a week), each with misspellings written as [wrong|right] and paragraphs split by \n\n
    ===================================================================== */
@@ -1286,8 +1286,210 @@ const WEEK_DATA = {
       "My brother's [tenthh|tenth] birthday party was in our backyard. Dad baked a [bacth|batch] of cupcakes with blue frosting. It had rained the night before, so the grass was still [dampe|damp], and we spread out blankets to sit on.\n\nFor one game, each kid had to [flingg|fling] a beanbag into a bucket. My brother missed every time, but he just gave a [shug|shrug] and laughed. Cleaning up all the wrapping paper was [tuogh|tough], but it was worth it.",
       "Moving day was finally here. We packed our [stuph|stuff] into boxes and wrote a label on each one. My old [cott|cot] from summer camp would not fit in the truck, so we gave it to our neighbor.\n\nOur new house sits on a hill above a little boat [dokk|dock]. A big tree [stumpp|stump] in the yard makes a perfect seat. Our dog ran right [pastt|past] us and jumped into a pile of leaves. Making new friends will take time, but Mom says that makes [sennse|sense]."
     ]
+  },
+  2: {
+    title: "Long vowels",
+    words: [
+      {w:"paste", s:"Use a little paste to stick the picture on the poster.",
+       m:"to stick something down with glue", zh:"粘贴", ko:"(풀로) 붙이다"},
+      {w:"bride", s:"The bride carried a bunch of white flowers.",
+       m:"a woman who is getting married", zh:"新娘", ko:"신부"},
+      {w:"shave", s:"Dad uses a razor to shave his face every morning.",
+       m:"to cut off hair close to the skin", zh:"刮（胡子）；剃", ko:"면도하다"},
+      {w:"spice", s:"The cook added lots of spice to the chili.",
+       m:"a powder or seed that gives food a strong flavor", zh:"香料；调味料", ko:"향신료"},
+      {w:"greed", s:"His greed made him a selfish person.",
+       m:"wanting much more than you need, especially money or things", zh:"贪婪", ko:"탐욕"},
+      {w:"plead", s:"The puppy seemed to plead for a treat with its big brown eyes.",
+       m:"to beg for something", zh:"恳求；乞求", ko:"간청하다"},
+      {w:"greet", s:"We stood by the door to greet our guests.",
+       m:"to say hello to someone", zh:"问候；迎接", ko:"인사하다; 맞이하다"},
+      {w:"heap", s:"There was a heap of dirty clothes on the floor.",
+       m:"a messy pile of things", zh:"一堆", ko:"더미; 무더기"},
+      {w:"paid", s:"He was not paid for his work at the food bank.",
+       m:"given money for work", zh:"（被）付钱；得到报酬", ko:"(돈을) 받은; 지불된"},
+      {w:"coach", s:"My friend's dad is our soccer coach.",
+       m:"a person who trains a team or a player", zh:"教练", ko:"코치"},
+      {w:"theme", s:"The theme of our class party was outer space.",
+       m:"the main idea of something", zh:"主题", ko:"주제"},
+      {w:"type", s:"What type of music do you like best?",
+       m:"a kind or sort", zh:"类型；种类", ko:"종류; 유형"},
+      {w:"oak", s:"A tall oak tree grows in our backyard.",
+       m:"a big, strong tree that grows acorns", zh:"橡树", ko:"참나무; 떡갈나무"},
+      {w:"growth", s:"I saw lots of growth on the new plants.",
+       m:"the way something gets bigger", zh:"生长；成长", ko:"성장; 자람"},
+      {w:"yolk", s:"I like to dip my toast in the egg yolk.",
+       m:"the yellow part of an egg", zh:"蛋黄", ko:"노른자"},
+      {w:"folks", s:"My grandparents are friendly folks who wave to everyone.",
+       m:"people", zh:"人们；大家", ko:"사람들"},
+      {w:"aim", s:"She did not aim, so she missed the basket.",
+       m:"to point at the thing you want to hit", zh:"瞄准", ko:"겨누다; 조준하다"},
+      {w:"prey", s:"Owls hunt their prey at night.",
+       m:"an animal that another animal hunts for food", zh:"猎物", ko:"먹이; 사냥감"},
+      {w:"tow", s:"A truck came to tow our broken car to the shop.",
+       m:"to pull something behind you", zh:"拖；拖走", ko:"(차를) 견인하다; 끌다"},
+      {w:"grind", s:"The machine will grind the coffee beans into powder.",
+       m:"to crush something into tiny pieces", zh:"磨碎；碾碎", ko:"갈다; 빻다"}
+    ],
+    review: [
+      {w:"tenth", s:"Today is my brother's tenth birthday.",
+       m:"the one that comes after ninth", zh:"第十", ko:"열 번째"},
+      {w:"damp", s:"My socks were damp after the walk in the rain.",
+       m:"a little bit wet", zh:"潮湿的；微湿的", ko:"축축한; 약간 젖은"},
+      {w:"stuff", s:"Please put your stuff in your backpack.",
+       m:"your things", zh:"东西；物品", ko:"물건; 소지품"}
+    ],
+    challenge: [
+      {w:"decay", s:"Leaves on the ground slowly decay and turn into soil.",
+       m:"to rot or break down slowly", zh:"腐烂；衰败", ko:"썩다; 부패하다"},
+      {w:"lifetime", s:"My grandpa has lived in the same town his whole lifetime.",
+       m:"the whole time that someone is alive", zh:"一生；终身", ko:"일생; 평생"}
+    ],
+    rhymes: [
+      ["tide", ["bride", "raid", "pipe"], "bride"],
+      ["seat", ["met", "greet", "hedge"], "greet"],
+      ["wave", ["shave", "dive", "have"], "shave"],
+      ["go", ["too", "tow", "good"], "tow"],
+      ["broke", ["brake", "yolk", "room"], "yolk"],
+      ["need", ["plead", "head", "beam"], "plead"],
+      ["mind", ["grin", "mice", "grind"], "grind"],
+      ["joke", ["oat", "lake", "oak"], "oak"],
+      ["nice", ["spice", "speck", "nose"], "spice"],
+      ["ripe", ["twine", "type", "rope"], "type"],
+      ["dream", ["them", "keep", "theme"], "theme"],
+      ["trade", ["pail", "paid", "mad"], "paid"],
+      ["taste", ["paste", "tank", "stall"], "paste"],
+      ["pokes", ["pass", "folks", "mows"], "folks"],
+      ["bead", ["great", "grand", "greed"], "greed"]
+    ],
+    sort: [
+      {sound:"long a", spell:"ai", words:["paid", "aim"]},
+      {sound:"long a", spell:"a_e", words:["paste", "shave"]},
+      {sound:"long a", spell:"ey", words:["prey"]},
+      {sound:"long e", spell:"ea or ee", words:["greed", "plead", "greet", "heap"]},
+      {sound:"long e", spell:"e_e", words:["theme"]},
+      {sound:"long i", spell:"i or y", words:["grind", "type"]},
+      {sound:"long i", spell:"i_e", words:["bride", "spice"]},
+      {sound:"long o", spell:"o", words:["yolk", "folks"]},
+      {sound:"long o", spell:"oa", words:["coach", "oak"]},
+      {sound:"long o", spell:"ow", words:["growth", "tow"]}
+    ],
+    abc: ["yolk", "paste", "heap", "coach", "bride"],
+    proof: [
+      "Each year the students in Kendra's class raised money for a class trip. This year they came up with a new [theem|theme]: “Breakfast at School.” The students decided they would cook breakfast for friends and family, and they would [grete|greet] their guests wearing funny pajamas! Any money that [foaks|folks] gave them would go for the trip.\n\nKendra helped cook the eggs. She made sure each [yowk|yolk] was just right. Her friend Sam walked around to [grinde|grind] fresh pepper for the guests. Other kids helped serve and clean up. They made a good team, and they were [payed|paid] enough to go on the trip.",
+      "Last June my aunt was a [bryde|bride] at a big outdoor wedding. The tables sat under a huge [ohk|oak] tree, and the wind kept blowing the napkins away. Grandpa had to [shaiv|shave] off his beard for the photos, and he looked like a different person.\n\nAfter dinner, my cousins and I made a [heep|heap] of leaves and jumped in it. The band played every [tipe|type] of music, from jazz to polka. When it was time to go home, I had to [plede|plead] with Mom to stay for one more dance.",
+      "On Saturday, Dad and I made tacos for dinner. He let me [griend|grind] the pepper and measure each [spise|spice]. I added a little too much chili powder, but Dad said that was fine.\n\nWhile the meat cooked, my little brother tried to [pleed|plead] for dessert first, but Dad said no. Then our neighbors, a kind older couple, stopped by, so we invited the [fokes|folks] to stay. We all went to the door to [greit|greet] them. Mr. Hill, my baseball [coche|coach], came too.",
+      "Our soccer [coatch|coach] says the key to scoring is to [aime|aim] for the corners of the net. At practice yesterday, she dumped a [heepe|heap] of cones in the middle of the field and told us to dribble around them.\n\nThe [theam|theme] of practice was teamwork. Ella passed the ball more than anyone and showed lots of [groath|growth] as a player. At the end, Coach said she was proud of every [tyep|type] of effort we made.",
+      "Our class took a night hike at the nature center. The ranger said the [theeme|theme] of the hike was night animals. She showed us an owl nest high in an old [oack|oak] tree and explained that owls hunt their [praye|prey] when it gets dark.\n\nWe also counted the [groth|growth] rings on a fallen log to see how old the tree was. On the way back, the ranger's truck got stuck in the mud, and a farmer had to [towe|tow] it out with his tractor. My friend slipped and landed in a [heeap|heap] of wet leaves, and everyone giggled.",
+      "Grandpa took me to the barber shop for my first real haircut. The barber used a tiny razor to [shayv|shave] the back of my neck. It tickled so much that I could not sit still. Grandpa told the barber that his [folkes|folks] used to bring him to the same shop when he was a boy.\n\nWhen we were done, Grandpa [payd|paid] for both haircuts. At home, I used [paist|paste] to stick a photo of my new haircut in my scrapbook. My sister said it was the coolest [tiepe|type] of haircut she had ever seen. Then Mom made lunch with a [spyce|spice] that smelled like ginger.",
+      "Our class ran a lemonade stand to raise money for the animal shelter. We set the price at fifty cents, because charging more would just be [greede|greed]. Our teacher helped us make a sign with [paeste|paste] and bright paper.\n\nMany [foks|folks] stopped to buy a cup. One woman asked what [typ|type] of lemons we used. We had to [tou|tow] the heavy cooler around on a wagon. Our [aym|aim] was to earn one hundred dollars, and we did it!",
+      "On our camping trip, my scout leader taught us to cook breakfast over a fire. I cracked an egg so carefully that the [yolck|yolk] did not break. My friend used a smooth rock to [grynde|grind] some dried herbs.\n\nOur leader, who is also our swim [coch|coach], piled the pancakes into a giant [heaep|heap]. She sprinkled a [spicce|spice] called cinnamon on top. By the end of the trip, we could see real [grothe|growth] in our cooking skills.",
+      "The [thieme|theme] of our school play was a royal wedding. I played the [brid|bride], and my best friend played the king. On opening night, my job was to [greete|greet] the audience at the door.\n\nIn one scene, a dragon tried to catch the king as its [prai|prey]. I had to [pleade|plead] with the dragon to let him go. The dragon's costume was so big that it bumped into a cardboard [oake|oak] tree and knocked it over. Everyone laughed, but we kept going.",
+      "Our old car broke down on the way to the lake. We waited by the road for a truck to [toh|tow] it to the shop. The mechanic said the old rubber hoses had started to [dekay|decay]. He told us he had fixed cars his whole [liftime|lifetime].\n\nWhile we waited, I sat on the [dampp|damp] grass and packed my [stuuf|stuff] into one bag. We finally got to the lake at lunchtime. It was our [tennth|tenth] trip there this year, and it was still the best."
+    ]
+  },
+  3: {
+    title: "Words with /ū/, /ů/, and /ü/",
+    words: [
+      {w:"tuna", s:"For a special treat, Dad cooked tuna on the grill.",
+       m:"a large ocean fish that people eat", zh:"金枪鱼", ko:"참치"},
+      {w:"duty", s:"It is my duty to feed the cat every morning.",
+       m:"a job you are supposed to do", zh:"职责；任务", ko:"의무; 맡은 일"},
+      {w:"lose", s:"Hold the string tight so you don't lose your balloon.",
+       m:"to misplace something, or not be able to find it", zh:"丢失；弄丢", ko:"잃어버리다"},
+      {w:"few", s:"Only a few people showed up for the meeting.",
+       m:"not many", zh:"很少；几个", ko:"몇몇의; 소수의"},
+      {w:"doom", s:"An injury will doom his hopes of winning the race.",
+       m:"to make sure something ends badly", zh:"注定（失败）；使毁灭", ko:"(실패를) 운명짓다; 망치다"},
+      {w:"bamboo", s:"Do you know bamboo can grow as tall as a tree?",
+       m:"a tall plant with hard, hollow stems", zh:"竹子", ko:"대나무"},
+      {w:"soothe", s:"Gentle rocking may soothe a crying baby.",
+       m:"to make someone feel calm or better", zh:"安抚；使平静", ko:"달래다; 진정시키다"},
+      {w:"crooks", s:"The police caught the crooks who stole the bikes.",
+       m:"people who steal or cheat; robbers", zh:"骗子；小偷", ko:"사기꾼; 도둑"},
+      {w:"hoof", s:"The horse raised a hoof and began to prance.",
+       m:"the hard foot of a horse, cow, or deer", zh:"蹄", ko:"발굽"},
+      {w:"hooks", s:"We hang our coats on the hooks by the door.",
+       m:"curved pieces of metal or plastic for hanging things", zh:"挂钩；钩子", ko:"고리; 걸이"},
+      {w:"booth", s:"I got a stuffed toy from a booth at the fair.",
+       m:"a small stand where things are sold or shown", zh:"摊位；小隔间", ko:"부스; 노점"},
+      {w:"handbook", s:"The school handbook lists all the rules for recess.",
+       m:"a small book that tells you how to do something; a guide", zh:"手册；指南", ko:"안내서; 핸드북"},
+      {w:"prove", s:"Can you prove that your answer is correct?",
+       m:"to show that something is true", zh:"证明", ko:"증명하다"},
+      {w:"mute", s:"The old, broken piano has been mute for years.",
+       m:"silent; making no sound", zh:"无声的；哑的", ko:"소리가 나지 않는; 말이 없는"},
+      {w:"amuse", s:"Funny puppets amuse the little kids at the library.",
+       m:"to make someone laugh or smile; to entertain", zh:"逗乐；使开心", ko:"즐겁게 하다; 웃기다"},
+      {w:"plume", s:"A plume of smoke rose from the chimney.",
+       m:"a long, feathery cloud of smoke", zh:"（一缕）烟柱", ko:"(피어오르는) 연기 기둥"},
+      {w:"hue", s:"The sky turned a pink hue at sunset.",
+       m:"a color, or a shade of a color", zh:"色调；颜色", ko:"색조; 빛깔"},
+      {w:"view", s:"The new building will block our view of the park.",
+       m:"what you can see from a place", zh:"景色；视野", ko:"전망; 경치"},
+      {w:"bruise", s:"I have a dark blue bruise on my arm.",
+       m:"a dark mark on your skin where you got hurt", zh:"瘀青；淤伤", ko:"멍"},
+      {w:"union", s:"A union of pet owners called for a new dog park.",
+       m:"a group of people who join together", zh:"联盟；协会", ko:"연합; 조합"}
+    ],
+    review: [
+      {w:"theme", s:"The theme of our class party was outer space.",
+       m:"the main idea of something", zh:"主题", ko:"주제"},
+      {w:"coach", s:"My friend's dad is our soccer coach.",
+       m:"a person who trains a team or a player", zh:"教练", ko:"코치"},
+      {w:"bride", s:"The bride carried a bunch of white flowers.",
+       m:"a woman who is getting married", zh:"新娘", ko:"신부"}
+    ],
+    challenge: [
+      {w:"strewn", s:"Toys were strewn all over the playroom floor.",
+       m:"scattered all around", zh:"散落的；撒满的", ko:"흩어진; 흩뿌려진"},
+      {w:"accuse", s:"It is not fair to accuse someone without proof.",
+       m:"to say that someone did something wrong", zh:"指责；控告", ko:"비난하다; 고발하다"}
+    ],
+    rhymes: [
+      ["choose", ["close", "lost", "lose"], "lose"],
+      ["tooth", ["booth", "both", "cloth"], "booth"],
+      ["cue", ["would", "hue", "plug"], "hue"],
+      ["cute", ["cut", "clung", "mute"], "mute"],
+      ["fruity", ["duty", "funny", "dusty"], "duty"],
+      ["few", ["foot", "view", "fudge"], "view"],
+      ["gloom", ["plume", "glum", "put"], "plume"],
+      ["smooth", ["root", "soothe", "should"], "soothe"],
+      ["brooks", ["bunks", "moods", "hooks"], "hooks"],
+      ["cruise", ["bruise", "bush", "crunch"], "bruise"],
+      ["move", ["dove", "prove", "moose"], "prove"],
+      ["room", ["rush", "dome", "doom"], "doom"],
+      ["woof", ["won", "hoof", "half"], "hoof"],
+      ["pew", ["pool", "flow", "few"], "few"],
+      ["confuse", ["among", "amuse", "compare"], "amuse"]
+    ],
+    sort: [
+      {sound:"/ū/", spell:"u_e", words:["mute", "amuse"], say:"yoo, as in cute"},
+      {sound:"/ū/", spell:"ue", words:["hue"], say:"yoo, as in cute"},
+      {sound:"/ū/", spell:"u", words:["union"], say:"yoo, as in cute"},
+      {sound:"/ū/", spell:"ew", words:["few", "view"], say:"yoo, as in cute"},
+      {sound:"/ů/", spell:"oo", words:["crooks", "hooks", "handbook", "hoof"], say:"oo, as in book"},
+      {sound:"/ü/", spell:"u", words:["tuna", "duty"], say:"oo, as in moon"},
+      {sound:"/ü/", spell:"o_e", words:["lose", "prove"], say:"oo, as in moon"},
+      {sound:"/ü/", spell:"u_e", words:["plume"], say:"oo, as in moon"},
+      {sound:"/ü/", spell:"oo", words:["doom", "bamboo", "soothe", "booth"], say:"oo, as in moon"},
+      {sound:"/ü/", spell:"ui", words:["bruise"], say:"oo, as in moon"}
+    ],
+    abc: ["union", "tuna", "handbook", "crooks", "bamboo"],
+    proof: [
+      "Our yard has only a [fue|few] trees. The big maple tree in back is my favorite. I have a good [vyoo|view] of it from my room. In the fall, the maple leaves change color. They turn a beautiful red [huwe|hue].\n\nBefore long, the tree begins to [loos|lose] its colorful leaves. I often [amews|amuse] myself by collecting maple leaves to display in my room. It is also my [dooty|duty] to rake the leaves. I don't mind. Spending time under my tree is not a problem.",
+      "Every fall our town holds a fair at the park. This year I worked at a [bouth|booth] that sold [toona|tuna] sandwiches. My [dutey|duty] was to wrap each sandwich and hand it to the customer.\n\nA [fewe|few] kids tried to sneak sandwiches without paying, but my dad caught the little [crukes|crooks]. Later, a clown came by to [amuze|amuse] everyone with silly tricks.",
+      "My cousin lives on a ranch with three horses. One morning, the brown horse would not stop limping. My cousin lifted its [huf|hoof] and found a sharp stone stuck in it. She pulled it out carefully and used a soft voice to [suthe|soothe] the horse.\n\nShe keeps a [handbuk|handbook] about horse care by the barn door, and her tools hang on metal [huks|hooks]. Now I want to [proove|prove] that I can take care of a horse too. By lunch, the horse was trotting again, with only a tiny [bruize|bruise] near its ankle.",
+      "At the zoo, we watched a panda munch on [bambo|bamboo] for almost an hour. A zookeeper told us that pandas eat more than a [fyew|few] pounds of it every day.\n\nThen we visited the bird house. A peacock spread its tail, and each [ploome|plume] shimmered in a different blue [hyu|hue]. The [veiw|view] from the top of the bird house was amazing. A sign asked visitors to stay quiet, but my little brother could not stay [mewt|mute] for long.",
+      "Mom could not find her car keys anywhere. She was sure that someone had taken them, but I told her not to [acuse|accuse] anyone yet. It is easy to [looze|lose] small things in a busy house.\n\nWe searched for a [fyu|few] minutes under the couch and behind the coat [huuks|hooks] by the door. Finally, I found the keys inside her coat pocket! That was enough to [pruve|prove] that there were no [krooks|crooks] in our house.",
+      "After the big storm, branches were [strewen|strewn] all over our street. My [doutey|duty] was to help Dad pick them up. I slipped on a wet log and got a [bruse|bruise] on my knee.\n\nMom gave me a cold pack and let me watch a movie to [amuise|amuse] myself. The storm did not [doome|doom] our weekend after all. By Sunday, the sky had turned a bright blue [hu|hue] again.",
+      "On the first day of school, every student got a [hanbook|handbook] with the class rules. One rule says it is everyone's [dutie|duty] to keep the hallways clean.\n\nThis year our class formed a [unyon|union] with the other fifth grade classes to plan a field day. We voted on the games, and only a [fiew|few] people wanted sack races. Our teacher said we had to [pruv|prove] we could work together before she would say yes. We plan to [amyuse|amuse] the whole school with a giant tug-of-war.",
+      "Last summer, Uncle Ray took me fishing on his boat. We used strong [hookes|hooks] because we hoped to catch a [tunah|tuna]. My fishing pole was made of [bambu|bamboo], just like the one my grandpa used.\n\nFrom the boat we had a wonderful [vu|view] of the coast. Far away, a [plumme|plume] of smoke rose from a ship. A big wave almost knocked us over, and I thought the storm would [dume|doom] our trip, but the sky cleared up.",
+      "Our class went to a music museum downtown. At one [buth|booth], we pressed buttons to hear old songs. One piano was [miute|mute] because it was too old to play.\n\nThe [thiem|theme] of the tour was music from long ago. Our guide used to be a choir [kohch|coach], and she sang a song for us. We could see a great [viewe|view] of the city from the top floor. The trip was a fun way to [ammuse|amuse] ourselves on a rainy day.",
+      "When Grandma's cookies went missing from the kitchen, my little brother was quick to [accuze|accuse] the dog. Crumbs were [strewnn|strewn] across the floor, but there was no proof.\n\nThen we found a [feww|few] cookies hidden behind the couch. The real thief was my brother! He tried to [sueth|soothe] Grandma by giving back the cookies, but she just laughed. She said she would never [lewse|lose] her sense of humor over cookies. Then she reminded him that telling the truth is his [dewty|duty] as a big brother."
+    ]
   }
-  // 2: { title:"...", words:[...], review:[...], challenge:[...], rhymes:[...], sort:[...], abc:[...], proof:"..." },
+  // 4: { title:"...", words:[...], review:[...], challenge:[...], rhymes:[...], sort:[...], abc:[...], proof:[...] },
 };
 
 /* ---------- Shared helpers ---------- */
@@ -1340,7 +1542,7 @@ function findWord(word){
 function patternOf(word,n){const g=(WK(n).sort||[]).find(g=>g.words.includes(word));return g?g:null}
 const KIND_BAND={list:'LIST WORD',review:'REVIEW WORD',challenge:'CHALLENGE WORD'};
 const kindClass=o=>o.kind==='review'?'c-review':o.kind==='challenge'?'c-challenge':'c-list';
-const soundClass=g=>{const m=g&&g.sound.match(/\b([aeiou])\b/);return m?'s-'+m[1]:'s-u'};
+const soundClass=g=>{if(!g)return's-u';if(/ū/.test(g.sound))return's-u';if(/ů/.test(g.sound))return's-o';if(/ü/.test(g.sound))return's-i';const m=g.sound.match(/\b([aeiou])\b/);return m?'s-'+m[1]:'s-u'};
 
 /* ---------- What the voice says. Every SPEAK.say text is built by one of these (see ALL_LINES) ---------- */
 const sayOf=o=>o.say||o.w;
@@ -1349,7 +1551,7 @@ const dictateText=o=>`${sayOf(o)}. ${sentenceFor(o)} ${sayOf(o)}.`;
 const testLine=(k,o)=>`Number ${k+1}. ${sayOf(o)}. ${sentenceFor(o)} ${sayOf(o)}.`;
 function backText(o,n){
   const pat=patternOf(o.w,n);
-  return `${sayOf(o)}. ${o.m?`${sayOf(o)} means ${o.m}. `:''}${pat?`${pat.sound}, spelled ${pat.spell.split(" or ").map(s=>s.split("").join(" ")).join(" or ")}. `:""}${sentenceFor(o)} ${o.w.split("").join(", ")}.`;
+  return `${sayOf(o)}. ${o.m?`${sayOf(o)} means ${o.m}. `:''}${pat?`${pat.say||pat.sound}, spelled ${pat.spell.split(" or ").map(s=>s.split("").map(c=>c==="_"?"consonant":c).join(" ")).join(" or ")}. `:""}${sentenceFor(o)} ${o.w.split("").join(", ")}.`;
 }
 function rhymeLine(cue,ans){const w=findWord(ans);return `${cue}, ${w?sayOf(w):ans}.`}
 const sortSay=w=>{const o=findWord(w);return o?sayOf(o):w};
