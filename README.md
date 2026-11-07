@@ -8,7 +8,7 @@ A 30-week spelling practice app for kids, built as the sister app of Root Detect
 - **Flashcards**: Root Detective's card. It has position dots, a 3D flip, swipe (the card and its Listen button move together), Back / Flip / Next, "I know this", Shuffle and "Next to flip". The front shows the word. The back shows the spelling pattern, the meaning, the sentence, the Chinese and Korean meanings and the letters.
 - **Daily review**: a 10-question quiz on the words due today (missed, weak or not practised lately), plus the list of every missed word with a "Practice these words" round.
 - **Activities**: Spell it, Build it, Rhyme time, Sound sort, ABC order, Proofread.
-- **Games**: Quiz (hear the word or read the sentence, then pick the right spelling), Match (word ↔ meaning), Memory (word ↔ sentence clue or rhyme) and Speed round (60 seconds of "Is this spelled right?").
+- **Games**: Quiz (hear the word or read the sentence, then pick the right spelling), Match (word ↔ meaning), Memory (word ↔ rhyme or simple definition) and Speed round (60 seconds of "Is this spelled right?").
 - **Tests**: the Pretest and the Final test for the current week.
 - **Progress**: name, streak, stats, passes per activity this week, tests by week, words that need work, 42 badges and a day-by-day history.
 

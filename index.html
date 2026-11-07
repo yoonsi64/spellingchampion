@@ -1583,7 +1583,7 @@ const ACTS={
   build:{name:'Build it',desc:'Tap the letters in the right order.',pass:'6 of 8'},
   quiz:{name:'Quiz',desc:'Pick the right spelling.',pass:'8 of 10'},
   match:{name:'Match',desc:'Match each word to its meaning.',pass:'2 misses or fewer'},
-  memory:{name:'Memory',desc:'Flip tiles to pair words and clues.',pass:'12 turns or fewer'},
+  memory:{name:'Memory',desc:'Flip tiles to pair words with rhymes and meanings.',pass:'12 turns or fewer'},
   rhyme:{name:'Rhyme time',desc:'Pick the spelling word that rhymes.',pass:'80%',needs:'rhymes'},
   sort:{name:'Sound sort',desc:'Sort words by sound and spelling pattern.',pass:'80%',needs:'sort'},
   abc:{name:'ABC order',desc:'Put words in ABC or reverse ABC order.',pass:'2 of 3 sets'},
@@ -2123,13 +2123,13 @@ function renderMatch(){
   $('matchBody').querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>pick('r',b.dataset.r));
 }
 
-/* ---------- Memory: flip tiles to pair each word with its sentence clue or rhyme ---------- */
+/* ---------- Memory: flip tiles to pair each word with a rhyme or a simple definition (a sentence only if a word has no meaning yet) ---------- */
 /* rough rhyme sound of a word, to keep "rhymes with cuff" from fitting two words in one round */
 const rhymeKey=w=>{let s=w.toLowerCase().replace(/ough$/,'uf').replace(/augh$/,'af').replace(/ue/,'e').replace(/ea/,'e').replace(/ck$/,'k').replace(/tch$/,'ch').replace(/([a-z])\1/g,'$1').replace(/se$/,'s').replace(/([^aeiou])e$/,'$1');const m=s.match(/[aeiou][^aeiou]*$/);return m?m[0]:s};
 let G=null,memPeek=store.get('sc-mem-peek',false)===true;
 function newMemory(go){const cs=pickWords('memory',6);if(cs.length<2)return emptyAct('memory','Not enough words yet.');
   const rows=WEEKS.flatMap(W=>W.rhymes),keys=cs.map(o=>rhymeKey(sayOf(o)));
-  const clues=cs.map((o,i)=>{const r=rows.find(x=>x[2]===o.w);const clash=r&&cs.some((p,j)=>j!==i&&keys[j]===rhymeKey(r[0]));return r&&!clash&&Math.random()<.4?{t:'rhyme',text:`rhymes with “${r[0]}”`}:{t:'sent',html:blankHTML(o)}});
+  const clues=cs.map((o,i)=>{const r=rows.find(x=>x[2]===o.w);const clash=r&&cs.some((p,j)=>j!==i&&keys[j]===rhymeKey(r[0]));const rh=r&&!clash?{t:'rhyme',text:`rhymes with “${r[0]}”`}:null;if(!o.m)return rh||{t:'sent',html:blankHTML(o)};return rh&&Math.random()<.5?rh:{t:'def',text:shortMean(o)}});
   const tiles=shuf(cs.flatMap((o,i)=>[{o,part:true},{o,part:false,clue:clues[i]}]));
   G={cs,tiles,up:[],got:new Set(),moves:0,lock:true,streak:0,best:0,wait:true};
   if(go===true)startMemory();else renderMemory()}
@@ -2137,8 +2137,8 @@ function startMemory(){const g=G;if(!g||!g.wait)return;g.wait=false;
   if(memPeek){g.peek=true;g.lock=true;renderMemory();g.peekT=setTimeout(()=>{if(G!==g)return;g.peek=false;g.lock=false;g.flipping=true;renderMemory();setTimeout(()=>{if(G===g)g.flipping=false},450)},3000)}
   else{g.lock=false;renderMemory();const t=$('memoryBody').querySelector('[data-i]');if(t)t.focus({preventScroll:true})}
   try{FX.play('flip')}catch(e){}}
-const tileFace=t=>t.part?esc(t.o.w):t.clue.t==='rhyme'?esc(t.clue.text):t.clue.html;
-const tileLabel=t=>t.part?t.o.w:t.clue.t==='rhyme'?t.clue.text:blankPlain(t.o);
+const tileFace=t=>t.part?esc(t.o.w):t.clue.t==='sent'?t.clue.html:esc(t.clue.text);
+const tileLabel=t=>t.part?t.o.w:t.clue.t==='sent'?blankPlain(t.o):t.clue.text;
 function renderMemory(){
   const fin=G.got.size===G.cs.length;
   $('memoryBody').innerHTML=`<div class="wcard"><div class="gtop"><b>Find each word and its clue</b><span class="grp">${fin?'':streakPill(G.streak)}<span class="note">${G.got.size} of ${G.cs.length} pairs · ${plural(G.moves,'turn')}</span></span></div>
