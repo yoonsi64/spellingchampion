@@ -105,6 +105,7 @@ input:focus-visible{outline:3px solid var(--primary);outline-offset:-3px}
 .hgame[data-go="parts"]{--ic:#0C8599}
 #tab-build,.hgame[data-go="build"]{--ic:#E67700}
 #tab-match,.hgame[data-go="match"]{--ic:#2B8A3E}
+#tab-meaning,.hgame[data-go="meaning"]{--ic:#C2255C}
 #tab-memory,.hgame[data-go="memory"]{--ic:#C2255C}
 #tab-spell,.hgame[data-go="spell"]{--ic:#1C7ED6}
 #tab-sort,.hgame[data-go="sort"]{--ic:#6741D9}
@@ -982,6 +983,10 @@ html.calm .m-star,html.calm .m-spark{animation:none}
 .opt.spopt.right,.opt.spopt.wrong{padding-right:44px;padding-left:44px}
 .opts.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:460px){.opts.three{grid-template-columns:1fr}}
+.mdef{margin:0;font-size:clamp(1.2rem,4.6vw,1.5rem);font-weight:700;line-height:1.35;text-wrap:pretty}
+.mword b{font-size:clamp(2rem,9vw,2.8rem);font-weight:800}
+.mopts{grid-template-columns:1fr!important}.mopts .opt{font-size:1.05rem;font-weight:600;text-align:left;line-height:1.3}
+.mhint{align-self:flex-start;font-size:.95rem}.mlang{justify-content:flex-start;max-width:none}
 .freq{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
 .freq li{display:flex;align-items:center;gap:10px}.freq li .linkish{min-width:7.5em;text-align:left}.freq li.ok .linkish{color:var(--good)}
 .passline{margin:0;font-weight:700;color:var(--muted)}.passline.ok{color:var(--good)}
@@ -1106,6 +1111,7 @@ html.nospeak .mlist li{padding:10px 0}
         <button id="tab-spell" role="tab" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><path class="d" d="m15 4.2 4.8 4.8L9 19.8H4.2V15z"/><path d="m15 4.2 4.8 4.8L9 19.8H4.2V15z"/><path d="m12.5 6.7 4.8 4.8"/><path d="M13.5 20.5h7"/></svg><span>Spell it</span></button>
         <button id="tab-build" role="tab" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><rect class="d" x="8" y="3" width="8" height="8" rx="1.5"/><rect x="8" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg><span>Build it</span></button>
         <button id="tab-quiz" role="tab" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><path class="d" d="M4 6a2.5 2.5 0 0 1 2.5-2.5h11A2.5 2.5 0 0 1 20 6v8.5a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 3.5V17A2.5 2.5 0 0 1 4 14.5z"/><path d="M4 6a2.5 2.5 0 0 1 2.5-2.5h11A2.5 2.5 0 0 1 20 6v8.5a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 3.5V17A2.5 2.5 0 0 1 4 14.5z"/><path d="M9.8 8.4a2.3 2.3 0 1 1 3.2 2.1c-.7.3-1 .8-1 1.5v.2"/><circle class="dot" cx="12" cy="14.6" r="1"/></svg><span>Quiz</span></button>
+        <button id="tab-meaning" role="tab" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><path class="d" d="M3 5.5c3-1.2 6-1 9 1v13c-3-2-6-2.2-9-1z"/><path d="M3 5.5c3-1.2 6-1 9 1v13c-3-2-6-2.2-9-1zM21 5.5c-3-1.2-6-1-9 1v13c3-2 6-2.2 9-1z"/><path d="M15 9.6h3M15 12.8h2.4M6 9.6h3"/></svg><span>Meanings</span></button>
         <button id="tab-match" role="tab" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><rect class="d" x="2.5" y="3.5" width="8.5" height="7" rx="2"/><rect x="2.5" y="3.5" width="8.5" height="7" rx="2"/><rect class="d" x="13" y="13.5" width="8.5" height="7" rx="2"/><rect x="13" y="13.5" width="8.5" height="7" rx="2"/><path d="M11 7h2.2a2.3 2.3 0 0 1 2.3 2.3v4.2"/><path d="M8.5 17H6.8a2.3 2.3 0 0 1-2.3-2.3v-4.2"/></svg><span>Match</span></button>
         <button id="tab-memory" role="tab" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect class="d" x="13" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect class="d" x="13" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/><circle class="dot" cx="17" cy="7" r="1.4"/><circle class="dot" cx="17" cy="17" r="1.4"/></svg><span>Memory</span></button>
         <button id="tab-rhyme" role="tab" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><ellipse class="d" cx="6.3" cy="17.8" rx="3" ry="2.4"/><ellipse class="d" cx="17.3" cy="15.8" rx="3" ry="2.4"/><ellipse cx="6.3" cy="17.8" rx="3" ry="2.4"/><ellipse cx="17.3" cy="15.8" rx="3" ry="2.4"/><path d="M9.3 17.6V5.2l11-2v12.4"/><path d="M9.3 8.8l11-2"/></svg><span>Rhyme time</span></button>
@@ -1160,6 +1166,7 @@ html.nospeak .mlist li{padding:10px 0}
     <section id="spell" hidden><div id="spellBody"></div></section>
     <section id="build" hidden><div id="buildBody"></div></section>
     <section id="quiz" hidden><div id="quizBody"></div></section>
+    <section id="meaning" hidden><div id="meaningBody"></div></section>
     <section id="match" hidden><div id="matchBody"></div></section>
     <section id="memory" hidden><div id="memoryBody"></div></section>
     <section id="rhyme" hidden><div id="rhymeBody"></div></section>
@@ -1555,6 +1562,7 @@ function backText(o,n){
   const pat=patternOf(o.w,n);
   return `${sayOf(o)}. ${o.m?`${sayOf(o)} means ${o.m}. `:''}${pat?`${pat.say||pat.sound}, spelled ${pat.spell.split(" or ").map(s=>s.split("").map(c=>c==="_"?"consonant":c).join(" ")).join(" or ")}. `:""}${sentenceFor(o)} ${o.w.split("").join(", ")}.`;
 }
+const meanSay=o=>`${o.m[0].toUpperCase()}${o.m.slice(1)}.`;
 function rhymeLine(cue,ans){const w=findWord(ans);return `${cue}, ${w?sayOf(w):ans}.`}
 const sortSay=w=>{const o=findWord(w);return o?sayOf(o):w};
 /* every text the app can pass to SPEAK.say, as [text, kind]; kind is 'word' (one word said alone), 'sent' (a sentence) or 'other' */
@@ -1568,6 +1576,7 @@ function ALL_LINES(){
     all.forEach(o=>add(sentenceFor(o),'sent'));
     all.forEach(o=>add(dictateText(o),'other'));
     all.forEach(o=>add(backText(o,n),'other'));
+    all.forEach(o=>{if(o.m)add(meanSay(o),'other')});
     all.forEach((o,k)=>add(testLine(k,o),'other'));
     W.rhymes.forEach(r=>add(rhymeLine(r[0],r[2]),'other'));
   }
@@ -1825,6 +1834,7 @@ const ACTS={
   spell:{name:'Spell it',desc:'Hear the word, then type it.',pass:'8 of 10'},
   build:{name:'Build it',desc:'Tap the letters in the right order.',pass:'6 of 8'},
   quiz:{name:'Quiz',desc:'Pick the right spelling.',pass:'8 of 10'},
+  meaning:{name:'Meanings',desc:'Match each word with what it means.',pass:'8 of 10'},
   match:{name:'Match',desc:'Match each word to its meaning.',pass:'2 misses or fewer'},
   memory:{name:'Memory',desc:'Flip tiles to pair words with rhymes and meanings.',pass:'12 turns or fewer'},
   rhyme:{name:'Rhyme time',desc:'Pick the spelling word that rhymes.',pass:'80%',needs:'rhymes'},
@@ -1891,7 +1901,7 @@ const MASCOT=`<svg class="mascot" viewBox="0 0 120 120" aria-hidden="true">
 const LOCK_ICON=`<svg class="slock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>`;
 
 /* ---------- Modes ---------- */
-const MODES=['home','plan','cards','review','spell','build','quiz','match','memory','rhyme','sort','abc','proof','speed','tests','progress'];
+const MODES=['home','plan','cards','review','spell','build','quiz','meaning','match','memory','rhyme','sort','abc','proof','speed','tests','progress'];
 const FC_FREE=['home','plan','cards','progress','tests'];
 const MODE_NAME={home:'Home',plan:'Plan',cards:'Flashcards',review:'Daily review',tests:'Tests',progress:'Progress'};
 let mode='home';
@@ -1908,7 +1918,7 @@ function setMode(m,noStart){
   if(!noStart&&!locked)refreshMode();
 }
 function refreshMode(){({home:renderHome,plan:renderPlan,cards:()=>openCards(),review:renderReview,spell:()=>startSpell(),build:startBuild,quiz:()=>startQuiz(),
-  match:newMatch,memory:()=>newMemory(),rhyme:startRhyme,sort:startSort,abc:startAbc,proof:startProof,speed:renderSpeedStart,tests:renderTests,progress:renderProgress}[mode]||renderHome)()}
+  meaning:()=>startMeaning(),match:newMatch,memory:()=>newMemory(),rhyme:startRhyme,sort:startSort,abc:startAbc,proof:startProof,speed:renderSpeedStart,tests:renderTests,progress:renderProgress}[mode]||renderHome)()}
 function centerTab(m,instant){const c=$('modeTabs'),t=$('tab-'+m);if(!c||!t||c.scrollWidth<=c.clientWidth+2)return;const left=t.offsetLeft-(c.clientWidth-t.offsetWidth)/2;
   try{c.scrollTo({left,behavior:instant||document.documentElement.classList.contains('calm')?'auto':'smooth'})}catch(e){c.scrollLeft=left}}
 function updateFcTabs(){const why=lockWhy();
@@ -1978,7 +1988,7 @@ function nextTask(){for(const day of PLAN)for(const [k,l] of day.tasks){if(!task
     return[k,l,day.d]}
   return null}
 function startTask(k){if(k==='cards'){fcGo();return}if(k==='test'&&!finalOpen()){setMode('tests');scrollTo({top:0});return}if(k==='pretest'||k==='test'){setMode('tests',true);startTest(k);scrollTo({top:0});return}setMode(k);scrollTo({top:0})}
-const HOME_GAMES=[['cards','Flashcards'],['spell','Spell it'],['build','Build it'],['quiz','Quiz'],['match','Match'],['memory','Memory'],['rhyme','Rhyme time'],['sort','Sound sort'],['abc','ABC order'],['proof','Proofread'],['speed','Speed round'],['tests','Tests']];
+const HOME_GAMES=[['cards','Flashcards'],['spell','Spell it'],['build','Build it'],['quiz','Quiz'],['meaning','Meanings'],['match','Match'],['memory','Memory'],['rhyme','Rhyme time'],['sort','Sound sort'],['abc','ABC order'],['proof','Proofread'],['speed','Speed round'],['tests','Tests']];
 function renderHome(){
   const days=HIST.days,run=currentRun(days),fw=frontierWeek(),cur=S.cur,W=WK(cur),st=wordStats();
   const words=uniqWords(avail()),mastered=words.filter(o=>isMastered(st[o.w])).length;
@@ -2338,6 +2348,43 @@ function buildCheck(){
       r.fb=k?`The first ${k} letter${k>1?'s are':' is'} right. ${triesLeft(r.tries)}.`:`Not quite. ${triesLeft(r.tries)}.`;
       r.slots=r.slots.slice(0,k);renderBuild();const sl=$('bslots');sl.classList.add('no','shake')}}
 }
+
+/* ---------- Meanings: three kinds of question to practise what each word means ----------
+   read a meaning, pick the word · see a word, pick its meaning · read a sentence, pick the word that fits */
+const MN=10;let MQ=null;
+function meanOpts(o,pool,n){const sm=shortMean(o),seen=new Set([o.w]),out=[];
+  for(const p of shuf(pool)){if(out.length>=n)break;if(seen.has(p.w)||!p.m||shortMean(p)===sm)continue;seen.add(p.w);out.push(p)}return out}
+function makeMeanQ(o,pool){const kinds=['def','word','ctx'],t=kinds[Math.floor(Math.random()*3)],others=meanOpts(o,pool,3);
+  return{o,t,opts:shuf([o,...others])}}
+function startMeaning(){const p=poolFor('meaning').filter(o=>o.m);
+  if(p.length<4)return emptyAct('meaning','Meanings need at least 4 words with meanings.');
+  const wide=uniqWords(avail()).filter(o=>o.m),pool=p.length>=8?p:wide;
+  MQ={qs:draw('meaning',p,Math.min(MN,p.length),wkey).map(o=>makeMeanQ(o,pool)),i:0,score:0,missed:[],streak:0,best:0};renderMeaning(true)}
+const langChips=o=>o.zh||o.ko?`<div class="fclang mlang">${o.zh?`<p lang="zh-Hans"><span class="fclbl" lang="zh-Hans">中文</span>${esc(o.zh)}</p>`:''}${o.ko?`<p lang="ko"><span class="fclbl" lang="ko">한국어</span>${esc(o.ko)}</p>`:''}</div>`:'';
+function renderMeaning(autoSay){const r=MQ,q=r.qs[r.i],o=q.o,N=r.qs.length;
+  const prompt=q.t==='def'?`<p class="prompt">Which word means…</p><div class="sayrow"><p class="mdef">${esc(o.m)}</p>${sayBtn(meanSay(o),'Hear the meaning')}</div>
+      ${o.zh||o.ko?`<button class="linkish mhint" id="mhint">Show 中文 / 한국어</button><div id="mhintBox" hidden>${langChips(o)}</div>`:''}`
+    :q.t==='word'?`<p class="prompt">What does this word mean?</p><div class="sayrow mword"><b>${esc(o.w)}</b>${sayBtn(sayOf(o),`Hear ${o.w}`)}</div>`
+    :`<p class="prompt">Which word fits the sentence?</p><p class="sent">${blankHTML(o)}</p>`;
+  const opts=q.t==='word'?q.opts.map((x,k)=>`<button class="opt mopt" data-v="${esc(x.w)}">${esc(shortMean(x))}</button>`).join('')
+    :q.opts.map((x,k)=>`<button class="opt spopt" data-v="${esc(x.w)}">${esc(x.w)}</button>`).join('');
+  $('meaningBody').innerHTML=`<div class="qcard">${qtop(`Question ${r.i+1} of ${N}`,r.i,N,`★ ${r.score}`)}${prompt}
+    <div class="opts${q.t==='word'?' mopts':''}">${opts}</div><div id="mfb"></div></div>`;
+  $('meaningBody').querySelectorAll('.opt').forEach(b=>b.onclick=()=>meaningAnswer(b));
+  const h=$('mhint');if(h)h.onclick=()=>{$('mhintBox').hidden=false;h.remove()};
+  if(autoSay)setTimeout(()=>{if(MQ===r&&r.qs[r.i]===q&&!q.done){if(q.t==='def')SPEAK.say(meanSay(o));else if(q.t==='word')SPEAK.say(sayOf(o))}},250)}
+function meaningAnswer(b){const r=MQ,q=r.qs[r.i],o=q.o;if(q.done)return;q.done=true;const ok=b.dataset.v===o.w;
+  $('meaningBody').querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(x.dataset.v===o.w)x.classList.add('right')});
+  answer(o.w,ok);
+  if(ok){r.score++;r.streak++;r.best=Math.max(r.best,r.streak);FX.burst(b,24);FX.cheer(b,FX.praise(r.streak));FX.play('good');b.classList.add('popin')}
+  else{r.streak=0;FX.play('bad');b.classList.add('wrong');if(!r.missed.includes(o.w))r.missed.push(o.w)}
+  const last=r.i===r.qs.length-1;
+  $('mfb').innerHTML=`<div class="fb ${ok?'ok':'no'}"><strong>${ok?'You know it!':'Not quite.'}</strong>
+    <div class="sayrow"><p><mark>${esc(o.w)}</mark> means ${esc(o.m)}.</p>${sayBtn(`${sayOf(o)} means ${o.m}.`,'Hear it')}</div>
+    <p class="sent">${markHTML(o)}</p>${langChips(o)}
+    <div class="grp"><button class="btn primary nextq" id="mnext">${last?'See my score':'Next question →'}</button></div></div>`;
+  $('mnext').onclick=()=>{r.i++;r.i<r.qs.length?renderMeaning(true):roundEnd('meaning',{score:r.score,total:r.qs.length,pass:r.score>=Math.ceil(r.qs.length*.8),missed:r.missed,passText:`${Math.ceil(r.qs.length*.8)} of ${r.qs.length}`})};
+  $('mnext').focus({preventScroll:true})}
 
 /* ---------- Quiz: hear the word or read the sentence, then pick the right spelling ---------- */
 const QN=10;let Q=null;
