@@ -2245,7 +2245,7 @@ const PLAN=[
   {d:'Mon',tasks:[['pretest','Pretest'],['cards','Flashcards']]},
   {d:'Tue',tasks:[['spell','Spell it'],['build','Build it']]},
   {d:'Wed',tasks:[['rhyme','Rhyme time'],['sort','Sound sort']]},
-  {d:'Thu',tasks:[['abc','ABC order'],['proof','Proofread']]},
+  {d:'Thu',tasks:[['abc','ABC order'],['proof','Proofread'],['meaning','Meanings']]},
   {d:'Fri',tasks:[['test','Final test']]}
 ];
 const DAYNAME={Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday'};
@@ -2322,8 +2322,8 @@ function renderPlan(){
     <div class="pp-bar"><i style="width:${uw.length/NW*100}%"></i></div></div>`;
   h+=`<div class="routine"><div class="gtop"><h2>Week ${cur} plan</h2><span class="note">About 15 minutes a day</span></div>
     ${hasList(cur)?`<div class="days">${PLAN.map(day=>`<div class="day"><b>${day.d}</b>${day.tasks.map(([k,l])=>{const ok=taskAvailable(k),dn=taskDone(k);
-      return`<button type="button" class="ptask ${dn?'on':''}" data-task="${k}" ${ok?'':'disabled'}><span class="pcheck" aria-hidden="true">${dn?'✓':''}</span><span>${esc(l)}</span>${!ok?'<small>no sheet yet</small>':''}</button>`}).join('')}</div>`).join('')}</div>
-      <p class="note">Before the flashcards are done, activities use all your weeks. Afterwards, each activity sticks to week ${cur} until you pass it 3 times. Pass the final test (80%) to open the next week.</p>`
+      return`<button type="button" class="ptask ${dn?'on':''}" data-task="${k}" ${ok?'':'disabled'}><span class="pcheck" aria-hidden="true">${dn?'✓':''}</span><span>${esc(l)}</span>${!ok?`<small>${modeLocked(k)?`🔒 ${weekStep()==='pre'?'after the pretest':weekStep()==='cards'?'after the flashcards':'opens with the final test'}`:'no sheet yet'}</small>`:''}</button>`}).join('')}</div>`).join('')}</div>
+      <p class="note">Each week goes in steps: the pretest, then the flashcards, then Spell it, Build it, Rhyme time, Sound sort, ABC order, Proofread and Meanings (pass each 3 times). Then the final test opens, along with the other games. Pass it (80%) to open the next week.</p>`
     :`<p class="note">Week ${cur}'s words are coming soon. The plan appears here when they're ready.</p>`}</div>`;
   h+=`<div class="wmap simple" id="wmap"><svg class="wtrail" id="wtrail" aria-hidden="true"></svg>`;
   let y=36;const pts=[],GAP=150;
