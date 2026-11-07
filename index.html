@@ -982,6 +982,8 @@ html.calm .m-star,html.calm .m-spark{animation:none}
 .opt.spopt.right,.opt.spopt.wrong{padding-right:44px;padding-left:44px}
 .opts.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:460px){.opts.three{grid-template-columns:1fr}}
+.freq{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.freq li{display:flex;align-items:center;gap:10px}.freq li .linkish{min-width:7.5em;text-align:left}.freq li.ok .linkish{color:var(--good)}
 .passline{margin:0;font-weight:700;color:var(--muted)}.passline.ok{color:var(--good)}
 .score small{font-size:.5em;color:var(--muted)}
 /* Build it: one box per letter, all the same size (--t, set from the space there is). The word sits on one line,
@@ -1796,6 +1798,22 @@ function fcGate(n=S.cur){const {f,b}=fcSides();if(!hasList(n))return{n,ids:[],f,
 const flashDone=n=>hasList(n)&&fcGate(n).ok;
 /* locked while there is nothing else to practice: the current week's flashcards come first */
 function fcLocked(){const g=fcGate();if(g.ok)return false;return avail().every(n=>n===S.cur)}
+/* Each new week opens in steps:
+   1. the pretest (only Home, Plan, Tests and Progress are open)
+   2. the flashcards, both sides of every card (only the flashcards open)
+   3. the required activities, each passed 3 times (only those, plus the flashcards)
+   4. the final test opens, and so does everything else.
+   A week that's already passed, or has no words yet, is fully open. */
+const pretestDone=(n=S.cur)=>{const h=testHist()[n];return !!(h&&h.pre)};
+const ALWAYS_OPEN=['home','plan','tests','progress'];
+const FINAL_REQ=['sort','abc','proof','build','spell'];
+function finalReqs(n=S.cur){const W=WK(n);return FINAL_REQ.filter(a=>{const k=ACTS[a].needs;return !k||(Array.isArray(W[k])?W[k].length:W[k])}).map(a=>({a,name:ACTS[a].name,n:Math.min(3,passCount(a,n))}))}
+const finalOpen=(n=S.cur)=>weekPassed(n,testHist())||finalReqs(n).every(r=>r.n>=3);
+function weekStep(n=S.cur){if(!hasList(n)||weekPassed(n,testHist()))return'open';if(!pretestDone(n))return'pre';if(!flashDone(n))return'cards';if(!finalOpen(n))return'req';return'open'}
+const preLocked=()=>weekStep()==='pre';
+function modeLocked(m){if(ALWAYS_OPEN.includes(m))return false;const st=weekStep();
+  if(st==='pre')return true;if(st==='cards')return m!=='cards';if(st==='req')return m!=='cards'&&!finalReqs().some(r=>r.a===m);return false}
+function lockWhy(){const st=weekStep();return st==='pre'?'Locked until you take the pretest':st==='cards'?'Locked until you study the flashcards':'Opens with the final test'}
 
 /* ---------- Activities & the 3-passes rule ----------
    Before the week's flashcards are done, activities use all your weeks.
@@ -1877,9 +1895,9 @@ let mode='home';
 function setMode(m,noStart){
   if(m!=='speed')stopSpeedIfLeaving();
   if(m!==mode){try{FX.clear()}catch(e){}try{SPEAK.stop()}catch(e){}}
-  mode=m;const locked=!FC_FREE.includes(m)&&fcLocked();
+  mode=m;const locked=modeLocked(m);
   MODES.forEach(x=>{$(x).hidden=x!==m||locked;$('tab-'+x).setAttribute('aria-selected',x===m)});
-  $('fcGate').hidden=!locked;if(locked)renderFcGate();
+  $('fcGate').hidden=!locked;if(locked)({pre:renderPreGate,cards:renderFcGate,req:renderReqGate}[weekStep()]||renderFcGate)();
   updateFcTabs();renderHeld();centerTab(m);
   document.body.classList.toggle('on-home',m==='home');document.body.classList.toggle('in-act',m!=='home');
   try{history.replaceState(null,'','#/'+m)}catch(e){}
@@ -1890,12 +1908,12 @@ function refreshMode(){({home:renderHome,plan:renderPlan,cards:()=>openCards(),r
   match:newMatch,memory:()=>newMemory(),rhyme:startRhyme,sort:startSort,abc:startAbc,proof:startProof,speed:renderSpeedStart,tests:renderTests,progress:renderProgress}[mode]||renderHome)()}
 function centerTab(m,instant){const c=$('modeTabs'),t=$('tab-'+m);if(!c||!t||c.scrollWidth<=c.clientWidth+2)return;const left=t.offsetLeft-(c.clientWidth-t.offsetWidth)/2;
   try{c.scrollTo({left,behavior:instant||document.documentElement.classList.contains('calm')?'auto':'smooth'})}catch(e){c.scrollLeft=left}}
-function updateFcTabs(){const lk=fcLocked();
-  document.querySelectorAll('.hgame[data-go]').forEach(b=>{const g=lk&&!FC_FREE.includes(b.dataset.go);b.classList.toggle('gated',g);if(g)b.setAttribute('aria-description','Locked until you study the flashcards');else b.removeAttribute('aria-description')});
-  MODES.forEach(m=>{const t=$('tab-'+m);if(!t||FC_FREE.includes(m))return;t.classList.toggle('gated',lk);if(lk)t.setAttribute('aria-description','Locked until you study the flashcards');else t.removeAttribute('aria-description')})}
+function updateFcTabs(){const why=lockWhy();
+  document.querySelectorAll('.hgame[data-go]').forEach(b=>{const g=modeLocked(b.dataset.go);b.classList.toggle('gated',g);if(g)b.setAttribute('aria-description',why);else b.removeAttribute('aria-description')});
+  MODES.forEach(m=>{const t=$('tab-'+m);if(!t)return;const g=modeLocked(m);t.classList.toggle('gated',g);if(g)t.setAttribute('aria-description',why);else t.removeAttribute('aria-description')})}
 /* the line above an activity: which weeks it uses right now */
 function renderHeld(){const el=$('fcHeldNote'),a=ACTS[mode]?mode:null;
-  if(!a||fcLocked()){el.hidden=true;return}
+  if(!a||modeLocked(mode)){el.hidden=true;return}
   const g=fcGate();
   if(hasList(S.cur)&&!g.ok){el.hidden=false;el.innerHTML=`<span aria-hidden="true">🗂️</span><span>Activities use all your weeks until the week ${S.cur} flashcards are done (${g.done}/${g.ids.length}).</span><button class="linkish" id="fhGo">Study them</button>`;$('fhGo').onclick=fcGo;return}
   if(scope(a).limited){el.hidden=false;el.innerHTML=`<span aria-hidden="true">🎯</span><span>Week ${S.cur} words only until you pass ${ACTS[a].name} 3 times (${passCount(a,S.cur)} of 3). Then all your weeks mix in.</span>`;return}
@@ -1908,7 +1926,19 @@ function renderFcGate(){const g=fcGate(),el=$('fcGate'),n=g.ids.length,pct=n?Mat
     <div class="chipset fg-chips">${weekWords(g.n).map(o=>{const id=wid(o),both=g.f.has(id)&&g.b.has(id),half=!both&&(g.f.has(id)||g.b.has(id));return`<span class="chip ${kindClass(o)} ${both?'ok':half?'half':'todo'}">${both?'✓ ':''}${esc(o.w)}</span>`}).join('')}</div>
     <button class="btn primary big" id="fgGo">${g.done?'Keep going with the flashcards':'Go to the flashcards'} →</button></div>`;
   $('fgGo').onclick=fcGo}
-function fcGo(){setMode('cards',true);openCards(S.cur,true);scrollTo({top:0})}
+function renderPreGate(){const el=$('fcGate'),n=S.cur,tot=weekWords(n).length;
+  el.innerHTML=`<div class="wcard fg-card"><div class="fg-ico" aria-hidden="true">📝</div><p class="hkick">Week ${n} · Monday</p><h2>First, take the pretest</h2>
+    <p class="fg-sub">A new week starts with the pretest: you'll hear all ${tot} words and write each one. It doesn't count toward passing, so just do your best. Then the flashcards and activities open up.</p>
+    <button class="btn primary big" id="pgGo">Start the pretest →</button></div>`;
+  $('pgGo').onclick=()=>startTask('pretest')}
+function renderReqGate(){const el=$('fcGate'),n=S.cur,rs=finalReqs(n);
+  el.innerHTML=`<div class="wcard fg-card"><div class="fg-ico" aria-hidden="true">🎯</div><p class="hkick">Week ${n}</p><h2>${esc(ACTS[mode]?ACTS[mode].name:'This')} opens with the final test</h2>
+    <p class="fg-sub">First, pass each of these 3 times. Then the final test opens, and so do all the other games.</p>
+    <ul class="freq" style="align-self:center">${rs.map(r=>`<li class="${r.n>=3?'ok':''}"><button class="linkish" data-req="${r.a}">${esc(r.name)}</button><span class="hgdots" aria-label="${r.n} of 3 passes">${[0,1,2].map(i=>`<i class="${r.n>i?'on':''}"></i>`).join('')}</span><span class="note">${r.n>=3?'✓ done':`${r.n} of 3`}</span></li>`).join('')}</ul>
+    ${(()=>{const r=rs.find(x=>x.n<3);return r?`<button class="btn primary big" id="rgGo">Go to ${esc(r.name)} →</button>`:''})()}</div>`;
+  el.querySelectorAll('[data-req]').forEach(b=>b.onclick=()=>{setMode(b.dataset.req);scrollTo({top:0})});
+  const g=$('rgGo');if(g)g.onclick=()=>{setMode(rs.find(x=>x.n<3).a);scrollTo({top:0})}}
+function fcGo(){if(preLocked()){setMode('cards');return}setMode('cards',true);openCards(S.cur,true);scrollTo({top:0})}
 function goHome(){setMode('home');window.scrollTo({top:0,behavior:'smooth'})}
 $('homeTitle').onclick=goHome;
 document.addEventListener('click',e=>{const h=e.target.closest('[data-home]');if(h){goHome();return}
@@ -1937,10 +1967,14 @@ const PLAN=[
   {d:'Fri',tasks:[['test','Final test']]}
 ];
 const DAYNAME={Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday'};
-const taskDone=k=>k==='cards'?flashDone(S.cur):didThisWeek(k);
-function taskAvailable(k){if(!hasList(S.cur))return false;if(['pretest','test','cards'].includes(k))return true;return scopeWeeksWith(k).length>0}
-function nextTask(){for(const day of PLAN)for(const [k,l] of day.tasks)if(taskAvailable(k)&&!taskDone(k))return[k,l,day.d];return null}
-function startTask(k){if(k==='cards'){fcGo();return}if(k==='pretest'||k==='test'){setMode('tests',true);startTest(k);scrollTo({top:0});return}setMode(k);scrollTo({top:0})}
+const taskDone=k=>k==='cards'?flashDone(S.cur):k==='pretest'?pretestDone():didThisWeek(k);
+function taskAvailable(k){if(!hasList(S.cur))return false;if(['pretest','test','cards'].includes(k))return true;if(modeLocked(k))return false;return scopeWeeksWith(k).length>0}
+const DAY_OF=k=>(PLAN.find(d=>d.tasks.some(t=>t[0]===k))||PLAN[0]).d;
+function nextTask(){for(const day of PLAN)for(const [k,l] of day.tasks){if(!taskAvailable(k)||taskDone(k))continue;
+    if(k==='test'&&!finalOpen()){const r=finalReqs().find(x=>x.n<3);return[r.a,r.name,DAY_OF(r.a),r.n]}
+    return[k,l,day.d]}
+  return null}
+function startTask(k){if(k==='cards'){fcGo();return}if(k==='test'&&!finalOpen()){setMode('tests');scrollTo({top:0});return}if(k==='pretest'||k==='test'){setMode('tests',true);startTest(k);scrollTo({top:0});return}setMode(k);scrollTo({top:0})}
 const HOME_GAMES=[['cards','Flashcards'],['spell','Spell it'],['build','Build it'],['quiz','Quiz'],['match','Match'],['memory','Memory'],['rhyme','Rhyme time'],['sort','Sound sort'],['abc','ABC order'],['proof','Proofread'],['speed','Speed round'],['tests','Tests']];
 function renderHome(){
   const days=HIST.days,run=currentRun(days),fw=frontierWeek(),cur=S.cur,W=WK(cur),st=wordStats();
@@ -1955,14 +1989,14 @@ function renderHome(){
       <p class="note">${avail().length?`Keep your streak going: review earlier words and play any game while you wait.`:`The word lists aren't ready yet.`}</p>
       <div class="grp">${picks.length?`<button class="btn primary big" id="homeReview">Start today's review →</button>`:''}<button class="linkish" id="homePlan">See the plan</button></div></div>`}
   else if(nt&&nt[0]==='cards'){const fn=g.ids.length;next=`<div class="hnext"><p class="hkick">🗂️ Next up</p><h3>Study the week ${cur} flashcards</h3>
-      <p class="note">Look at both sides of every card to ${fcLocked()?'unlock the activities':`focus your activities on week ${cur}`}.</p>
+      <p class="note">Look at both sides of every card to unlock this week's activities.</p>
       <div class="fg-bar" style="max-width:none"><i style="width:${fn?Math.round(g.done/fn*100):0}%"></i></div><p class="note" style="margin:0"><b>${g.done} of ${fn}</b> cards studied on both sides</p>
       <div class="grp"><button class="btn primary big" data-task="cards">${g.done?'Keep going':'Start the flashcards'} →</button><button class="linkish" id="homePlan">See the plan</button></div></div>`}
   else if(nt&&nt[0]==='test'){const tot=weekWords(cur).length;next=`<div class="hnext ready"><p class="hkick">🏆 Next up · Friday</p><h3>Take the week ${cur} final test</h3>
       <p class="note">Score ${passMark(tot)} of ${tot} (80%) to unlock week ${cur+1}.${th[cur]&&th[cur].fin?` Best so far: ${th[cur].fin.best}/${tot}.`:''}</p>
       <div class="grp"><button class="btn primary big" data-task="test">Start the final test →</button><button class="linkish" id="homePlan">See the plan</button></div></div>`}
   else if(nt){next=`<div class="hnext"><p class="hkick">Next up · ${DAYNAME[nt[2]]}</p><h3>${esc(nt[1])}</h3>
-      <p class="note">${nt[0]==='pretest'?`See which week ${cur} words you already know. It doesn't count, so just do your best.`:esc(ACTS[nt[0]]?ACTS[nt[0]].desc:'')}</p>
+      <p class="note">${nt[0]==='pretest'?`See which week ${cur} words you already know. It doesn't count, so just do your best. The flashcards and activities open after it.`:nt[3]!=null?`Pass it ${3-nt[3]} more time${3-nt[3]===1?'':'s'} (${nt[3]} of 3 so far) to open the final test.`:esc(ACTS[nt[0]]?ACTS[nt[0]].desc:'')}</p>
       <div class="grp"><button class="btn primary big" data-task="${nt[0]}">Start ${esc(nt[1])} →</button><button class="linkish" id="homePlan">See the plan</button></div></div>`}
   else if(!weekPassed(cur,th)){const tot=weekWords(cur).length;next=`<div class="hnext ready"><p class="hkick">🏆 Next up</p><h3>Try the week ${cur} final test again</h3>
       <p class="note">Score ${passMark(tot)} of ${tot} (80%) to unlock week ${cur+1}.${th[cur]&&th[cur].fin?` Best so far: ${th[cur].fin.best}/${tot}.`:''}</p>
@@ -1970,7 +2004,7 @@ function renderHome(){
   else{next=`<div class="hnext"><p class="hkick">${revDone?'✓ Today\'s review is done':'Next up'}</p><h3>${revDone||!picks.length?'Pick any activity to keep practicing':`Today's review: ${picks.length} words`}</h3>
       ${!revDone&&picks.length?`<div class="chips">${picks.slice(0,6).map(x=>`<span class="chip ${kindClass(x.o)}">${esc(x.o.w)}</span>`).join('')}${picks.length>6?`<span class="chip">+${picks.length-6}</span>`:''}</div>`:''}
       <div class="grp">${picks.length?`<button class="btn ${revDone?'':'primary big'}" id="homeReview">${revDone?'Review again':'Start today\'s review →'}</button>`:''}<button class="linkish" id="homePlan">See the plan</button></div></div>`}
-  const lk=fcLocked(),showDots=hasList(cur)&&flashDone(cur);
+  const why=lockWhy(),showDots=hasList(cur)&&flashDone(cur);
   $('homeBody').innerHTML=`<div class="home">
     <div class="hhero">${MASCOT}<div class="hh-text"><p class="hhello">${hello}, <b>${HIST.name?esc(HIST.name):'champion'}</b>!</p>
       <div class="hpills"><span class="hpill ${run?'':'off'}" title="Days in a row">🔥 ${plural(run,'day')}</span>
@@ -1981,8 +2015,8 @@ function renderHome(){
     ${hasList(cur)?`<div class="hweek"><div class="gtop"><p class="hkick" style="margin:0">Week ${cur} · ${esc(W.title)}</p><span class="note">Tap a word to hear it</span></div>
       <div class="wbox">${W.words.map(x=>`<button type="button" class="wchip" data-say="${esc(sayOf(x))}">${esc(x.w)}</button>`).join('')}</div>
       ${W.review.length||W.challenge.length?`<p class="note wextra">${W.review.length?`<span><b>Review</b> ${W.review.map(x=>esc(x.w)).join(', ')}</span>`:''}${W.challenge.length?`<span><b>Challenge</b> ${W.challenge.map(x=>esc(x.w)).join(', ')}</span>`:''}</p>`:''}</div>`:''}
-    <div class="hprac"><p class="plabel">Practice</p><div class="hgames">${HOME_GAMES.map(([k,t])=>{const sv=$('tab-'+k).querySelector('svg'),gated=lk&&!FC_FREE.includes(k),pc=ACTS[k]&&showDots?passCount(k,cur):-1;
-      return`<button class="hgame${gated?' gated':''}" data-go="${k}"${gated?' aria-description="Locked until you study the flashcards"':''}>${sv?sv.outerHTML:''}<span>${t}</span>${pc>=0?`<span class="hgdots" aria-label="${Math.min(pc,3)} of 3 passes">${[0,1,2].map(i=>`<i class="${pc>i?'on':''}"></i>`).join('')}</span>`:''}</button>`}).join('')}</div></div>
+    <div class="hprac"><p class="plabel">Practice</p><div class="hgames">${HOME_GAMES.map(([k,t])=>{const sv=$('tab-'+k).querySelector('svg'),gated=modeLocked(k),pc=ACTS[k]&&showDots?passCount(k,cur):-1;
+      return`<button class="hgame${gated?' gated':''}" data-go="${k}"${gated?` aria-description="${why}"`:''}>${sv?sv.outerHTML:''}<span>${t}</span>${pc>=0?`<span class="hgdots" aria-label="${Math.min(pc,3)} of 3 passes">${[0,1,2].map(i=>`<i class="${pc>i?'on':''}"></i>`).join('')}</span>`:''}</button>`}).join('')}</div></div>
   </div>`;
   const q=id=>$(id);
   if(q('homeNewWeek'))q('homeNewWeek').onclick=()=>{setCur(fw);renderHome();updateFcTabs()};
@@ -2075,7 +2109,7 @@ const knownSet=n=>new Set(S.known[n]||[]);
 function renderCardsTop(){
   const g=fcGate(deckWeek),n=deck.length,W=WK(deckWeek);
   let top=`<div class="scopebar slim"><span class="sb-ico" aria-hidden="true">📚</span><div class="sb-text"><b>Week ${deckWeek}${W.title?` · ${esc(W.title)}`:''}</b><span>${n} cards</span></div>${deckWeek!==S.cur&&hasList(S.cur)?`<button class="btn small" id="cardsCur">Week ${S.cur} cards</button>`:''}</div>`;
-  if(!g.ok)top+=`<div class="fcstrip"><div class="fcs-row"><span class="fcs-txt"><b>Both sides: ${g.done} of ${g.ids.length}</b> week ${deckWeek} cards. ${deckWeek===S.cur?`Flip every card to ${fcLocked()?'unlock the activities':`focus your activities on week ${deckWeek}`}.`:'Flip every card to finish this deck.'}</span></div><span class="fcs-bar"><i style="width:${g.ids.length?Math.round(g.done/g.ids.length*100):0}%"></i></span></div>`;
+  if(!g.ok)top+=`<div class="fcstrip"><div class="fcs-row"><span class="fcs-txt"><b>Both sides: ${g.done} of ${g.ids.length}</b> week ${deckWeek} cards. ${deckWeek===S.cur?`Flip every card to ${deckWeek===S.cur&&weekStep()==='cards'?'unlock this week\'s activities':`focus your activities on week ${deckWeek}`}.`:'Flip every card to finish this deck.'}</span></div><span class="fcs-bar"><i style="width:${g.ids.length?Math.round(g.done/g.ids.length*100):0}%"></i></span></div>`;
   $('cardsTop').innerHTML=top;
   const todo=g.ok?-1:fcTodoIndex(g),tb=$('fcTodo');tb.hidden=!(todo>=0&&todo!==idx);tb.onclick=()=>{const t=fcTodoIndex(fcGate(deckWeek));if(t>=0){idx=t;renderCard()}};
   $('cardsBottom').innerHTML=`<p class="note">${g.ok?`Every card studied on both sides. ${deckWeek===S.cur?`Each activity now sticks to week ${deckWeek} until you pass it 3 times.`:''}`:'A card counts once you have seen its front and its back.'}</p>`;
@@ -2116,11 +2150,11 @@ function fcEndNote(t){const sc=document.querySelector('#cardArea .scene');let el
   el.textContent=t;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),1800)}
 const seenCard=()=>{const o=deck[idx];if(!o)return;rec(d=>{const c=sub(d,'cards');c.ids=c.ids||[];if(!c.ids.includes(wid(o)))c.ids.push(wid(o))})};
 function fcMark(side){const o=deck[idx];if(!o||mode!=='cards')return;const id=wid(o),{f,b}=fcSides();if((side==='f'?f:b).has(id))return;
-  const wasLocked=fcLocked(),was=fcGate(S.cur).ok;rec(d=>{const x=sub(d,'fc');x[side]=x[side]||[];if(!x[side].includes(id))x[side].push(id)});
+  const wasLocked=weekStep()==='cards',was=fcGate(S.cur).ok;rec(d=>{const x=sub(d,'fc');x[side]=x[side]||[];if(!x[side].includes(id))x[side].push(id)});
   const g=fcGate(S.cur);updateFcTabs();renderCardsTop();renderFcBar();
   if(!was&&g.ok&&deckWeek===S.cur){try{FX.play('win');FX.shower()}catch(e){}fcUnlockedNote(S.cur,wasLocked)}}
 function fcUnlockedNote(w,first){let el=$('fcDone');if(!el){el=document.createElement('div');el.id='fcDone';el.className='fcdone';el.setAttribute('role','status');document.body.appendChild(el)}
-  el.innerHTML=first?`<b>🎉 Activities unlocked!</b><span>You studied every week ${w} card on both sides.</span>`:`<b>🎉 Flashcards done!</b><span>Activities now focus on week ${w}.</span>`;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),4200)}
+  el.innerHTML=first?`<b>🎉 Activities unlocked!</b><span>Now pass ${finalReqs(w).map(r=>r.name).join(', ').replace(/, ([^,]*)$/,' and $1')} 3 times each to open the final test.</span>`:`<b>🎉 Flashcards done!</b><span>Activities now focus on week ${w}.</span>`;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),4200)}
 /* the Listen button sits on the card's coloured band, in the card's colour */
 function fcSayPlace(){const bd=$('front')&&$('front').querySelector('.band'),sc=document.querySelector('#cardArea .scene');if(!bd||!sc||!bd.offsetHeight)return;
   const r=bd.getBoundingClientRect(),q=sc.getBoundingClientRect();sc.style.setProperty('--bandh',bd.offsetHeight+'px');sc.style.setProperty('--bandr',Math.round(q.right-r.right)+'px');
@@ -2562,12 +2596,16 @@ function renderTests(){if(T&&T.week===S.cur&&!T.checked)return renderTestSheet()
   $('testsBody').innerHTML=`<div class="qcard"><div class="gtop"><b style="font-size:1.25rem">Week ${cur} tests</b>${passed?'<span class="streak">🏆 Passed</span>':''}</div>
     <p class="note" style="margin:0">All ${tot} words: ${WK(cur).words.length} list words, then the review and challenge words. You'll hear each word, a sentence, and the word again. Write it, then unfold the paper to check.</p>
     <div class="tcards">
-      <div class="tcard"><p class="hkick">Monday</p><b>Pretest</b><span class="note">Find out which words you already know. It doesn't count.</span>${h.pre?`<span class="note">Best: <b>${h.pre.best}/${h.pre.total}</b></span>`:''}<button class="btn" data-test="pretest">Start the pretest</button></div>
-      <div class="tcard fin"><p class="hkick">Friday</p><b>Final test</b><span class="note">Pass mark: <b>${pm} of ${tot}</b> (80%). ${cur<NW?`Passing it unlocks week ${cur+1}.`:'Pass it to finish the year!'}</span>${h.fin?`<span class="note">Best: <b>${h.fin.best}/${h.fin.total}</b> · ${plural(h.fin.n,'try','tries')}</span>`:''}<button class="btn primary" data-test="test">Start the final test</button></div>
+      <div class="tcard"><p class="hkick">Monday</p><b>Pretest</b><span class="note">${h.pre?'Find out which words you already know. It doesn\'t count.':'<b>Take this first.</b> It starts the week and doesn\'t count toward passing.'}</span>${h.pre?`<span class="note">Best: <b>${h.pre.best}/${h.pre.total}</b></span>`:''}<button class="btn" data-test="pretest">Start the pretest</button></div>
+      <div class="tcard fin"><p class="hkick">Friday</p><b>Final test</b><span class="note">Pass mark: <b>${pm} of ${tot}</b> (80%). ${cur<NW?`Passing it unlocks week ${cur+1}.`:'Pass it to finish the year!'}</span>${h.fin?`<span class="note">Best: <b>${h.fin.best}/${h.fin.total}</b> · ${plural(h.fin.n,'try','tries')}</span>`:''}
+        ${finalOpen(cur)?`<button class="btn primary" data-test="test">Start the final test</button>`:`<span class="note"><b>Opens after you pass each of these 3 times:</b></span>
+        <ul class="freq">${finalReqs(cur).map(r=>`<li class="${r.n>=3?'ok':''}"><button class="linkish" data-req="${r.a}" ${modeLocked(r.a)?'disabled':''}>${esc(r.name)}</button><span class="hgdots" aria-label="${r.n} of 3 passes">${[0,1,2].map(i=>`<i class="${r.n>i?'on':''}"></i>`).join('')}</span><span class="note">${r.n>=3?'✓ done':`${r.n} of 3`}</span></li>`).join('')}</ul>
+        <button class="btn primary" disabled aria-disabled="true">🔒 Final test</button>`}</div>
     </div></div>`;
   $('testsBody').querySelectorAll('[data-test]').forEach(b=>b.onclick=()=>startTest(b.dataset.test));
+  $('testsBody').querySelectorAll('[data-req]').forEach(b=>b.onclick=()=>{setMode(b.dataset.req);scrollTo({top:0})});
 }
-function startTest(a){if(!hasList(S.cur)){T=null;renderTests();return}const items=weekWords(S.cur);T={a,items,answers:[],checked:false,week:S.cur,passAt:passMark(items.length)};renderTestSheet();
+function startTest(a){if(!hasList(S.cur)||(a==='test'&&!finalOpen())){T=null;renderTests();return}const items=weekWords(S.cur);T={a,items,answers:[],checked:false,week:S.cur,passAt:passMark(items.length)};renderTestSheet();
   setTimeout(()=>{const i=$('t0');if(i&&SPELL_KB.matches)i.focus({preventScroll:true})},50)}
 function renderTestSheet(){
   const r=T,list=r.items,nList=WK(r.week).words.length,nRev=WK(r.week).review.length;

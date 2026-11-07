@@ -16,9 +16,13 @@ Header: Sound on/off and Display options (text size, easier reading, calm mode, 
 
 ## Rules
 - **Weeks unlock in order.** Week N+1 opens when week N's **Final test is passed with 80%** (20 of 25 for week 1). The pretest doesn't count.
-- **Flashcards first.** Each card counts once both of its sides have been seen. While nothing else can be practised (week 1), the activity tiles stay locked with a lock badge until every week 1 card is done.
-- Before a week's flashcards are done, activities use all unlocked weeks.
-- After that, each activity and game sticks to the current week until it has been **passed 3 times** with that week's words, then goes back to all weeks. A note above the activity shows the count.
+- **Each new week opens in steps** (a week that's already passed, or has no words yet, is fully open):
+  1. **Pretest.** Until it's taken, only Home, Plan, Tests and Progress are open. It doesn't count toward passing.
+  2. **Flashcards.** Then only the flashcards open; each card counts once both of its sides have been seen.
+  3. **Required activities.** Then only Sound sort, ABC order, Proofread, Build it and Spell it open (plus the flashcards). Each must be **passed 3 times** with that week's words.
+  4. **Final test.** It opens once all five are done, and so does everything else (Quiz, Match, Memory, Rhyme time, Speed round, Daily review).
+- Locked tabs and tiles show a lock badge; opening one explains what to do first.
+- Each activity sticks to the current week until it has been passed 3 times with that week's words, then goes back to all weeks. A note above the activity shows the count.
 - Spell it, Build it and Proofread show the answer after 3 wrong tries.
 - Pass marks: Spell it 8/10, Build it 6/8, Quiz 8/10, Rhyme time and Sound sort 80%, ABC order 2 of 3 sets, Proofread 5 of 6, Match 2 misses or fewer, Memory 12 turns or fewer, Speed round 10 right.
 - A word is **mastered** after 3 or more first-try correct answers with 80% or better accuracy.
