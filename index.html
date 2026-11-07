@@ -1493,13 +1493,16 @@ const SPEAK=(()=>{const ok='speechSynthesis' in window&&'SpeechSynthesisUtteranc
     /* iPad/iPhone only allow sound after a tap: unlock the player on the first tap */
     const unlock=()=>{try{audio.muted=true;audio.src='audio/silence.mp3';const p=audio.play();if(p)p.then(()=>{audio.pause();audio.muted=false}).catch(()=>{audio.muted=false})}catch(e){}removeEventListener('pointerdown',unlock,true)};
     addEventListener('pointerdown',unlock,true)}
-  function playNext(){const k=queue.shift();if(!k)return;audio.src='audio/'+k+'.mp3';audio.muted=false;
-    const p=audio.play();if(p)p.catch(()=>{queue=[];if(audio._text)device(audio._text,audio._rate)})}
+  /* a play that was interrupted (a new line started, or stop) is not a failure: only fall back to the device voice
+     when the browser really refuses or can't play the recording, and only for the line that's still current */
+  let playN=0;
+  function playNext(){const k=queue.shift();if(!k)return;const my=++playN;audio.src='audio/'+k+'.mp3';audio.muted=false;
+    const p=audio.play();if(p)p.catch(e=>{if(my!==playN||(e&&e.name==='AbortError'))return;queue=[];if(audio._text)device(audio._text,audio._rate)})}
   function device(t,rate){try{speechSynthesis.cancel();
     chunks(t).forEach(x=>{const u=new SpeechSynthesisUtterance(x);u.lang=voice?voice.lang:'en-US';if(voice)u.voice=voice;u.rate=Math.max(.5,Math.min(1.4,rate));u.pitch=1;speechSynthesis.speak(u)});
     if(speechSynthesis.paused)speechSynthesis.resume()}catch(e){}}
   function say(t,rate=1){const cs=chunks(t);if(!cs.length)return;
-    try{if(ok)speechSynthesis.cancel()}catch(e){}if(audio){audio.pause();queue=[]}
+    try{if(ok)speechSynthesis.cancel()}catch(e){}if(audio){playN++;audio.pause();queue=[]}
     /* no list yet: fetch it (briefly) before falling back to the device voice */
     if(audio&&!REC&&Date.now()-recAt>3000){const my=++sayN;Promise.race([loadRec(),new Promise(r=>setTimeout(r,1200))]).then(()=>{if(my===sayN)say2(t,rate,cs)});return}
     sayN++;say2(t,rate,cs)}
@@ -1507,7 +1510,7 @@ const SPEAK=(()=>{const ok='speechSynthesis' in window&&'SpeechSynthesisUtteranc
   function say2(t,rate,cs){const keys=cs.map(key);
     if(audio&&REC&&keys.every(k=>REC.has(k))){audio._text=t;audio._rate=rate;audio.playbackRate=rate<1?Math.max(.8,rate+.05):1;queue=keys;playNext();return}
     if(ok)device(t,rate)}
-  function stop(){sayN++;try{if(ok)speechSynthesis.cancel()}catch(e){}if(audio){queue=[];audio._text='';try{audio.pause()}catch(e){}}}
+  function stop(){sayN++;playN++;try{if(ok)speechSynthesis.cancel()}catch(e){}if(audio){queue=[];audio._text='';try{audio.pause()}catch(e){}}}
   function busy(){try{return !!(audio&&(!audio.paused||queue.length))||!!(ok&&(speechSynthesis.speaking||speechSynthesis.pending))}catch(e){return false}}
   return{ok:ok||!!audio,say,stop,busy,clean,chunks,key,voices:()=>list,current:()=>voice,recorded:()=>REC};
 })();
