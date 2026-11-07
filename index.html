@@ -1180,7 +1180,7 @@ html.nospeak .mlist li{padding:10px 0}
    rhymes:  [cue, [three options], answer]   (Rhyme time; the cue must be a different word from the answer)
    sort:    [{sound:"short a", spell:"a", words:[...]}]   (Sound sort)
    abc:     five words to put in reverse ABC order
-   proof:   a passage with misspellings written as [wrong|right]
+   proof:   passages to correct (10 a week), each with misspellings written as [wrong|right] and paragraphs split by \n\n
    ===================================================================== */
 const WEEK_DATA = {
   1: {
@@ -1274,7 +1274,18 @@ const WEEK_DATA = {
       {sound:"short u", spell:"ou", words:["rough","tough"]}
     ],
     abc: ["tenth","rough","tough","laugh","guess"],
-    proof: "On Saturday our class held a bake sale in the gym. Grandpa helped me make a [bach|batch] of muffins the night before. The tops came out a little [ruff|rough], but they still tasted great.\n\nAt the sale, I had to [gess|guess] how much to charge. One dollar for each muffin seemed to make [sens|sense]. My friend Ana sold the [tenthe|tenth] one before lunch. The last hour was [tuff|tough] because everyone wanted cookies instead, but we still made enough money for new library books."
+    proof: [
+      "On Saturday our class held a bake sale in the gym. Grandpa helped me make a [bach|batch] of muffins the night before. The tops came out a little [ruff|rough], but they still tasted great.\n\nAt the sale, I had to [gess|guess] how much to charge. One dollar for each muffin seemed to make [sens|sense]. My friend Ana sold the [tenthe|tenth] one before lunch. The last hour was [tuff|tough] because everyone wanted cookies instead, but we still made enough money for new library books.",
+      "Last spring our scout troop went camping by Pine Lake. I slept on a [kot|cot] inside a big green tent. In the morning, the grass was [dammp|damp] with dew, and my socks got soaked.\n\nOur leader showed us how to [skan|scan] the shore for animal tracks. We found raccoon prints near an old tree [stummp|stump]. Then my little brother tried to [flinge|fling] a pebble across the water. It sank right away, and we all started to [lauf|laugh].",
+      "Our soccer game on Thursday was a [tuf|tough] one. It had rained all morning, so the field was muddy and [rugh|rough]. Water began to [gussh|gush] out of the drainpipe by the bleachers.\n\nWhen the other team scored, our goalie gave a little [shrugg|shrug] and kept smiling. In the [tinth|tenth] minute of the second half, I kicked the ball [passt|past] their goalie. It was the best goal I have ever scored!",
+      "For the science fair, my partner Leo and I tested which things sink and which things float. A small piece of [ledd|lead] sank to the bottom right away. A [plumm|plum] sank too, which surprised us both.\n\nLeo got a tiny [nik|nick] on his thumb while cutting labels, so we stopped to find a bandage. He wanted to [gess|guess] each answer before we tested it, but I said it made more [sence|sense] to write down what really happened. At the end, we packed all our [stuf|stuff] into a box and carried it home.",
+      "Every summer I visit Grandma's farm. A white [duv|dove] lives in the barn and coos every morning. This year Grandma showed me how to cut a [notsh|notch] in a fence post so the gate latch would fit.\n\nThe old boards were splintery and [ruf|rough], so I wore thick gloves. Fixing the gate was a [sinch|cinch] for Grandma, but it was hard work for me. Her hair used to be [blund|blond], but now it is silver. When we finished, she baked a [batsh|batch] of corn muffins for dinner.",
+      "On Saturday we rode our bikes to the boat [dok|dock] at the edge of town. A big rock seemed to [jutt|jut] out over the water like a diving board, but we were careful not to climb on it.\n\nMy cousin brought a net to catch crabs. A small [nik|nick] in the net let the first crab slip away. We tried to [fleng|fling] our bait farther out, and soon we caught three. By lunchtime our shoes were [damb|damp], and we were starving. Mom had packed a juicy [ploom|plum] for each of us.",
+      "Our class library has one big rule: every book goes back where it belongs. On Monday, I had to [scann|scan] every shelf to find a book about volcanoes. I finally found it on the very bottom shelf.\n\nWhen I asked Mr. Park how it got there, he gave a [shruge|shrug]. He said the shelves get messy when people [gues|guess] where books go instead of reading the labels. Labels make [senss|sense], so I helped him sort a whole [battch|batch] of new books. It was a [cinsh|cinch] once we knew the system.",
+      "In art class, we built kites out of paper, sticks, and string. First, we cut a small [nach|notch] at the end of each stick to hold the string in place. Then we decorated the paper with markers, glitter, and other [stuf|stuff].\n\nMia drew a [duve|dove] with its wings spread wide. We tested the kites at the park, but mine got stuck on top of a tree [stumpe|stump]. Everyone began to [lagh|laugh], even me. A girl with long [blawnd|blond] braids helped me get it down.",
+      "My brother's [tenthh|tenth] birthday party was in our backyard. Dad baked a [bacth|batch] of cupcakes with blue frosting. It had rained the night before, so the grass was still [dampe|damp], and we spread out blankets to sit on.\n\nFor one game, each kid had to [flingg|fling] a beanbag into a bucket. My brother missed every time, but he just gave a [shug|shrug] and laughed. Cleaning up all the wrapping paper was [tuogh|tough], but it was worth it.",
+      "Moving day was finally here. We packed our [stuph|stuff] into boxes and wrote a label on each one. My old [cott|cot] from summer camp would not fit in the truck, so we gave it to our neighbor.\n\nOur new house sits on a hill above a little boat [dokk|dock]. A big tree [stumpp|stump] in the yard makes a perfect seat. Our dog ran right [pastt|past] us and jumped into a pile of leaves. Making new friends will take time, but Mom says that makes [sennse|sense]."
+    ]
   }
   // 2: { title:"...", words:[...], review:[...], challenge:[...], rhymes:[...], sort:[...], abc:[...], proof:"..." },
 };
@@ -1310,7 +1321,7 @@ const NW=30;
 const WEEKS=Array.from({length:NW},(_,i)=>{
   const d=WEEK_DATA[i+1]||{};
   return {n:i+1,title:d.title||"",words:d.words||[],review:d.review||[],challenge:d.challenge||[],
-    rhymes:(d.rhymes||[]).filter(r=>String(r[0]).toLowerCase()!==String(r[2]).toLowerCase()),/* a word never "rhymes" with itself */sort:d.sort||[],abc:d.abc||[],proof:d.proof||""};
+    rhymes:(d.rhymes||[]).filter(r=>String(r[0]).toLowerCase()!==String(r[2]).toLowerCase()),/* a word never "rhymes" with itself */sort:d.sort||[],abc:d.abc||[],proof:[].concat(d.proof||[]).filter(Boolean)};
 });
 const WK=n=>WEEKS[n-1];
 const hasList=n=>!!WK(n)&&WK(n).words.length>0;
@@ -1372,7 +1383,7 @@ const REAL=new Set(COMMON);
 WEEKS.forEach(W=>{weekWords(W.n).forEach(o=>REAL.add(o.w.toLowerCase()));W.rhymes.forEach(r=>{REAL.add(r[0]);r[1].forEach(x=>REAL.add(x))});W.sort.forEach(g=>g.words.forEach(x=>REAL.add(x)));W.abc.forEach(x=>REAL.add(x))});
 /* misspellings the teacher already wrote in a Proofread passage are the most plausible ones */
 const KNOWN_MISS={};
-WEEKS.forEach(W=>{(W.proof.match(/\[[^\]|]+\|[^\]]+\]/g)||[]).forEach(m=>{const [a,b]=m.slice(1,-1).split('|');(KNOWN_MISS[b.toLowerCase()]=KNOWN_MISS[b.toLowerCase()]||[]).push(a.toLowerCase())})});
+WEEKS.forEach(W=>{(W.proof.join(' ').match(/\[[^\]|]+\|[^\]]+\]/g)||[]).forEach(m=>{const [a,b]=m.slice(1,-1).split('|');(KNOWN_MISS[b.toLowerCase()]=KNOWN_MISS[b.toLowerCase()]||[]).push(a.toLowerCase())})});
 const SPELL_RULES=[[/ough$/,'uff'],[/ough$/,'uf'],[/ough$/,'off'],[/augh/,'af'],[/augh/,'aff'],[/gh$/,'f'],[/ck$/,'k'],[/ck/,'c'],[/([^c])k$/,'$1ck'],
   [/tch/,'ch'],[/([aeiou])ch$/,'$1tch'],[/ph/,'f'],[/ue/,'u'],[/ue/,'eu'],[/ea/,'e'],[/ea/,'ee'],[/ss$/,'s'],[/([aeiou])s$/,'$1ss'],[/nse$/,'nce'],[/nse$/,'ns'],
   [/ff$/,'f'],[/([aeiou])f$/,'$1ff'],[/ll$/,'l'],[/ove$/,'uv'],[/ove$/,'uve'],[/ng$/,'nk'],[/nk$/,'ng'],[/mp$/,'mb'],[/nth$/,'nt'],[/nth$/,'nthe'],[/th$/,'f'],
@@ -2275,11 +2286,15 @@ function parseProof(text){let id=0;
       part.split(/(\s+)/).forEach(seg=>{if(!seg)return;const mm=seg.match(/^([^A-Za-z']*)([A-Za-z']+)([^A-Za-z']*)$/);
         if(mm){if(mm[1])out.push({text:mm[1]});out.push({id:id++,tap:true,text:mm[2]});if(mm[3])out.push({text:mm[3]})}else out.push({text:seg})})});
     return out})}
+/* a different passage each time: go through all of a week's passages, in a shuffled order, before any repeats */
+function pickProof(n){const all=WK(n).proof,k='sc-proof-seen-'+n;let seen=(store.get(k,null)||[]).filter(i=>i<all.length);
+  const last=seen[seen.length-1];if(seen.length>=all.length)seen=[];let left=all.map((_,i)=>i).filter(i=>!seen.includes(i));if(left.length>1)left=left.filter(i=>i!==last);
+  const i=left[Math.floor(Math.random()*left.length)];seen.push(i);store.set(k,seen);return{pi:i,pn:all.length,paras:parseProof(all[i])}}
 function startProof(){const ws=scopeWeeksWith('proof');if(!ws.length)return emptyAct('proof');const n=ws.includes(S.cur)?S.cur:ws[Math.floor(Math.random()*ws.length)];
-  PR={week:n,paras:parseProof(WK(n).proof),open:null,tries:0,wrongTaps:0,firstFix:0,fixed:{},fb:'',fbc:'',missedW:[]};renderProof()}
+  PR={week:n,...pickProof(n),open:null,tries:0,wrongTaps:0,firstFix:0,fixed:{},fb:'',fbc:'',missedW:[]};renderProof()}
 function renderProof(){const r=PR,toks=r.paras.flat(),errs=toks.filter(t=>t.right),nFixed=Object.keys(r.fixed).length,open=r.open!==null?toks.find(t=>t.id===r.open):null;
   $('proofBody').innerHTML=`<div class="wcard">${qtop(`${nFixed} of ${errs.length} fixed · week ${r.week}`,nFixed,errs.length,r.wrongTaps?plural(r.wrongTaps,'wrong tap'):'')}
-    <p class="target">Find the ${errs.length} misspelled words</p><p class="hintline">Tap each one, then write it correctly.</p>
+    <p class="target">Find the ${errs.length} misspelled words</p><p class="hintline">Passage ${r.pi+1} of ${r.pn}. Tap each one, then write it correctly.</p>
     <div class="passage">${r.paras.map(p=>`<p>${p.map(t=>t.tap?`<button class="pw ${r.fixed[t.id]?'fixed':(r.open===t.id?'found':'')} ${r.nope===t.id?'nope':''}" data-t="${t.id}" ${r.fixed[t.id]?'aria-disabled="true"':''}>${esc(r.fixed[t.id]?t.right:t.text)}</button>`:esc(t.text)).join('')}</p>`).join('')}</div>
     ${open?`<form class="spform" id="prForm" autocomplete="off"><label for="prIn" class="note">Write <b class="bad-word">${esc(open.text)}</b> correctly${r.tries?` (try ${r.tries+1} of 3)`:''}:</label>
       <input id="prIn" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="${SPELL_KB.matches?'Type here':'Tap here to type'}"><button class="btn primary" type="submit">Fix it</button></form>`:''}
