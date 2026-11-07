@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A3304F"/><stop offset="1" stop-color="#5E1730"/></linearGradient><radialGradient id="glow" cx=".5" cy=".45" r=".5"><stop offset="0" stop-color="#FFD24A" stop-opacity=".6"/><stop offset="1" stop-color="#FFD24A" stop-opacity="0"/></radialGradient>
+    <linearGradient id="mGold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFE27A"/><stop offset=".45" stop-color="#F8BE2E"/><stop offset="1" stop-color="#E39A12"/></linearGradient>
+    <linearGradient id="mGoldV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE98F"/><stop offset="1" stop-color="#F2AE22"/></linearGradient>
+    <linearGradient id="mBase" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9C2B4C"/><stop offset="1" stop-color="#6A1A33"/></linearGradient>
+  </defs><style>.m-shadow{fill:#2A0712;opacity:.35}
+.m-cup{fill:url(#mGold);stroke:#9A5B0A;stroke-width:2.5;stroke-linejoin:round}
+.m-rim{fill:url(#mGoldV);stroke:#9A5B0A;stroke-width:2.5}
+.m-in{fill:#D98E10;opacity:.75}
+.m-gloss{fill:none;stroke:#FFF6CF;stroke-width:4.5;stroke-linecap:round;opacity:.9}
+.m-armo{fill:none;stroke:#9A5B0A;stroke-width:10;stroke-linecap:round}
+.m-arm{fill:none;stroke:#F6B92B;stroke-width:5;stroke-linecap:round}
+.m-hand{fill:#FFD34D;stroke:#9A5B0A;stroke-width:2.5}
+.m-stem{fill:url(#mGold);stroke:#9A5B0A;stroke-width:2.5;stroke-linejoin:round}
+.m-knob{fill:#FFD95A;stroke:#9A5B0A;stroke-width:2.2}
+.m-step{fill:#8A2443;stroke:#3D0D1E;stroke-width:2.5;stroke-linejoin:round}
+.m-base{fill:url(#mBase);stroke:#3D0D1E;stroke-width:2.5}
+.m-plate{fill:#FFD95A;stroke:#9A5B0A;stroke-width:1.2}
+.m-brow{fill:none;stroke:#5A3507;stroke-width:2.6;stroke-linecap:round}
+.m-eyes{fill:#2B1D0E}.m-shine{fill:#fff}
+.m-mouth{fill:#7A2E12;stroke:#2B1D0E;stroke-width:2.4;stroke-linejoin:round}
+.m-tongue{fill:#FF7F93}
+.m-cheek{fill:#FF8FA3;opacity:.75}
+.m-star{fill:#FFE066;stroke:#C98A0B;stroke-width:1.1;stroke-linejoin:round}
+.m-spark{fill:#FFCF3A}
+.m-spark.s1{}.m-spark.s2{}
+.m-pstar{fill:#C98A0B}</style><rect width="120" height="120" rx="26" fill="url(#bg)"/><circle cx="60" cy="55" r="50" fill="url(#glow)"/><g transform="translate(6.00,7.00) scale(0.9)"><ellipse class="m-shadow" cx="60" cy="113" rx="30" ry="4"/>
+  <path class="m-armo" d="M30 40C17 40 12 31 14 21"/><path class="m-arm" d="M30 40C17 40 12 31 14 21"/>
+  <circle class="m-hand" cx="14" cy="18" r="5.2"/>
+  <path class="m-armo" d="M90 40c13 0 18-9 16-19"/><path class="m-arm" d="M90 40c13 0 18-9 16-19"/>
+  <circle class="m-hand" cx="106" cy="18" r="5.2"/>
+  <path class="m-base" d="M33 96h54a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H33a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3z"/>
+  <rect class="m-plate" x="47" y="100" width="26" height="7" rx="2"/><path class="m-pstar" d="M60 100.9l.9 1.9 2.1.2-1.6 1.4.5 2.1-1.9-1.1-1.9 1.1.5-2.1-1.6-1.4 2.1-.2z"/>
+  <path class="m-step" d="M40 88h40l3 8H37z"/>
+  <path class="m-stem" d="M54 72h12l-1 9 7 7H48l7-7z"/>
+  <ellipse class="m-knob" cx="60" cy="80" rx="8" ry="3.2"/>
+  <path class="m-cup" d="M27 22h66v12c0 23-14 40-33 40S27 57 27 34z"/>
+  <path class="m-gloss" d="M35 30c0 15 4 26 11 34"/>
+  <ellipse class="m-rim" cx="60" cy="22" rx="35" ry="6.5"/>
+  <ellipse class="m-in" cx="60" cy="21.5" rx="29" ry="3.6"/>
+  <path class="m-brow" d="M42 36q5-4 10 0M68 36q5-4 10 0"/>
+  <g class="m-eyes"><ellipse cx="47" cy="45" rx="5" ry="6.4"/><ellipse cx="73" cy="45" rx="5" ry="6.4"/></g>
+  <circle class="m-shine" cx="48.8" cy="42.6" r="2"/><circle class="m-shine" cx="74.8" cy="42.6" r="2"/>
+  <circle class="m-shine" cx="45.6" cy="47.6" r=".9"/><circle class="m-shine" cx="71.6" cy="47.6" r=".9"/>
+  <path class="m-mouth" d="M51 54h18q0 10-9 10t-9-10z"/>
+  <path class="m-tongue" d="M55 61q5-4 10 0q-2 3-5 3t-5-3z"/>
+  <ellipse class="m-cheek" cx="39" cy="54" rx="4.6" ry="2.8"/><ellipse class="m-cheek" cx="81" cy="54" rx="4.6" ry="2.8"/>
+  <path class="m-star" d="M60 0l1.6 3.4 3.7.4-2.8 2.5.8 3.7L60 8.2 56.7 10l.8-3.7-2.8-2.5 3.7-.4z"/>
+  <path class="m-spark s1" d="M10 58l1.2 3 3 1.2-3 1.2-1.2 3-1.2-3-3-1.2 3-1.2z"/>
+  <path class="m-spark s2" d="M110 60l1 2.4 2.4 1-2.4 1-1 2.4-1-2.4-2.4-1 2.4-1z"/></g></svg>
