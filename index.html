@@ -953,6 +953,7 @@ html.calm .m-star,html.calm .m-spark{animation:none}
 @media (max-width:520px){.wbox{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media (max-width:360px){.wbox{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .wchip{font:inherit;font-weight:700;font-size:1.02rem;color:var(--paper-ink);background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:6px 4px;min-height:40px;text-align:center;overflow-wrap:anywhere;box-shadow:0 2px 0 var(--line);transition:transform .1s}
+.wchip,.mbtn.part,.bwords span,.spopt,.srword>span,.sortcard b,.tile2.part,.chip{overflow-wrap:normal;word-break:keep-all;white-space:nowrap}
 .wchip:hover{border-color:var(--primary)}.wchip:active{transform:translateY(2px);box-shadow:none}
 .wchip.speaking{animation:popIn .45s cubic-bezier(.3,1.6,.5,1)}
 .wextra{display:flex;flex-wrap:wrap;gap:4px 16px}.wextra b{color:var(--ink);margin-right:4px}
@@ -970,7 +971,9 @@ html.calm .m-star,html.calm .m-spark{animation:none}
 .ptask{display:flex;align-items:center;gap:8px;width:100%;font:inherit;font-weight:700;font-size:.95rem;color:var(--ink);background:none;border:0;border-radius:8px;padding:5px 4px;text-align:left;min-height:36px;cursor:pointer}
 .ptask:hover:not(:disabled){background:var(--bg)}
 .ptask:disabled{opacity:.55;cursor:default}
-.ptask small{margin-left:auto;font-size:.7rem;color:var(--muted);font-weight:600}
+.ptask{flex-wrap:wrap;row-gap:0}
+.ptask>span:nth-child(2){flex:1;min-width:0}
+.ptask small{flex-basis:100%;padding-left:30px;font-size:.72rem;line-height:1.25;color:var(--muted);font-weight:600}
 .pcheck{flex:none;width:20px;height:20px;border-radius:6px;border:2px solid var(--line);display:grid;place-items:center;font-size:.75rem;color:#fff;line-height:1}
 .ptask.on .pcheck{background:var(--good);border-color:var(--good)}
 .ptask.on>span:nth-child(2){color:var(--good)}
@@ -3233,6 +3236,13 @@ function renderNameBar(){const nb=$('namebar');
 }
 $('nameSave').onclick=()=>setName($('nameInput').value);
 $('nameInput').onkeydown=e=>{if(e.key==='Enter')setName($('nameInput').value)};
+
+/* ---------- Words never wrap mid-word: a word that doesn't fit its pill gets a slightly smaller font instead ---------- */
+const FIT_SEL='.wchip,.mbtn.part,.bwords span,.spopt,.srword>span,.sortcard b,.tile2.part,.chip';
+function fitWords(){document.querySelectorAll(FIT_SEL).forEach(el=>{if(!el.offsetParent||!el.clientWidth)return;
+  el.style.fontSize='';const base=parseFloat(getComputedStyle(el).fontSize);let f=base,n=0;
+  while(el.scrollWidth>el.clientWidth+1&&f>base*.55&&n++<24){f-=.5;el.style.fontSize=f+'px'}})}
+{let raf=0;const go=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(fitWords)};new MutationObserver(go).observe(document.body,{childList:true,subtree:true});addEventListener('resize',go)}
 
 /* ---------- Boot ---------- */
 renderNameBar();checkBadges();
