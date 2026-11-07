@@ -2015,8 +2015,10 @@ function backText(o,n){
   const pat=patternOf(o.w,n);
   return `${sayOf(o)}. ${o.m?`${sayOf(o)} means ${o.m}. `:''}${pat?`${pat.say||pat.sound}, spelled ${pat.spell.split(" or ").map(s=>s.split("").map(c=>c==="_"?"consonant":c).join(" ")).join(" or ")}. `:""}${sentenceFor(o)} ${o.w.split("").join(", ")}.`;
 }
-const anaAsk=a=>a[0].replace('___','blank').replace(/^blank/,'Blank');
-const anaFull=a=>{const w=findWord(a[1]),say=w?sayOf(w):a[1];return a[0].replace('___',say).replace(/^\w/,c=>c.toUpperCase())};
+/* read with a pause at the middle "as": "Calm is to peace, as disorder is to blank." */
+const anaPause=t=>t.replace(/ as /,', as ');
+const anaAsk=a=>anaPause(a[0].replace('___','blank').replace(/^blank/,'Blank'));
+const anaFull=a=>{const w=findWord(a[1]),say=w?sayOf(w):a[1];return anaPause(a[0].replace('___',say).replace(/^\w/,c=>c.toUpperCase()))};
 const meanSay=o=>`${o.m[0].toUpperCase()}${o.m.slice(1)}.`;
 function rhymeLine(cue,ans){const w=findWord(ans);return `${cue}, ${w?sayOf(w):ans}.`}
 const sortSay=w=>{const o=findWord(w);return o?sayOf(o):w};
