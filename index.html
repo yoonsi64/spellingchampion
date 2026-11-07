@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spelling Champion</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Patrick+Hand&display=swap">
+<style>
+/* Layout: a ruled spelling notebook. Blue rules, red margin line, pencil-yellow highlights. One column, bottom tab bar. */
+:root{
+  --paper:#f7f9fe; --sheet:#ffffff; --rule:#d5e0f2; --margin:#e0574f;
+  --ink:#1c2c55; --muted:#5d6c8f; --pencil:#f4b93e; --pencil-ink:#3a2a00;
+  --ok:#2c8a56; --ok-bg:#e3f4ea; --bad:#c43f37; --bad-bg:#fbe7e5;
+  --band1:#cfe0ff; --band2:#ffe3b0; --band3:#d6f1df; --band4:#f6d6e6; --band5:#e3dcff;
+  --shadow:0 1px 2px rgba(28,44,85,.08),0 4px 14px rgba(28,44,85,.07);
+  --f-body:"Lexend",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-hand:"Patrick Hand","Comic Sans MS","Chalkboard SE",cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#111827; --sheet:#182133; --rule:#26344f; --margin:#e7675f;
+  --ink:#e7edfb; --muted:#9eabc8; --pencil:#f4b93e; --pencil-ink:#2b1f00;
+  --ok:#5fcf8f; --ok-bg:#183527; --bad:#f07c74; --bad-bg:#3a1d1c;
+  --band1:#27406e; --band2:#5a4520; --band3:#22493a; --band4:#53283f; --band5:#3a3168;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#111827; --sheet:#182133; --rule:#26344f; --margin:#e7675f;
+  --ink:#e7edfb; --muted:#9eabc8; --pencil:#f4b93e; --pencil-ink:#2b1f00;
+  --ok:#5fcf8f; --ok-bg:#183527; --bad:#f07c74; --bad-bg:#3a1d1c;
+  --band1:#27406e; --band2:#5a4520; --band3:#22493a; --band4:#53283f; --band5:#3a3168;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3); color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--pencil);outline-offset:2px}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:1.5rem;font-weight:700}
+h2{font-size:1.15rem;font-weight:600}
+h3{font-size:1rem;font-weight:600}
+p{margin:0}
+.hand{font-family:var(--f-hand)}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.label{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* shell */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--rule)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.top-in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.logo{font-family:var(--f-hand);font-size:1.45rem;line-height:1;display:flex;align-items:baseline;gap:6px}
+.logo b{background:var(--pencil);color:var(--pencil-ink);padding:2px 7px;border-radius:4px;font-weight:400}
+.week-chip{margin-left:auto;border:1.5px solid var(--rule);background:var(--sheet);border-radius:999px;padding:4px 12px;font-size:.85rem;font-weight:600}
+main{max-width:760px;margin:0 auto;padding-block:18px 110px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--sheet);border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.tabs-in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
+.tab{background:none;border:0;padding:8px 2px 9px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.7rem;color:var(--muted);font-weight:500}
+.tab svg{width:22px;height:22px}
+.tab[aria-current="page"]{color:var(--ink)}
+.tab[aria-current="page"] svg{color:var(--margin)}
+
+/* sheet = ruled paper panel */
+.sheet{background:var(--sheet);border-radius:10px;box-shadow:var(--shadow);padding:16px 16px 16px 30px;position:relative;display:flex;flex-direction:column;gap:12px}
+.sheet::before{content:"";position:absolute;left:18px;top:0;bottom:0;width:1.5px;background:var(--margin);opacity:.55}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+
+.btn{border:1.5px solid var(--rule);background:var(--sheet);border-radius:10px;padding:9px 14px;font-weight:600;font-size:.95rem;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.btn.pencil{background:var(--pencil);border-color:var(--pencil);color:var(--pencil-ink)}
+.btn.big{padding:13px 18px;font-size:1.05rem}
+.btn:disabled{opacity:.45;cursor:default}
+.btn svg{width:18px;height:18px}
+.icon-btn{width:44px;height:44px;padding:0;border-radius:50%}
+
+/* word box like the worksheet */
+.wordbox{border:2px solid var(--rule);border-radius:14px;padding:10px 14px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px 10px;font-family:var(--f-hand);font-size:1.25rem}
+.wordbox button{background:none;border:0;padding:2px 0;text-align:left;font:inherit}
+.wordbox button:hover{color:var(--margin)}
+@media (max-width:520px){.wordbox{grid-template-columns:repeat(4,minmax(0,1fr));font-size:1.15rem}}
+@media (max-width:380px){.wordbox{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.extra{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:.9rem}
+.extra .hand{font-size:1.15rem}
+
+/* activity tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.tile{background:var(--sheet);border:1.5px solid var(--rule);border-radius:12px;padding:12px;text-align:left;display:flex;flex-direction:column;gap:6px;min-width:0}
+.tile:hover{border-color:var(--muted)}
+.tile .sample{font-family:var(--f-hand);font-size:1.4rem;line-height:1.1;color:var(--margin)}
+.tile .scope{font-size:.72rem;font-weight:600;color:var(--muted)}
+.tile .scope.lim{color:var(--pencil-ink);background:var(--pencil);align-self:flex-start;padding:1px 7px;border-radius:5px}
+.tile[disabled]{opacity:.5}
+.passdots{display:flex;gap:4px}
+.passdots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--muted)}
+.passdots i.on{background:var(--ok);border-color:var(--ok)}
+
+/* plan */
+.days{display:flex;flex-direction:column}
+.day{display:grid;grid-template-columns:64px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--rule);align-items:start}
+.day:last-child{border-bottom:0}
+.day .dn{font-family:var(--f-hand);font-size:1.25rem;color:var(--margin)}
+.task{display:flex;align-items:center;gap:8px;background:none;border:0;padding:3px 0;text-align:left;width:100%}
+.check{width:20px;height:20px;border-radius:5px;border:2px solid var(--muted);flex:none;display:grid;place-items:center}
+.check.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.check svg{width:13px;height:13px}
+.weeklist{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
+.wk{border:1.5px solid var(--rule);background:var(--sheet);border-radius:10px;padding:8px 4px;text-align:center;display:flex;flex-direction:column;gap:2px;align-items:center}
+.wk b{font-size:1.1rem}
+.wk span{font-size:.65rem;color:var(--muted);line-height:1.2}
+.wk.cur{border-color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.wk.empty{opacity:.55}
+.wk .st{width:100%;height:4px;border-radius:2px;background:var(--rule);overflow:hidden}
+.wk .st i{display:block;height:100%;background:var(--ok)}
+
+/* flashcards */
+.posbar{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
+.posbar button{width:12px;height:12px;border-radius:50%;border:0;padding:0;background:var(--rule)}
+.posbar button.seen{background:var(--muted)}
+.posbar button.known{background:var(--ok)}
+.posbar button.at{outline:2px solid var(--margin);outline-offset:2px}
+.rail{height:8px;border-radius:4px;background:var(--rule);position:relative;overflow:hidden}
+.rail i{position:absolute;top:0;bottom:0;background:var(--muted)}
+.rail b{position:absolute;top:-2px;bottom:-2px;width:6px;background:var(--margin);border-radius:3px}
+.cardwrap{perspective:1200px;touch-action:pan-y}
+.card{position:relative;height:340px;transition:transform .45s ease;transform-style:preserve-3d}
+.card.flipped{transform:rotateY(180deg)}
+.card.slide-l{animation:slideL .25s ease}
+.card.slide-r{animation:slideR .25s ease}
+@keyframes slideL{from{translate:40px 0;opacity:.3}to{translate:0 0;opacity:1}}
+@keyframes slideR{from{translate:-40px 0;opacity:.3}to{translate:0 0;opacity:1}}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--sheet);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;
+  background-image:repeating-linear-gradient(to bottom,transparent 0 33px,var(--rule) 33px 34px);background-position:0 86px}
+.face.back{transform:rotateY(180deg)}
+.band{height:86px;flex:none;position:relative;display:flex;align-items:center;padding:0 72px 0 20px;gap:10px}
+.band .label{color:var(--ink);opacity:.8}
+.listen{position:absolute;right:16px;top:50%;translate:0 -50%;width:48px;height:48px;border-radius:50%;border:0;background:var(--sheet);color:var(--ink);display:grid;place-items:center;box-shadow:var(--shadow)}
+.listen svg{width:22px;height:22px}
+.face .body{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:12px 20px;gap:10px;text-align:center;min-width:0}
+.bigword{font-family:var(--f-hand);font-size:clamp(3rem,14vw,4.6rem);line-height:1;overflow-wrap:anywhere}
+.pattern{font-weight:600}
+.pattern em{font-family:var(--f-hand);font-style:normal;font-size:1.3em;color:var(--margin)}
+.sentence{font-size:1.05rem;max-width:34ch}
+.sentence mark{background:transparent;border-bottom:3px solid var(--pencil);color:inherit;font-weight:600}
+.cardctl{display:flex;justify-content:center;align-items:center;gap:12px}
+.kbadge{font-size:.75rem;font-weight:600;color:var(--ok)}
+
+/* activities */
+.act-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.prog{height:8px;border-radius:4px;background:var(--rule);overflow:hidden;flex:1;min-width:100px}
+.prog i{display:block;height:100%;background:var(--pencil);transition:width .3s}
+.answer{font-family:var(--f-hand);font-size:1.9rem;border:0;border-bottom:2px solid var(--muted);background:transparent;padding:2px 4px;width:100%;max-width:340px;outline:none;text-align:center}
+.answer:focus{border-bottom-color:var(--margin)}
+.fb{min-height:1.6em;font-weight:600}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)}
+.center{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.slots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:52px}
+.slot{width:42px;height:50px;border-bottom:3px solid var(--muted);display:grid;place-items:center;font-family:var(--f-hand);font-size:2rem;background:none;border-top:0;border-left:0;border-right:0;padding:0}
+.letters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.ltile{width:46px;height:50px;border-radius:9px;border:1.5px solid var(--rule);background:var(--paper);font-family:var(--f-hand);font-size:1.8rem;box-shadow:0 2px 0 var(--rule)}
+.ltile:disabled{visibility:hidden}
+.opts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.opt{min-width:96px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--rule);background:var(--paper);font-family:var(--f-hand);font-size:1.6rem}
+.opt.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.opt.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad);text-decoration:line-through}
+.cue{font-weight:700;font-size:2rem}
+.buckets{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;width:100%}
+.bucket{border:1.5px dashed var(--muted);border-radius:10px;padding:8px 10px;background:var(--paper);text-align:left;display:flex;flex-direction:column;gap:2px;min-height:64px;min-width:0}
+.bucket .bl{font-size:.82rem;font-weight:600}
+.bucket .bl em{font-family:var(--f-hand);font-style:italic;font-size:1.2em;color:var(--margin)}
+.bucket .bw{font-family:var(--f-hand);font-size:1.15rem;line-height:1.2;color:var(--ok)}
+.bucket.bad{border-color:var(--bad);background:var(--bad-bg)}
+.abcpicked{display:flex;flex-direction:column;gap:2px;min-height:40px;width:100%;max-width:300px}
+.abcpicked div{font-family:var(--f-hand);font-size:1.45rem;border-bottom:1px solid var(--rule);text-align:left;display:flex;gap:10px}
+.abcpicked div span{color:var(--muted);width:24px;font-family:var(--f-body);font-size:.85rem;padding-top:6px}
+.passage{font-family:Georgia,"Times New Roman",serif;font-size:1.1rem;line-height:1.85;display:flex;flex-direction:column;gap:12px}
+.pw{background:none;border:0;padding:0 1px;font:inherit;border-radius:3px}
+.pw:hover{background:var(--rule)}
+.pw.found{background:var(--bad-bg);color:var(--bad);text-decoration:underline}
+.pw.fixed{background:var(--ok-bg);color:var(--ok);text-decoration:none}
+.pw.nope{animation:shake .3s}
+@keyframes shake{25%{translate:-3px 0}75%{translate:3px 0}}
+.fixlist{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;font-family:var(--f-hand);font-size:1.3rem}
+.fixlist div{border-bottom:1px solid var(--rule);display:flex;gap:8px}
+.fixlist span{color:var(--muted);font-family:var(--f-body);font-size:.85rem;padding-top:5px}
+
+/* test sheet */
+.testgrid{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:end}
+.testgrid .n{font-weight:700;font-size:.95rem;padding-bottom:6px;text-align:right;min-width:2.2em}
+.testgrid input{font-family:var(--f-hand);font-size:1.45rem;border:0;border-bottom:1.5px solid var(--muted);background:transparent;padding:2px 4px;width:100%;min-width:0;outline:none}
+.testgrid input:focus{border-bottom-color:var(--margin)}
+.testgrid .say{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--rule);background:var(--paper);display:grid;place-items:center;padding:0}
+.testgrid .say svg{width:16px;height:16px}
+.testgrid .sect{grid-column:1/-1;padding-top:10px}
+.key{font-family:var(--f-hand);font-size:1.3rem;padding-bottom:4px;white-space:nowrap}
+.key.ok{color:var(--ok)} .key.bad{color:var(--bad)}
+.testgrid input.ok{color:var(--ok);border-bottom-color:var(--ok)}
+.testgrid input.bad{color:var(--bad);border-bottom-color:var(--bad);text-decoration:line-through}
+.fold{border-left:2px dashed var(--muted);padding-left:10px}
+
+.score{font-family:var(--f-hand);font-size:4rem;line-height:1}
+.stamp{display:inline-block;border:3px solid currentColor;border-radius:8px;padding:2px 12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;rotate:-6deg}
+.stamp.ok{color:var(--ok)} .stamp.bad{color:var(--margin)}
+.list{display:flex;flex-direction:column}
+.list .li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--rule)}
+.list .li:last-child{border-bottom:0}
+.pill{font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--rule);color:var(--ink);white-space:nowrap}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.bad{background:var(--bad-bg);color:var(--bad)}
+.toast{position:fixed;left:50%;translate:-50% 0;bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:10px;font-weight:600;z-index:20;max-width:calc(100% - 32px);text-align:center;box-shadow:var(--shadow)}
+.notice{background:var(--paper);border:1.5px dashed var(--rule);border-radius:10px;padding:12px 14px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="logo">Spelling <b>Champion</b></div>
+  <button class="week-chip" data-a="go" data-v="plan" id="weekChip">Week 1</button>
+</div></header>
+<main id="view"></main>
+<nav class="tabs" aria-label="Main"><div class="tabs-in" id="tabs"></div></nav>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* =====================================================================
+   WORD LISTS — 30 weeks. To add a week, fill in its entry in WEEK_DATA.
+   words: the 20 list words. review / challenge: extra words for the test.
+   Each word: { w:"word", s:"Sentence using the word.", say:"(optional) how the voice should say it" }
+   rhymes:  [cue, [three options], answer]   (Rhyme time)
+   sort:    [{sound:"short a", spell:"a", words:[...]}]   (Sound sort)
+   abc:     five words to put in reverse ABC order
+   proof:   a passage with misspellings written as [wrong|right]
+   ===================================================================== */
+const WEEK_DATA = {
+  1: {
+    title: "Short vowels",
+    words: [
+      {w:"jut", s:"The rock seemed to jut out over the water."},
+      {w:"nick", s:"There is a small nick on the edge of the table."},
+      {w:"tenth", s:"Today is my brother's tenth birthday."},
+      {w:"shrug", s:"When I asked where the cat went, she gave a shrug."},
+      {w:"stuff", s:"Please put your stuff in your backpack."},
+      {w:"sense", s:"It makes sense to wear a coat when it is cold."},
+      {w:"damp", s:"My socks were damp after the walk in the rain."},
+      {w:"cot", s:"We slept on a cot at the campsite."},
+      {w:"fling", s:"Watch me fling the ball across the yard."},
+      {w:"notch", s:"He cut a notch in the stick with his knife."},
+      {w:"gush", s:"Water began to gush out of the broken pipe."},
+      {w:"scan", s:"Scan the page to find your name."},
+      {w:"batch", s:"Dad baked a batch of cookies for the party."},
+      {w:"rough", s:"The bark of the old tree feels rough."},
+      {w:"stump", s:"We sat on a tree stump to eat lunch."},
+      {w:"tough", s:"The last puzzle was tough to solve."},
+      {w:"laugh", s:"The funny joke made everyone laugh."},
+      {w:"guess", s:"Can you guess what is in the box?"},
+      {w:"lead", say:"led", s:"The old pipes in the house were made of lead, a heavy gray metal."},
+      {w:"dove", say:"duv", s:"A white dove landed on the fence."}
+    ],
+    review: [
+      {w:"past", s:"We walked past the library on our way home."},
+      {w:"dock", s:"The boat is tied to the dock."},
+      {w:"plum", s:"I ate a sweet, juicy plum."}
+    ],
+    challenge: [
+      {w:"cinch", s:"The math quiz was a cinch for her."},
+      {w:"blond", s:"My cousin has curly blond hair."}
+    ],
+    rhymes: [
+      ["hut",["jut","jet","hat"],"jut"],
+      ["quick",["neck","nick","knock"],"nick"],
+      ["bug",["shrug","shrill","brag"],"shrug"],
+      ["puff",["staff","stiff","stuff"],"stuff"],
+      ["fence",["sends","sense","since"],"sense"],
+      ["stamp",["damp","dump","dime"],"damp"],
+      ["hot",["cut","cat","cot"],"cot"],
+      ["king",["flung","fling","fang"],"fling"],
+      ["watch",["notch","nacho","match"],"notch"],
+      ["brush",["gash","gist","gush"],"gush"],
+      ["fan",["scan","scam","skin"],"scan"],
+      ["patch",["botch","batch","bath"],"batch"],
+      ["cuff",["roof","rough","rug"],"rough"],
+      ["bump",["stamp","step","stump"],"stump"],
+      ["half",["laugh","loaf","life"],"laugh"],
+      ["mess",["gas","guess","goose"],"guess"],
+      ["red",["lid","load","lead"],"lead"],
+      ["glove",["dove","dive","dime"],"dove"],
+      ["enough",["touch","tough","through"],"tough"],
+      ["tenth",["tent","tense","tenth"],"tenth"]
+    ],
+    sort: [
+      {sound:"short a", spell:"a", words:["damp","scan","batch"]},
+      {sound:"short a", spell:"au", words:["laugh"]},
+      {sound:"short e", spell:"e", words:["tenth","sense"]},
+      {sound:"short e", spell:"ea or ue", words:["lead","guess"]},
+      {sound:"short i", spell:"i", words:["nick","fling"]},
+      {sound:"short o", spell:"o", words:["cot","notch"]},
+      {sound:"short u", spell:"u", words:["jut","shrug","stuff","gush","stump"]},
+      {sound:"short u", spell:"o", words:["dove"]},
+      {sound:"short u", spell:"ou", words:["rough","tough"]}
+    ],
+    abc: ["tenth","rough","tough","laugh","guess"],
+    proof: "On Saturday our class held a bake sale in the gym. Grandpa helped me make a [bach|batch] of muffins the night before. The tops came out a little [ruff|rough], but they still tasted great.\n\nAt the sale, I had to [gess|guess] how much to charge. One dollar for each muffin seemed to make [sens|sense]. My friend Ana sold the [tenthe|tenth] one before lunch. The last hour was [tuff|tough] because everyone wanted cookies instead, but we still made enough money for new library books."
+  }
+  // 2: { title:"...", words:[...], review:[...], challenge:[...], rhymes:[...], sort:[...], abc:[...], proof:"..." },
+};
+
+const WEEKS = Array.from({length:30},(_,i)=>{
+  const d = WEEK_DATA[i+1] || {};
+  return {n:i+1, title:d.title||"", words:d.words||[], review:d.review||[], challenge:d.challenge||[],
+    rhymes:d.rhymes||[], sort:d.sort||[], abc:d.abc||[], proof:d.proof||""};
+});
+const WK = n => WEEKS[n-1];
+
+/* ---------------- state ---------------- */
+const KEY = "spellingchampion_v1";
+let S = null;
+try { S = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
+S = Object.assign({cur:1, flash:{}, passes:{}, best:{}, missed:{}, log:[] }, S || {});
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} }
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const norm = s => String(s||"").trim().toLowerCase().replace(/[’']/g,"'");
+
+const hasList = n => WK(n).words.length > 0;
+const avail = () => WEEKS.filter(w => w.words.length).map(w => w.n);
+function weekWords(n, withExtra=true){
+  const w = WK(n);
+  const tag = (arr,kind) => arr.map(x => ({...x, kind, week:n}));
+  return withExtra ? [...tag(w.words,"list"), ...tag(w.review,"review"), ...tag(w.challenge,"challenge")] : tag(w.words,"list");
+}
+function findWord(word){
+  for (const w of WEEKS) for (const x of weekWords(w.n)) if (x.w === word) return x;
+  return null;
+}
+function patternOf(word, n){
+  const g = (WK(n).sort||[]).find(g => g.words.includes(word));
+  return g ? g : null;
+}
+
+/* ---------------- voice ---------------- */
+let AUDIO = {};
+fetch("audio/index.json").then(r => r.ok ? r.json() : {}).then(j => { AUDIO = j || {}; }).catch(()=>{});
+let voice = null;
+function pickVoice(){
+  try {
+    const vs = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang));
+    voice = vs.find(v => /Samantha|Aria|Jenny|Ava|Allison|Google US English/i.test(v.name)) || vs.find(v => /en[-_]US/i.test(v.lang)) || vs[0] || null;
+  } catch(e) {}
+}
+if ("speechSynthesis" in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+let curAudio = null;
+function stopSpeech(){ if (curAudio){ curAudio.pause(); curAudio = null; } try { speechSynthesis.cancel(); } catch(e) {} }
+const chunks = t => t.split(/(?<=[.!?;:])\s+/).map(s => s.trim()).filter(Boolean);
+function speak(text){
+  stopSpeech();
+  const cs = chunks(text);
+  if (cs.length && cs.every(c => AUDIO[c])){
+    let i = 0;
+    const next = () => { if (i >= cs.length) return; const a = new Audio("audio/" + AUDIO[cs[i++]]); curAudio = a; a.onended = next; a.play().catch(()=>{}); };
+    next(); return;
+  }
+  if (!("speechSynthesis" in window)) return;
+  const u = new SpeechSynthesisUtterance(text);
+  if (voice) u.voice = voice;
+  u.rate = .88;
+  speechSynthesis.speak(u);
+}
+const sayOf = o => o.say || o.w;
+const sentenceFor = o => o.say ? o.s.replace(new RegExp("\\b"+o.w+"\\b","i"), o.say) : o.s;
+const dictate = o => speak(`${sayOf(o)}. ${sentenceFor(o)} ${sayOf(o)}.`);
+
+/* ---------------- icons ---------------- */
+const I = {
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>',
+  plan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>',
+  cards:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="14" height="13" rx="2"/><path d="M7 4h12a2 2 0 0 1 2 2v11"/></svg>',
+  practice:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></svg>',
+  progress:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  review:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>',
+  sound:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>',
+  prev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>',
+  next:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
+  flip:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 14-5.3L20 9"/><path d="M20 4v5h-5"/><path d="M20 12a8 8 0 0 1-14 5.3L4 15"/><path d="M4 20v-5h5"/></svg>',
+  shuffle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>',
+  tick:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>'
+};
+
+/* ---------------- activities & limits ---------------- */
+const ACTS = {
+  spell:{name:"Spell it", sample:"j_t", desc:"Hear the word, then type it.", pass:"8 of 10"},
+  build:{name:"Build it", sample:"t·o·u·g·h", desc:"Tap the letters in the right order.", pass:"6 of 8"},
+  rhyme:{name:"Rhyme time", sample:"snug → shrug", desc:"Pick the spelling word that rhymes.", pass:"80%", needs:"rhymes"},
+  sort:{name:"Sound sort", sample:"ou · o · u", desc:"Sort words by sound and spelling pattern.", pass:"80%", needs:"sort"},
+  abc:{name:"ABC order", sample:"z → a", desc:"Put words in ABC or reverse ABC order.", pass:"2 of 3 sets"},
+  proof:{name:"Proofread", sample:"gess", desc:"Find the misspelled words and fix them.", pass:"5 of 6", needs:"proof"}
+};
+const passCount = (a,n) => (S.passes[a]||{})[n] || 0;
+const flashDone = n => !!(S.flash[n] && S.flash[n].done);
+function scope(a){
+  const all = avail();
+  if (!hasList(S.cur) || !flashDone(S.cur)) return {weeks:all, limited:false};
+  if (passCount(a,S.cur) < 3) return {weeks:[S.cur], limited:true};
+  return {weeks:all, limited:false};
+}
+const scopeLabel = a => scope(a).limited ? `Week ${S.cur} only` : "All weeks";
+function scopeWeeksWith(a){
+  const sc = scope(a);
+  const need = ACTS[a].needs;
+  return sc.weeks.filter(n => need ? (Array.isArray(WK(n)[need]) ? WK(n)[need].length : WK(n)[need]) : true);
+}
+function poolFor(a){ return scope(a).weeks.flatMap(n => weekWords(n)); }
+
+function logDone(a, score, total, pass, extra){
+  S.log.push({a, week:S.cur, score, total, pass, t:Date.now(), ...(extra||{})});
+  if (S.log.length > 400) S.log = S.log.slice(-400);
+  if (pass && ACTS[a] && scope(a).weeks.includes(S.cur)){
+    S.passes[a] = S.passes[a] || {};
+    const before = passCount(a,S.cur);
+    S.passes[a][S.cur] = before + 1;
+    if (before + 1 === 3 && flashDone(S.cur)) setTimeout(()=>toast(`${ACTS[a].name} passed 3 times. It now uses all weeks.`), 600);
+  }
+  save();
+}
+function addMissed(word){ S.missed[word] = (S.missed[word]||0) + 1; save(); }
+function clearMissed(word){ if (S.missed[word]){ S.missed[word]--; if (S.missed[word] <= 0) delete S.missed[word]; save(); } }
+const didThisWeek = (a) => S.log.some(l => l.a === a && l.week === S.cur);
+
+/* ---------------- render plumbing ---------------- */
+let H = {}, run = null, view = "home";
+const TABS = [["home","Home"],["plan","Plan"],["cards","Cards"],["practice","Practice"],["progress","Progress"],["review","Review"]];
+function renderTabs(){
+  const cur = view === "play" ? "practice" : view;
+  $("#tabs").innerHTML = TABS.map(([v,l]) => `<button class="tab" data-a="go" data-v="${v}" ${cur===v?'aria-current="page"':''}>${I[v]}<span>${l}</span></button>`).join("");
+  $("#weekChip").textContent = `Week ${S.cur}`;
+}
+const GLOBAL = {
+  go: t => { stopSpeech(); go(t.dataset.v); },
+  say: t => speak(t.dataset.say),
+  start: t => startAct(t.dataset.v),
+};
+function go(v){
+  if (v !== "play") run = null;
+  view = v;
+  if (v !== "play") { try { history.replaceState(null, "", "#" + v); } catch(e) {} }
+  render();
+  window.scrollTo(0,0);
+}
+function render(){
+  renderTabs();
+  const fn = VIEWS[view] || VIEWS.home;
+  const out = fn();
+  H = Object.assign({}, GLOBAL, out.h || {});
+  $("#view").innerHTML = out.html;
+  out.after && out.after();
+}
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-a]");
+  if (!t || t.disabled) return;
+  const f = H[t.dataset.a];
+  if (f) f(t, e);
+});
+let toastT;
+function toast(msg){ const el = $("#toast"); el.textContent = msg; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(()=> el.hidden = true, 2800); }
+
+/* ---------------- views ---------------- */
+function wordBoxHTML(n){
+  const w = WK(n);
+  if (!w.words.length) return `<div class="notice"><b>No list yet for Week ${n}.</b> <span class="muted">Add it in WEEK_DATA and it will appear here.</span></div>`;
+  return `<div class="wordbox">${w.words.map(x => `<button data-a="say" data-say="${esc(sayOf(x))}">${esc(x.w)}</button>`).join("")}</div>
+  <div class="extra">${w.review.length?`<div><span class="label">Review</span> <span class="hand">${w.review.map(x=>esc(x.w)).join(", ")}</span></div>`:""}
+  ${w.challenge.length?`<div><span class="label">Challenge</span> <span class="hand">${w.challenge.map(x=>esc(x.w)).join(", ")}</span></div>`:""}</div>`;
+}
+const PLAN = [
+  {d:"Mon", tasks:[["pretest","Pretest"],["cards","Flashcards"]]},
+  {d:"Tue", tasks:[["spell","Spell it"],["build","Build it"]]},
+  {d:"Wed", tasks:[["rhyme","Rhyme time"],["sort","Sound sort"]]},
+  {d:"Thu", tasks:[["abc","ABC order"],["proof","Proofread"]]},
+  {d:"Fri", tasks:[["test","Spelling test"]]}
+];
+const taskDone = k => k === "cards" ? flashDone(S.cur) : didThisWeek(k);
+function taskAvailable(k){
+  if (!hasList(S.cur)) return false;
+  if (["pretest","test","cards"].includes(k)) return true;
+  return scopeWeeksWith(k).length > 0;
+}
+function nextTask(){
+  for (const day of PLAN) for (const [k,l] of day.tasks) if (taskAvailable(k) && !taskDone(k)) return [k,l,day.d];
+  return null;
+}
+function taskBtn(k){ return k === "cards" ? `data-a="go" data-v="cards"` : `data-a="start" data-v="${k}"`; }
+
+const VIEWS = {
+  home(){
+    const w = WK(S.cur), nt = nextTask();
+    const fd = flashDone(S.cur);
+    return {html:`
+      <section class="sheet">
+        <div class="row"><div><div class="label">This week</div><h1>Week ${S.cur}${w.title?` · ${esc(w.title)}`:""}</h1></div></div>
+        ${wordBoxHTML(S.cur)}
+        <p class="small muted">Tap a word to hear it.</p>
+      </section>
+      ${hasList(S.cur) ? `<section class="sheet">
+        <div class="label">Up next</div>
+        ${nt ? `<div class="row"><div><h2>${esc(nt[1])}</h2><p class="small muted">${nt[2]} on this week's plan</p></div><span class="spacer"></span>
+          <button class="btn pencil big" ${taskBtn(nt[0])}>Start</button></div>`
+          : `<div class="row"><h2>Every task this week is done.</h2></div><p class="muted small">Keep practicing, or move to the next week on the Plan page.</p>`}
+        ${!fd ? `<p class="small muted">Activities use all weeks until this week's flashcards are done.</p>` : ""}
+      </section>` : ""}
+      <section style="display:flex;flex-direction:column;gap:10px">
+        <div class="row"><h2>Practice</h2><span class="spacer"></span><button class="btn" data-a="go" data-v="practice">See all</button></div>
+        ${tilesHTML(["spell","build","rhyme"])}
+      </section>`};
+  },
+  practice(){
+    return {html:`
+      <section style="display:flex;flex-direction:column;gap:6px">
+        <h1>Practice</h1>
+        <p class="muted small">${flashDone(S.cur) ? `After the flashcards, each activity sticks to Week ${S.cur} until you pass it 3 times.` : `Finish Week ${S.cur}'s flashcards to focus activities on this week.`}</p>
+      </section>
+      ${tilesHTML(Object.keys(ACTS))}
+      <section class="sheet">
+        <div class="row"><div><h2>Spelling test</h2><p class="small muted">All ${weekWords(S.cur).length} words for Week ${S.cur}. Listen, write, then unfold to check.</p></div><span class="spacer"></span>
+        <button class="btn" data-a="start" data-v="pretest" ${hasList(S.cur)?"":"disabled"}>Pretest</button>
+        <button class="btn primary" data-a="start" data-v="test" ${hasList(S.cur)?"":"disabled"}>Final test</button></div>
+      </section>`};
+  },
+  plan(){
+    const fdone = n => flashDone(n);
+    return {html:`
+      <section class="sheet">
+        <div class="label">Week ${S.cur} plan</div>
+        <div class="days">${PLAN.map(day => `<div class="day"><div class="dn">${day.d}</div><div>${day.tasks.map(([k,l]) => {
+          const ok = taskAvailable(k);
+          return `<button class="task" ${ok?taskBtn(k):"disabled"}><span class="check ${taskDone(k)?"on":""}">${taskDone(k)?I.tick:""}</span><span>${esc(l)}</span>${!ok&&hasList(S.cur)?'<span class="pill">no sheet yet</span>':""}</button>`;
+        }).join("")}</div></div>`).join("")}</div>
+      </section>
+      <section style="display:flex;flex-direction:column;gap:10px">
+        <h2>All 30 weeks</h2>
+        <p class="small muted">Tap a week to make it the current week.</p>
+        <div class="weeklist">${WEEKS.map(w => {
+          const b = S.best[w.n];
+          const pct = b ? Math.round(100*b.score/b.total) : 0;
+          return `<button class="wk ${w.n===S.cur?"cur":""} ${w.words.length?"":"empty"}" data-a="setweek" data-v="${w.n}">
+            <b>${w.n}</b><span>${w.words.length ? (b?`${b.score}/${b.total}`:(fdone(w.n)?"cards done":"ready")) : "no list"}</span>
+            <span class="st"><i style="width:${pct}%"></i></span></button>`;
+        }).join("")}</div>
+      </section>`,
+      h:{ setweek: t => { S.cur = +t.dataset.v; save(); render(); toast(`Week ${S.cur} is now the current week.`); } }};
+  },
+  progress(){
+    const tests = S.log.filter(l => l.a === "test").slice(-8).reverse();
+    return {html:`
+      <h1>Progress</h1>
+      <section class="sheet">
+        <div class="label">Week ${S.cur} activities</div>
+        <div class="list">${Object.entries(ACTS).map(([k,a]) => `<div class="li"><span style="flex:1">${a.name}</span>
+          <span class="small muted">${scopeLabel(k)}</span>
+          <span class="passdots" title="${passCount(k,S.cur)} of 3 passes">${[0,1,2].map(i=>`<i class="${passCount(k,S.cur)>i?"on":""}"></i>`).join("")}</span></div>`).join("")}
+          <div class="li"><span style="flex:1">Flashcards</span><span class="pill ${flashDone(S.cur)?"ok":""}">${flashDone(S.cur)?"done":"not done"}</span></div>
+        </div>
+      </section>
+      <section class="sheet">
+        <div class="label">Best test score by week</div>
+        <div class="weeklist">${WEEKS.map(w => { const b = S.best[w.n]; return `<div class="wk ${w.words.length?"":"empty"}"><b>${w.n}</b><span>${b?`${b.score}/${b.total}`:(w.words.length?"—":"no list")}</span></div>`; }).join("")}</div>
+      </section>
+      <section class="sheet">
+        <div class="label">Recent tests</div>
+        ${tests.length ? `<div class="list">${tests.map(l => `<div class="li"><span style="flex:1">Week ${l.week} test</span><span class="small muted">${new Date(l.t).toLocaleDateString()}</span><span class="pill ${l.pass?"ok":"bad"}">${l.score}/${l.total}</span></div>`).join("")}</div>`
+          : `<p class="muted">No tests yet. The final test is on Friday's plan.</p>`}
+      </section>`};
+  },
+  review(){
+    const items = Object.entries(S.missed).sort((a,b) => b[1]-a[1]).map(([w,c]) => ({o:findWord(w), c})).filter(x => x.o);
+    return {html:`
+      <h1>Review</h1>
+      <section class="sheet">
+        <div class="label">Words to practice</div>
+        ${items.length ? `<div class="list">${items.map(x => `<div class="li"><button class="btn icon-btn" data-a="say" data-say="${esc(sayOf(x.o))}" aria-label="Hear ${esc(x.o.w)}">${I.sound}</button>
+          <span class="hand" style="font-size:1.4rem;flex:1">${esc(x.o.w)}</span><span class="small muted">Week ${x.o.week}</span><span class="pill bad">missed ${x.c}×</span></div>`).join("")}</div>
+          <button class="btn pencil big" data-a="startreview">Practice these words</button>
+          <p class="small muted">Spell a word right on the first try to take one miss off the list.</p>`
+          : `<p class="muted">No missed words. Words you miss in any activity show up here.</p>`}
+      </section>`,
+      h:{ startreview: () => { const words = items.map(x => x.o); startSpell(shuffle(words).slice(0,12), true); } }};
+  },
+  cards(){ return cardsView(); },
+  play(){ return run ? PLAY[run.a]() : VIEWS.practice(); }
+};
+
+function tilesHTML(keys){
+  return `<div class="tiles">${keys.map(k => {
+    const a = ACTS[k], ok = hasList(S.cur) && scopeWeeksWith(k).length > 0, sc = scope(k);
+    return `<button class="tile" data-a="start" data-v="${k}" ${ok?"":"disabled"}>
+      <span class="sample">${esc(a.sample)}</span><h3>${a.name}</h3>
+      <span class="small muted">${a.desc}</span>
+      <span class="row" style="gap:8px"><span class="scope ${sc.limited?"lim":""}">${ok?scopeLabel(k):"No sheet for this week yet"}</span><span class="spacer"></span>
+      ${flashDone(S.cur)?`<span class="passdots">${[0,1,2].map(i=>`<i class="${passCount(k,S.cur)>i?"on":""}"></i>`).join("")}</span>`:""}</span>
+    </button>`;
+  }).join("")}</div>`;
+}
+
+/* ---------------- flashcards ---------------- */
+let FC = null;
+const BANDS = ["--band1","--band2","--band3","--band4","--band5"];
+function fcState(n){ S.flash[n] = S.flash[n] || {seen:[], known:[], done:false}; return S.flash[n]; }
+function cardsView(){
+  const n = S.cur;
+  if (!hasList(n)) return {html:`<h1>Flashcards</h1>${wordBoxHTML(n)}`};
+  const all = weekWords(n);
+  if (!FC || FC.week !== n) FC = {week:n, order:all.map((_,i)=>i), i:0, flipped:false, anim:""};
+  const st = fcState(n);
+  const o = all[FC.order[FC.i]];
+  const seen = new Set(st.seen), known = new Set(st.known);
+  const pat = patternOf(o.w, n);
+  const band = `var(${BANDS[FC.order[FC.i] % BANDS.length]})`;
+  const kindLabel = o.kind === "list" ? `Week ${n} · word ${FC.order[FC.i]+1}` : (o.kind === "review" ? "Review word" : "Challenge word");
+  const sentHTML = esc(o.s).replace(new RegExp("\\b("+o.w+")\\b","i"), "<mark>$1</mark>");
+  const total = all.length;
+  const pos = total <= 30
+    ? `<div class="posbar">${FC.order.map((idx,i) => `<button data-a="fcgo" data-v="${i}" aria-label="Card ${i+1}" class="${known.has(all[idx].w)?"known":(seen.has(all[idx].w)?"seen":"")} ${i===FC.i?"at":""}"></button>`).join("")}</div>`
+    : `<div class="rail"><i style="left:0;width:${100*seen.size/total}%"></i><b style="left:calc(${100*FC.i/(total-1)}% - 3px)"></b></div>`;
+  const unseenLeft = all.filter(x => !seen.has(x.w)).length;
+  return {html:`
+    <div class="row"><h1>Flashcards</h1><span class="spacer"></span><span class="small muted">${FC.i+1} / ${total} · ${seen.size} flipped${st.done?" · done":""}</span></div>
+    ${pos}
+    <div class="cardwrap" id="cw">
+      <div class="card ${FC.flipped?"flipped":""} ${FC.anim}" id="card">
+        <div class="face front" data-a="fcflip">
+          <div class="band" style="background:${band}"><span class="label">${kindLabel}</span>
+            <button class="listen" data-a="fcsay" data-v="word" aria-label="Listen">${I.sound}</button></div>
+          <div class="body"><div class="bigword">${esc(o.w)}</div>${known.has(o.w)?'<span class="kbadge">I know this one</span>':""}<span class="small muted">Tap to flip</span></div>
+        </div>
+        <div class="face back" data-a="fcflip">
+          <div class="band" style="background:${band}"><span class="label">${esc(o.w)}</span>
+            <button class="listen" data-a="fcsay" data-v="back" aria-label="Listen">${I.sound}</button></div>
+          <div class="body">
+            ${pat ? `<div class="pattern">${esc(pat.sound)} spelled <em>${esc(pat.spell)}</em></div>` : ""}
+            <p class="sentence">${sentHTML}</p>
+            <p class="hand" style="font-size:1.6rem;letter-spacing:.18em">${esc(o.w.split("").join(" "))}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cardctl">
+      <button class="btn icon-btn" data-a="fcmove" data-v="-1" aria-label="Previous">${I.prev}</button>
+      <button class="btn big primary" data-a="fcflip">${I.flip} Flip</button>
+      <button class="btn icon-btn" data-a="fcmove" data-v="1" aria-label="Next">${I.next}</button>
+    </div>
+    <div class="row" style="justify-content:center">
+      <button class="btn" data-a="fcknown">${I.star} ${known.has(o.w)?"Known":"Mark known"}</button>
+      <button class="btn" data-a="fcshuffle">${I.shuffle} Shuffle</button>
+      <button class="btn pencil" data-a="fcnext" ${unseenLeft?"":"disabled"}>Next to flip${unseenLeft?` (${unseenLeft})`:""}</button>
+    </div>`,
+    h:{
+      fcflip: (t,e) => { if (e.target.closest(".listen")) return; FC.flipped = !FC.flipped; FC.anim="";
+        if (FC.flipped){ markSeen(o.w); speakBack(o, n); }
+        $("#card").classList.toggle("flipped", FC.flipped); if (FC.flipped) render(); },
+      fcsay: (t,e) => { e.stopPropagation(); t.dataset.v === "word" ? speak(sayOf(o)) : speakBack(o, n); },
+      fcmove: t => fcMove(+t.dataset.v),
+      fcgo: t => { FC.i = +t.dataset.v; FC.flipped = false; FC.anim=""; render(); },
+      fcknown: () => { const k = new Set(st.known); k.has(o.w) ? k.delete(o.w) : k.add(o.w); st.known = [...k]; save(); render(); },
+      fcshuffle: () => { FC.order = shuffle(FC.order); FC.i = 0; FC.flipped = false; FC.anim=""; render(); toast("Cards shuffled"); },
+      fcnext: () => { for (let k=1;k<=total;k++){ const j=(FC.i+k)%total; if (!seen.has(all[FC.order[j]].w)){ FC.i=j; FC.flipped=false; FC.anim="slide-l"; render(); return; } } }
+    },
+    after(){
+      const cw = $("#cw"); let x0 = null;
+      cw.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, {passive:true});
+      cw.addEventListener("touchend", e => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 50) fcMove(dx < 0 ? 1 : -1); });
+    }};
+}
+function fcMove(d){ const total = weekWords(FC.week).length; FC.i = (FC.i + d + total) % total; FC.flipped = false; FC.anim = d > 0 ? "slide-l" : "slide-r"; render(); }
+function speakBack(o, n){
+  const pat = patternOf(o.w, n);
+  speak(`${sayOf(o)}. ${pat ? `${pat.sound}, spelled ${pat.spell.split(" or ").map(s=>s.split("").join(" ")).join(" or ")}. ` : ""}${sentenceFor(o)} ${o.w.split("").join(", ")}.`);
+}
+function markSeen(w){
+  const st = fcState(S.cur);
+  if (!st.seen.includes(w)) st.seen.push(w);
+  if (!st.done && st.seen.length >= weekWords(S.cur).length){
+    st.done = true; S.log.push({a:"cards", week:S.cur, t:Date.now()});
+    setTimeout(()=>toast(`Flashcards done! Activities now focus on Week ${S.cur}.`), 500);
+  }
+  save();
+}
+
+/* ---------------- activity runner ---------------- */
+function startAct(a){
+  stopSpeech();
+  if (a === "pretest" || a === "test") return startTest(a);
+  if (a === "spell") return startSpell(shuffle(poolFor("spell")).slice(0,10), false);
+  if (a === "build") { run = {a, items:shuffle(poolFor("build")).slice(0,8), i:0, score:0, missed:[]}; newBuild(); return go("play"); }
+  if (a === "rhyme") {
+    const rows = scopeWeeksWith("rhyme").flatMap(n => WK(n).rhymes);
+    run = {a, items:shuffle(rows).slice(0,15).map(r => ({cue:r[0], opts:shuffle(r[1]), ans:r[2], bad:[]})), i:0, score:0, missed:[]};
+    return go("play");
+  }
+  if (a === "sort") {
+    const ws = scopeWeeksWith("sort"); const n = ws.includes(S.cur) ? S.cur : ws[Math.floor(Math.random()*ws.length)];
+    const groups = WK(n).sort.map(g => ({...g, got:[]}));
+    run = {a, week:n, groups, items:shuffle(groups.flatMap(g => g.words)), i:0, score:0, wrongThis:false, badG:null, missed:[]};
+    return go("play");
+  }
+  if (a === "abc") {
+    const ws = scopeWeeksWith("abc"); const sets = [];
+    const sheetWeek = ws.find(n => WK(n).abc.length) ;
+    if (sheetWeek) sets.push({words:shuffle(WK(sheetWeek).abc), dir:-1});
+    const pool = shuffle([...new Set(ws.flatMap(n => WK(n).words.map(x => x.w)))]);
+    let k = 0;
+    while (sets.length < 3){ const pick = pool.slice(k, k+5); k += 5; if (pick.length < 4) { k = 0; continue; } sets.push({words:pick, dir: sets.length % 2 ? 1 : -1}); }
+    run = {a, sets, si:0, picked:[], mist:0, score:0, flash:null};
+    return go("play");
+  }
+  if (a === "proof") {
+    const ws = scopeWeeksWith("proof"); const n = ws.includes(S.cur) ? S.cur : ws[Math.floor(Math.random()*ws.length)];
+    run = {a, week:n, paras:parseProof(WK(n).proof), open:null, tries:0, wrongTaps:0, firstFix:0, fixed:{}, fb:""};
+    return go("play");
+  }
+}
+function finish(a, score, total, passAt, missedWords){
+  const pass = score >= passAt;
+  (missedWords||[]).forEach(addMissed);
+  logDone(a, score, total, pass);
+  run = {a:"_done", src:a, score, total, pass, passAt, missed:missedWords||[]};
+  render();
+}
+const headHTML = (title, i, n) => `<div class="act-head"><button class="btn icon-btn" data-a="go" data-v="practice" aria-label="Back">${I.prev}</button><h2>${title}</h2><div class="prog"><i style="width:${100*i/n}%"></i></div><span class="small muted">${Math.min(i+1,n)}/${n}</span></div>`;
+
+const PLAY = {
+  _done(){
+    const r = run, a = ACTS[r.src] || {name: {test:"Spelling test", pretest:"Pretest", review:"Review"}[r.src] || "Practice"};
+    return {html:`<section class="sheet center">
+      <div class="label">${a.name}</div>
+      <div class="score">${r.score}<span class="muted" style="font-size:.5em">/${r.total}</span></div>
+      <span class="stamp ${r.pass?"ok":"bad"}">${r.pass?"Passed":"Keep going"}</span>
+      ${ACTS[r.src] ? `<p class="small muted">Pass mark: ${a.pass}. ${scope(r.src).limited ? `Passes this week: ${passCount(r.src,S.cur)} of 3.` : ""}</p>` : ""}
+      ${r.missed.length ? `<p>Practice these: <span class="hand" style="font-size:1.3rem">${[...new Set(r.missed)].map(esc).join(", ")}</span></p>` : ""}
+      <div class="row" style="justify-content:center"><button class="btn" data-a="go" data-v="home">Home</button><button class="btn pencil big" data-a="start" data-v="${r.src}">Go again</button></div>
+    </section>`};
+  },
+
+  spell(){
+    const r = run, o = r.items[r.i];
+    return {html:`${headHTML(r.review ? "Review" : "Spell it", r.i, r.items.length)}
+      <section class="sheet center">
+        <p class="small muted">${r.review ? "Missed words" : scopeLabel("spell")}</p>
+        <div class="row" style="justify-content:center">
+          <button class="btn big primary" data-a="hear">${I.sound} Hear word</button>
+          <button class="btn" data-a="sent">Sentence</button>
+        </div>
+        ${r.state === "reveal" || r.state === "right"
+          ? `<div class="bigword" style="color:${r.state==="right"?"var(--ok)":"var(--bad)"}">${esc(o.w)}</div>`
+          : `<input class="answer" id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Type the word" placeholder="type it here">`}
+        <div class="fb ${r.fbc||""}">${esc(r.fb||"")}</div>
+        ${r.state === "ask" ? `<button class="btn pencil big" data-a="check">Check</button>` : `<button class="btn pencil big" data-a="nextq" id="nextBtn">Next</button>`}
+        ${r.state === "ask" && r.tries ? `<p class="small muted">Try ${r.tries+1} of 3</p>` : ""}
+      </section>`,
+      h:{
+        hear: () => speak(sayOf(o)),
+        sent: () => speak(sentenceFor(o)),
+        check: () => {
+          const v = norm($("#ans").value); if (!v) return;
+          if (v === o.w.toLowerCase()){
+            if (!r.tries){ r.score++; if (r.review) clearMissed(o.w); }
+            r.state = "right"; r.fb = r.tries ? "Got it!" : "Correct on the first try!"; r.fbc = "ok";
+          } else {
+            r.tries++;
+            if (r.tries >= 3){ r.state = "reveal"; r.fb = "Here's how it's spelled. Look closely."; r.fbc = "bad"; r.missed.push(o.w); }
+            else { r.fb = `Not quite. ${3-r.tries} ${3-r.tries===1?"try":"tries"} left.`; r.fbc = "bad"; }
+          }
+          if (r.tries && r.state !== "ask" && !r.missed.includes(o.w)) r.missed.push(o.w);
+          render(); if (r.state !== "ask") speak(sayOf(o));
+        },
+        nextq: () => {
+          r.i++;
+          if (r.i >= r.items.length) return finish(r.review ? "review" : "spell", r.score, r.items.length, Math.ceil(r.items.length*.8), r.review ? [] : r.missed);
+          Object.assign(r, {tries:0, state:"ask", fb:"", fbc:""}); render(); dictate(r.items[r.i]);
+        }
+      },
+      after(){
+        const inp = $("#ans");
+        if (inp){ inp.focus(); inp.addEventListener("keydown", e => { if (e.key === "Enter") H.check(); }); }
+        else { const nb = $("#nextBtn"); nb && nb.focus(); }
+      }};
+  },
+
+  build(){
+    const r = run, o = r.items[r.i];
+    return {html:`${headHTML("Build it", r.i, r.items.length)}
+      <section class="sheet center">
+        <p class="small muted">${scopeLabel("build")}</p>
+        <button class="btn big primary" data-a="hear">${I.sound} Hear word</button>
+        ${r.state === "ask" ? `
+          <div class="slots">${o.w.split("").map((_,k) => `<button class="slot" data-a="unslot" data-v="${k}">${r.slots[k]!==undefined?esc(r.tiles[r.slots[k]].ch):""}</button>`).join("")}</div>
+          <div class="letters">${r.tiles.map((t,k) => `<button class="ltile" data-a="tile" data-v="${k}" ${r.slots.includes(k)?"disabled":""}>${esc(t.ch)}</button>`).join("")}</div>
+          <button class="btn" data-a="clear">Clear</button>`
+        : `<div class="bigword" style="color:${r.state==="right"?"var(--ok)":"var(--bad)"}">${esc(o.w)}</div>`}
+        <div class="fb ${r.fbc||""}">${esc(r.fb||"")}</div>
+        ${r.state !== "ask" ? `<button class="btn pencil big" data-a="nextq">Next</button>` : (r.tries?`<p class="small muted">Try ${r.tries+1} of 3</p>`:"")}
+      </section>`,
+      h:{
+        hear: () => dictate(o),
+        tile: t => { r.slots.push(+t.dataset.v); r.fb = ""; if (r.slots.length === o.w.length) buildCheck(); else render(); },
+        unslot: t => { const k = +t.dataset.v; if (k < r.slots.length){ r.slots = r.slots.slice(0,k); render(); } },
+        clear: () => { r.slots = []; render(); },
+        nextq: () => { r.i++; if (r.i >= r.items.length) return finish("build", r.score, r.items.length, 6, r.missed); newBuild(); render(); dictate(r.items[r.i]); }
+      }};
+  },
+
+  rhyme(){
+    const r = run, q = r.items[r.i];
+    return {html:`${headHTML("Rhyme time", r.i, r.items.length)}
+      <section class="sheet center">
+        <p class="small muted">${scopeLabel("rhyme")} · Which spelling word rhymes with</p>
+        <div class="row" style="justify-content:center"><span class="cue">${esc(q.cue)}</span><button class="btn icon-btn" data-a="say" data-say="${esc(q.cue)}" aria-label="Hear ${esc(q.cue)}">${I.sound}</button></div>
+        <div class="opts">${q.opts.map(op => `<button class="opt ${q.done&&op===q.ans?"ok":""} ${q.bad.includes(op)?"bad":""}" data-a="pick" data-v="${esc(op)}" ${q.done||q.bad.includes(op)?"disabled":""}>${esc(op)}</button>`).join("")}</div>
+        <div class="fb ${r.fbc||""}">${esc(r.fb||"")}</div>
+        ${q.done ? `<button class="btn pencil big" data-a="nextq" id="nextBtn">Next</button>` : ""}
+      </section>`,
+      h:{
+        pick: t => {
+          const op = t.dataset.v;
+          const w = findWord(op);
+          if (op === q.ans){ q.done = true; if (!q.bad.length) r.score++; r.fb = `${q.cue} · ${op}`; r.fbc = "ok"; speak(`${q.cue}, ${w?sayOf(w):op}.`); }
+          else { q.bad.push(op); r.fb = `${op} doesn't rhyme with ${q.cue}. Say them both out loud.`; r.fbc = "bad"; if (!r.missed.includes(q.ans)) r.missed.push(q.ans); }
+          render();
+        },
+        nextq: () => { r.i++; r.fb = ""; if (r.i >= r.items.length) return finish("rhyme", r.score, r.items.length, Math.ceil(r.items.length*.8), r.missed); render(); }
+      },
+      after(){ const nb = $("#nextBtn"); nb && nb.focus(); }};
+  },
+
+  sort(){
+    const r = run, w = r.items[r.i], done = r.i >= r.items.length;
+    const wo = findWord(w);
+    return {html:`${headHTML("Sound sort", r.i, r.items.length)}
+      <section class="sheet center">
+        <p class="small muted">${scopeLabel("sort")} · Week ${r.week} words</p>
+        ${done ? `<h2>All sorted!</h2>` : `<div class="row" style="justify-content:center"><span class="bigword" style="font-size:3rem">${esc(w)}</span><button class="btn icon-btn" data-a="say" data-say="${esc(wo?sayOf(wo):w)}" aria-label="Hear ${esc(w)}">${I.sound}</button></div>
+        <p class="small">Which sound and spelling does it have?</p>`}
+        <div class="buckets">${r.groups.map((g,k) => `<button class="bucket ${r.badG===k?"bad":""}" data-a="drop" data-v="${k}" ${done?"disabled":""}>
+          <span class="bl">${esc(g.sound)} spelled <em>${esc(g.spell)}</em></span><span class="bw">${g.got.map(esc).join(", ")}</span></button>`).join("")}</div>
+        <div class="fb ${r.fbc||""}">${esc(r.fb||"")}</div>
+        ${done ? `<button class="btn pencil big" data-a="fin">See score</button>` : ""}
+      </section>`,
+      h:{
+        drop: t => {
+          const k = +t.dataset.v, g = r.groups[k];
+          if (g.words.includes(w)){ g.got.push(w); if (!r.wrongThis) r.score++; r.wrongThis = false; r.badG = null; r.fb = ""; r.i++; }
+          else { r.wrongThis = true; r.badG = k; r.fb = `Not ${g.sound} spelled ${g.spell}. Listen for the vowel sound.`; r.fbc = "bad"; if (!r.missed.includes(w)) r.missed.push(w); }
+          render();
+        },
+        fin: () => finish("sort", r.score, r.items.length, Math.ceil(r.items.length*.8), r.missed)
+      }};
+  },
+
+  abc(){
+    const r = run, set = r.sets[r.si];
+    const target = set.words.slice().sort((x,y) => set.dir * x.localeCompare(y));
+    const left = set.words.filter(x => !r.picked.includes(x));
+    const done = !left.length;
+    return {html:`${headHTML("ABC order", r.si, r.sets.length)}
+      <section class="sheet center">
+        <p class="small muted">${scopeLabel("abc")}</p>
+        <h2>${set.dir < 0 ? "Reverse ABC order (z to a)" : "ABC order (a to z)"}</h2>
+        <p class="small">Tap the word that comes ${r.picked.length ? "next" : "first"}.</p>
+        <div class="opts">${left.map(x => `<button class="opt ${r.flash===x?"bad":""}" data-a="pick" data-v="${esc(x)}">${esc(x)}</button>`).join("")}</div>
+        <div class="abcpicked">${r.picked.map((x,k) => `<div><span>${k+1}.</span>${esc(x)}</div>`).join("")}</div>
+        <div class="fb ${r.fbc||""}">${esc(r.fb||"")}</div>
+        ${done ? `<button class="btn pencil big" data-a="nextset">${r.si+1 < r.sets.length ? "Next set" : "See score"}</button>` : ""}
+      </section>`,
+      h:{
+        pick: t => {
+          const x = t.dataset.v;
+          if (x === target[r.picked.length]){ r.picked.push(x); r.flash = null; r.fb = r.picked.length === target.length ? (r.mist ? "Done." : "Perfect order!") : ""; r.fbc = "ok"; }
+          else { r.mist++; r.flash = x; const nx = target[r.picked.length]; r.fb = `Look at the ${firstDiff(x, nx)} letter of each word.`; r.fbc = "bad"; }
+          render();
+        },
+        nextset: () => {
+          if (!r.mist) r.score++;
+          r.si++; r.picked = []; r.mist = 0; r.fb = ""; r.flash = null;
+          if (r.si >= r.sets.length) return finish("abc", r.score, r.sets.length, 2, []);
+          render();
+        }
+      }};
+  },
+
+  proof(){
+    const r = run;
+    const errs = r.paras.flat().filter(t => t.right);
+    const nFixed = Object.keys(r.fixed).length;
+    const open = r.open !== null ? r.paras.flat().find(t => t.id === r.open) : null;
+    return {html:`${headHTML("Proofread", nFixed, errs.length)}
+      <section class="sheet">
+        <p class="small muted">${scopeLabel("proof")} · Week ${r.week}</p>
+        <h2>Find the ${errs.length} misspelled words. Tap each one, then write it correctly.</h2>
+        <div class="passage">${r.paras.map(p => `<p>${p.map(t => t.tap
+          ? `<button class="pw ${r.fixed[t.id]?"fixed":(r.open===t.id?"found":"")} ${r.nope===t.id?"nope":""}" data-a="tap" data-v="${t.id}">${esc(r.fixed[t.id] ? t.right : t.text)}</button>`
+          : esc(t.text)).join("")}</p>`).join("")}</div>
+        ${open ? `<div class="center" style="border-top:1px solid var(--rule);padding-top:12px">
+          <p>Write <b class="hand" style="font-size:1.3rem;color:var(--bad)">${esc(open.text)}</b> correctly:</p>
+          <input class="answer" id="fix" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Correct spelling">
+          <button class="btn pencil" data-a="fixit">Fix it</button></div>` : ""}
+        <div class="fb ${r.fbc||""}">${esc(r.fb||"")}</div>
+        <div class="fixlist">${errs.map((t,k) => `<div><span>${k+1}.</span>${r.fixed[t.id]?esc(t.right):""}</div>`).join("")}</div>
+        ${nFixed === errs.length ? `<button class="btn pencil big" data-a="fin">See score</button>` : ""}
+      </section>`,
+      h:{
+        tap: t => {
+          const id = +t.dataset.v, tok = r.paras.flat().find(x => x.id === id);
+          if (r.fixed[id]) return;
+          if (tok.right){ r.open = id; r.tries = 0; r.fb = ""; r.nope = null; }
+          else { r.wrongTaps++; r.nope = id; r.fb = `"${tok.text}" is spelled correctly.`; r.fbc = "bad"; }
+          render();
+        },
+        fixit: () => {
+          const tok = r.paras.flat().find(x => x.id === r.open), v = norm($("#fix").value);
+          if (!v) return;
+          if (v === tok.right){ r.fixed[tok.id] = true; if (!r.tries) r.firstFix++; r.open = null; r.fb = `Fixed: ${tok.right}`; r.fbc = "ok"; }
+          else { r.tries++; if (!r.missedW) r.missedW = []; if (!r.missedW.includes(tok.right)) r.missedW.push(tok.right);
+            if (r.tries >= 3){ r.fixed[tok.id] = true; r.open = null; r.fb = `It's spelled ${tok.right}.`; r.fbc = "bad"; }
+            else { r.fb = `Not quite. ${3-r.tries} ${3-r.tries===1?"try":"tries"} left.`; r.fbc = "bad"; } }
+          render();
+        },
+        fin: () => { const sc = Math.max(0, r.firstFix - r.wrongTaps); finish("proof", sc, errs.length, errs.length - 1, r.missedW || []); }
+      },
+      after(){ const f = $("#fix"); if (f){ f.focus(); f.addEventListener("keydown", e => { if (e.key === "Enter") H.fixit(); }); } }};
+  },
+
+  test(){
+    const r = run, list = r.items;
+    const row = (o,k) => {
+      const ok = r.checked ? norm(r.answers[k]) === o.w.toLowerCase() : null;
+      return `<span class="n">${k+1}.</span>
+        <input id="t${k}" data-k="${k}" class="${r.checked?(ok?"ok":"bad"):""}" value="${esc(r.answers[k]||"")}" ${r.checked?"readonly":""} autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Word ${k+1}">
+        ${r.checked ? `<span class="key fold ${ok?"ok":"bad"}">${esc(o.w)}</span>` : `<button class="say" data-a="sayk" data-v="${k}" aria-label="Hear word ${k+1}">${I.sound}</button>`}`;
+    };
+    const nList = WK(r.week).words.length, nRev = WK(r.week).review.length;
+    const score = r.checked ? list.filter((o,k) => norm(r.answers[k]) === o.w.toLowerCase()).length : 0;
+    return {html:`<div class="act-head"><button class="btn icon-btn" data-a="go" data-v="practice" aria-label="Back">${I.prev}</button><h2>${r.a==="pretest"?"Pretest":"Spelling test"} · Week ${r.week}</h2></div>
+      <section class="sheet">
+        ${r.checked
+          ? `<div class="row"><div class="score" style="font-size:2.6rem">${score}<span class="muted" style="font-size:.5em">/${list.length}</span></div><span class="spacer"></span><span class="stamp ${score>=r.passAt?"ok":"bad"}">${score>=r.passAt?"Passed":"Practice"}</span></div>
+             <p class="small muted">The paper is unfolded. Copy any word you missed three times on real paper, too.</p>`
+          : `<p class="small muted">Tap <b>Read next</b>. You'll hear the word, a sentence, and the word again. Write it on the line. When you finish, unfold the paper to check.</p>
+             <div class="row"><button class="btn primary big" data-a="readnext">${I.sound} Read next</button><span class="spacer"></span><span class="small muted">${r.answers.filter(Boolean).length}/${list.length} written</span></div>`}
+        <div class="testgrid">
+          ${list.map((o,k) => (k===nList?`<div class="sect label">Review words</div>`:"") + (k===nList+nRev?`<div class="sect label">Challenge words</div>`:"") + row(o,k)).join("")}
+        </div>
+        ${r.checked ? `<div class="row"><button class="btn" data-a="go" data-v="home">Home</button><span class="spacer"></span><button class="btn pencil big" data-a="start" data-v="${r.a}">Take it again</button></div>`
+          : `<button class="btn pencil big" data-a="unfold">Unfold and check</button>`}
+      </section>`,
+      h:{
+        sayk: t => { const k = +t.dataset.v; r.at = k; speak(`Number ${k+1}. ${sayOf(list[k])}. ${sentenceFor(list[k])} ${sayOf(list[k])}.`); $("#t"+k).focus(); },
+        readnext: () => {
+          let k = r.answers.findIndex((a,i) => !a && i >= 0); if (k < 0) k = list.findIndex((_,i) => !r.answers[i]);
+          if (k < 0) { toast("Every line has a word. Unfold the paper to check."); return; }
+          r.at = k; speak(`Number ${k+1}. ${sayOf(list[k])}. ${sentenceFor(list[k])} ${sayOf(list[k])}.`); $("#t"+k).focus();
+        },
+        unfold: () => {
+          r.checked = true;
+          const missed = list.filter((o,k) => norm(r.answers[k]) !== o.w.toLowerCase()).map(o => o.w);
+          const sc = list.length - missed.length;
+          missed.forEach(addMissed);
+          if (r.a === "test"){ const b = S.best[r.week]; if (!b || sc > b.score) S.best[r.week] = {score:sc, total:list.length}; }
+          logDone(r.a, sc, list.length, sc >= r.passAt);
+          render(); window.scrollTo(0,0);
+        }
+      },
+      after(){
+        document.querySelectorAll(".testgrid input").forEach(inp => {
+          inp.addEventListener("input", () => { r.answers[+inp.dataset.k] = inp.value; });
+          inp.addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); H.readnext(); } });
+        });
+      }};
+  }
+};
+
+function startSpell(items, review){
+  run = {a:"spell", review, items, i:0, tries:0, score:0, state:"ask", fb:"", missed:[]};
+  go("play"); dictate(items[0]);
+}
+function newBuild(){
+  const o = run.items[run.i];
+  let letters = shuffle(o.w.split(""));
+  if (letters.join("") === o.w && o.w.length > 1) letters = letters.reverse();
+  Object.assign(run, {tiles:letters.map(ch => ({ch})), slots:[], tries:0, state:"ask", fb:"", fbc:""});
+}
+function buildCheck(){
+  const r = run, o = r.items[r.i];
+  const guess = r.slots.map(k => r.tiles[k].ch).join("");
+  if (guess === o.w){ if (!r.tries) r.score++; r.state = "right"; r.fb = r.tries ? "You built it!" : "Built on the first try!"; r.fbc = "ok"; speak(sayOf(o)); }
+  else {
+    r.tries++; if (!r.missed.includes(o.w)) r.missed.push(o.w);
+    if (r.tries >= 3){ r.state = "reveal"; r.fb = "Here's the word. Look at each letter."; r.fbc = "bad"; speak(sayOf(o)); }
+    else { let k = 0; while (k < o.w.length && guess[k] === o.w[k]) k++;
+      r.fb = k ? `The first ${k} letter${k>1?"s are":" is"} right. ${3-r.tries} ${3-r.tries===1?"try":"tries"} left.` : `Not quite. ${3-r.tries} ${3-r.tries===1?"try":"tries"} left.`;
+      r.fbc = "bad"; r.slots = r.slots.slice(0,k); }
+  }
+  render();
+}
+function firstDiff(a, b){
+  let i = 0; while (i < a.length && i < b.length && a[i] === b[i]) i++;
+  return ["first","second","third","fourth","fifth","sixth"][i] || "next";
+}
+function parseProof(text){
+  let id = 0;
+  return text.split(/\n\s*\n/).map(p => {
+    const out = [];
+    p.split(/(\[[^\]]+\])/).forEach(part => {
+      const m = part.match(/^\[([^|\]]+)\|([^\]]+)\]$/);
+      if (m) { out.push({id:id++, tap:true, text:m[1], right:m[2]}); return; }
+      part.split(/(\s+)/).forEach(seg => {
+        if (!seg) return;
+        const mm = seg.match(/^([^A-Za-z']*)([A-Za-z']+)([^A-Za-z']*)$/);
+        if (mm){ if (mm[1]) out.push({text:mm[1]}); out.push({id:id++, tap:true, text:mm[2]}); if (mm[3]) out.push({text:mm[3]}); }
+        else out.push({text:seg});
+      });
+    });
+    return out;
+  });
+}
+function startTest(a){
+  const items = weekWords(S.cur);
+  run = {a, items, answers:[], checked:false, week:S.cur, passAt:Math.ceil(items.length*.8)};
+  go("play");
+}
+PLAY.pretest = PLAY.test;
+
+/* ---------------- boot ---------------- */
+const startView = (location.hash || "").replace("#","");
+go(VIEWS[startView] && startView !== "play" ? startView : "home");
+</script>
+</body>
+</html>
