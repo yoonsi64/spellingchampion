@@ -1,22 +1,45 @@
 # Spelling Champion
 
-A 30-week spelling practice app, built like Root Detective: one `index.html`, no build step.
+A 30-week spelling practice app for kids, built as the sister app of Root Detective. It has the same design, fonts, components and progress system. It is one `index.html` with no build step and works offline. The voice can play recorded MP3s from `audio/`.
 
 ## Pages
-- **Home**: this week's word box, what's up next, quick practice tiles
-- **Plan**: Monday–Friday plan for the current week, and all 30 weeks (tap one to make it current)
-- **Cards**: flashcards with position dots, flip, known, shuffle and "Next to flip"
-- **Practice**: Spell it, Build it, Rhyme time, Sound sort, ABC order, Proofread, plus the Pretest and Final test
-- **Progress**: passes per activity, best test score per week
-- **Review**: every word missed in any activity, with a practice round
+- **Home**: greeting from the trophy mascot, pills for 🔥 days in a row, ⭐ words mastered, 🏅 badges and 🔓 week reached, then one **Next up** card that follows the week's plan. Below that are this week's words (tap one to hear it) and the Practice tiles.
+- **Plan**: the Monday–Friday plan for the current week, with check marks, and all 30 weeks along a winding road. Tap a week to make it your week, open its flashcards or take its final test.
+- **Flashcards**: Root Detective's card. It has position dots, a 3D flip, swipe (the card and its Listen button move together), Back / Flip / Next, "I know this", Shuffle and "Next to flip". The front shows the word. The back shows the spelling pattern, the sentence and the letters.
+- **Daily review**: a 10-question quiz on the words due today (missed, weak or not practised lately), plus the list of every missed word with a "Practice these words" round.
+- **Activities**: Spell it, Build it, Rhyme time, Sound sort, ABC order, Proofread.
+- **Games**: Quiz (hear the word or read the sentence, then pick the right spelling), Match (word ↔ sentence with a blank), Memory (word ↔ sentence clue or rhyme) and Speed round (60 seconds of "Is this spelled right?").
+- **Tests**: the Pretest and the Final test for the current week.
+- **Progress**: name, streak, stats, passes per activity this week, tests by week, words that need work, 42 badges and a day-by-day history.
+
+Header: Sound on/off and Display options (text size, easier reading, calm mode, read-aloud buttons).
 
 ## Rules
-- Before a week's flashcards are all flipped, activities use all weeks.
-- After that, each activity sticks to the current week until it has been passed 3 times, then goes back to all weeks. The tiles say "Week N only" while the limit is on.
+- **Weeks unlock in order.** Week N+1 opens when week N's **Final test is passed with 80%** (20 of 25 for week 1). The pretest doesn't count.
+- **Flashcards first.** Each card counts once both of its sides have been seen. While nothing else can be practised (week 1), the activity tiles stay locked with a lock badge until every week 1 card is done.
+- Before a week's flashcards are done, activities use all unlocked weeks.
+- After that, each activity and game sticks to the current week until it has been **passed 3 times** with that week's words, then goes back to all weeks. A note above the activity shows the count.
 - Spell it, Build it and Proofread show the answer after 3 wrong tries.
+- Pass marks: Spell it 8/10, Build it 6/8, Quiz 8/10, Rhyme time and Sound sort 80%, ABC order 2 of 3 sets, Proofread 5 of 6, Match 2 misses or fewer, Memory 12 turns or fewer, Speed round 10 right.
+- A word is **mastered** after 3 or more first-try correct answers with 80% or better accuracy.
+- Weeks without words show as "coming soon" everywhere. The activities keep using the earlier weeks.
 
 ## Adding a week
-Fill in the week's entry in `WEEK_DATA` near the top of the script in `index.html`. The format is explained in the comment above it. Only `words` is required; Rhyme time, Sound sort and Proofread appear for a week once its `rhymes`, `sort` or `proof` is filled in.
+Fill in the week's entry in `WEEK_DATA` near the top of the script in `index.html`. The comment above it explains the format. Only `words` is required. Rhyme time, Sound sort and Proofread appear for a week once its `rhymes`, `sort` or `proof` is filled in. Misspellings written in a `proof` passage are also used as Quiz and Speed round options.
 
-## Voice
-Uses the browser's built-in voice. Recorded MP3s can be added later in `audio/` with an `audio/index.json` that maps each sentence to a file, the same way Root Detective does.
+## Voice and recorded audio
+All speech goes through Root Detective's `SPEAK` module, copied unchanged. A line plays from `audio/<key>.mp3` only if every piece of it is listed in `audio/index.json`. Otherwise the device voice reads it. A word's `say` field changes what the voice says, both alone and inside its sentence.
+
+To make recordings, open the app and run `ALL_LINES()` in the browser console. It returns `[text, kind]` for every text the app can speak. `kind` is `word` (one word said alone), `sent` (a sentence) or `other` (dictation, test lines, card backs, rhyme feedback). For each text, take `SPEAK.chunks(text)`, then save each chunk as `audio/${SPEAK.key(chunk)}.mp3` and add the key to `keys` in `audio/index.json`. `audio/silence.mp3` unlocks sound on iPad and iPhone.
+
+## Saving progress
+Progress is saved in this browser on this device, in `localStorage`:
+- `sc-history`: name and one record per day
+- `sc-state`: current week, known words, missed words
+- display, sound and badge keys
+
+Progress from the first version (`spellingchampion_v1`) is brought over automatically the first time the new version opens.
+
+## Credits
+- Font: URW Gothic © 2013–2015 (URW)++ Design & Development, used under the SIL Open Font License 1.1.
+- Design, components and the voice module come from Root Detective.
