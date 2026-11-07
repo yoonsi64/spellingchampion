@@ -973,6 +973,8 @@ html.calm .m-star,html.calm .m-spark{animation:none}
 .ptask:disabled{opacity:.55;cursor:default}
 .ptask{flex-wrap:wrap;row-gap:0}
 .ptask>span:nth-child(2){flex:1;min-width:0}
+.pcheck.plk{border-color:transparent;background:none;font-size:1rem;display:grid;place-items:center}
+.ptask.lk:disabled{opacity:.7}
 .ptask small{flex-basis:100%;padding-left:30px;font-size:.72rem;line-height:1.25;color:var(--muted);font-weight:600}
 .pcheck{flex:none;width:20px;height:20px;border-radius:6px;border:2px solid var(--line);display:grid;place-items:center;font-size:.75rem;color:#fff;line-height:1}
 .ptask.on .pcheck{background:var(--good);border-color:var(--good)}
@@ -2325,7 +2327,8 @@ function renderPlan(){
     <div class="pp-bar"><i style="width:${uw.length/NW*100}%"></i></div></div>`;
   h+=`<div class="routine"><div class="gtop"><h2>Week ${cur} plan</h2><span class="note">About 15 minutes a day</span></div>
     ${hasList(cur)?`<div class="days">${PLAN.map(day=>`<div class="day"><b>${day.d}</b>${day.tasks.map(([k,l])=>{const ok=taskAvailable(k),dn=taskDone(k);
-      return`<button type="button" class="ptask ${dn?'on':''}" data-task="${k}" ${ok?'':'disabled'}><span class="pcheck" aria-hidden="true">${dn?'✓':''}</span><span>${esc(l)}</span>${!ok?`<small>${modeLocked(k)?`🔒 ${weekStep()==='pre'?'after the pretest':weekStep()==='cards'?'after the flashcards':'opens with the final test'}`:'no sheet yet'}</small>`:''}</button>`}).join('')}</div>`).join('')}</div>
+      const lk=k==='test'?!finalOpen():k!=='pretest'&&k!=='cards'&&modeLocked(k);
+      return`<button type="button" class="ptask ${dn?'on':''} ${lk?'lk':''}" data-task="${k}" ${ok?'':'disabled'} ${lk?`aria-label="${esc(l)}, locked"`:''}><span class="pcheck ${lk?'plk':''}" aria-hidden="true">${dn?'✓':lk?'🔒':''}</span><span>${esc(l)}</span>${!ok&&!lk?'<small>no sheet yet</small>':''}</button>`}).join('')}</div>`).join('')}</div>
       <p class="note">Each week goes in steps: the pretest, then the flashcards, then Spell it, Build it, Rhyme time, Sound sort, ABC order, Proofread and Meanings (pass each 3 times). Then the final test opens, along with the other games. Pass it (80%) to open the next week.</p>`
     :`<p class="note">Week ${cur}'s words are coming soon. The plan appears here when they're ready.</p>`}</div>`;
   h+=`<div class="wmap simple" id="wmap"><svg class="wtrail" id="wtrail" aria-hidden="true"></svg>`;
