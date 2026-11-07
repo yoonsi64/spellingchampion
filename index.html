@@ -399,6 +399,35 @@ html.calm .memgo{animation:none}
   .btoast .medal{animation:none}
   .badge.on:hover .medal{transform:none}
 }
+.tshelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:10px 6px;padding:6px 4px}
+.wslot{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;padding-bottom:4px;border-bottom:5px solid color-mix(in srgb,#8A5530 45%,transparent);border-radius:0 0 3px 3px}
+.wslot small{font-size:.66rem;font-weight:700;color:var(--muted)}
+.wslot.gold small{color:#B07D00}.wslot.silver small{color:#6C757D}.wslot.bronze small{color:#A0522D}
+.wslot.soon{opacity:.35}.wslot.cur .wtro{filter:drop-shadow(0 0 4px color-mix(in srgb,var(--primary) 50%,transparent))}
+.wtro{width:44px;height:48px;overflow:visible}
+.wtro .tc{stroke:var(--line);stroke-width:2;stroke-linejoin:round;stroke-dasharray:3 2.5}
+.wtro .th{fill:none;stroke:var(--line);stroke-width:2.5;stroke-linecap:round}
+.wtro .tb{fill:var(--line)}
+.wtro text{font:800 8px var(--display);fill:var(--paper-ink);text-anchor:middle;dominant-baseline:central}
+.wtro.on .tc{stroke:rgba(0,0,0,.25);stroke-dasharray:none}.wtro.on .th{stroke:#C98A0B}.wtro.on .tb{fill:#7B1E3A}.wtro.on text{fill:#fff}
+.wtro .tpart{fill:none;stroke:var(--primary);stroke-width:3;stroke-linecap:round}
+.medal.tmed{width:56px;height:58px;display:grid;place-items:center}.medal.tmed .wtro{width:50px;height:54px}
+.stamps{display:flex;flex-wrap:wrap;gap:6px}
+.stamp2{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:99px;background:var(--bg);font-size:.85rem;font-weight:700;color:var(--muted)}
+.stamp2 i{font-style:normal;min-width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--card);border:2px dashed var(--line);font-size:.72rem}
+.stamp2.on{color:var(--good);background:var(--good-bg)}.stamp2.on i{background:var(--good);border:0;color:#fff;font-size:.9rem}
+.stamp2.fin i{border-style:solid}
+.bpips{display:flex;gap:4px;margin:2px 0}
+.bpips i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.bpips i.bronze{background:#C0703A}.bpips i.silver{background:#A5AEB7}.bpips i.gold{background:#F2B705}.bpips i.diamond{background:#15AABF}
+.badge .blv{font-weight:700}
+.hgoal{display:flex;align-items:center;gap:8px;margin-top:8px;padding:6px 12px 6px 6px;border:1.5px solid var(--line);border-radius:14px;background:var(--card);font:inherit;color:var(--ink);text-align:left;cursor:pointer;position:relative;overflow:hidden;max-width:100%}
+.hgoal span{display:flex;flex-direction:column;font-size:.85rem;line-height:1.25;min-width:0}
+.hgoal small{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hgoal>i{position:absolute;left:0;bottom:0;height:3px;width:var(--p);background:var(--good)}
+.hgoal .medal.sm{width:30px;height:31px}
+.tclose{border:0;background:none;font-size:1.5rem;line-height:1;color:var(--muted);padding:0 2px;cursor:pointer;align-self:flex-start}
+.btoast{touch-action:none;cursor:grab}
 .bcat{margin:6px 0 0;font-size:.8rem;font-weight:700;color:var(--muted)}
 .bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
 .badge{display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;padding:10px 8px;border-radius:12px;background:var(--bg);min-width:0}
@@ -2036,7 +2065,7 @@ const HOME_GAMES=[['cards','Flashcards'],['spell','Spell it'],['build','Build it
 function renderHome(){
   const days=HIST.days,run=currentRun(days),fw=frontierWeek(),cur=S.cur,W=WK(cur),st=wordStats();
   const words=uniqWords(avail()),mastered=words.filter(o=>isMastered(st[o.w])).length;
-  const nb=earnedBadges().ids.length,hr=new Date().getHours(),hello=hr<12?'Good morning':hr<18?'Good afternoon':'Good evening';
+  const nb=badgeCount(),goal=nextGoal(),hr=new Date().getHours(),hello=hr<12?'Good morning':hr<18?'Good afternoon':'Good evening';
   const g=fcGate(),nt=nextTask(),picks=reviewPick(10),revDone=((HIST.days[dayKey()]||{}).review||0)>0,th=testHist();
   let next;
   if(weekPassed(cur,th)&&fw>cur){next=`<div class="hnext ready"><p class="hkick">🔓 Next up</p><h3>Week ${fw} is unlocked!</h3>
@@ -2066,8 +2095,9 @@ function renderHome(){
     <div class="hhero">${MASCOT}<div class="hh-text"><p class="hhello">${hello}, <b>${HIST.name?esc(HIST.name):'champion'}</b>!</p>
       <div class="hpills"><span class="hpill ${run?'':'off'}" title="Days in a row">🔥 ${plural(run,'day')}</span>
         <span class="hpill" title="Words mastered">⭐ ${mastered}/${words.length} mastered</span>
-        <button class="hpill" id="homeBadges" title="See your badges">🏅 ${plural(nb,'badge')}</button>
-        <span class="hpill" title="Weeks unlocked">🔓 Week ${fw} of ${NW}</span></div></div></div>
+        <button class="hpill" id="homeBadges" title="See your trophies and badges">🏆 ${plural(nb,'award')}</button>
+        <span class="hpill" title="Weeks unlocked">🔓 Week ${fw} of ${NW}</span></div>
+      ${goal?`<button type="button" class="hgoal" id="homeGoal">${medal(goal.b,null,true)}<span><small>Next badge</small>${esc(goalText(goal))}</span><i style="--p:${Math.round(goal.frac*100)}%"></i></button>`:''}</div></div>
     ${next}
     ${hasList(cur)?`<div class="hweek"><div class="gtop"><p class="hkick" style="margin:0">Week ${cur} · ${esc(W.title)}</p><span class="note">Tap a word to hear it</span></div>
       <div class="wbox">${W.words.map(x=>`<button type="button" class="wchip" data-say="${esc(sayOf(x))}">${esc(x.w)}</button>`).join('')}</div>
@@ -2079,6 +2109,7 @@ function renderHome(){
   if(q('homeNewWeek'))q('homeNewWeek').onclick=()=>{setCur(fw);renderHome();updateFcTabs()};
   if(q('homeReview'))q('homeReview').onclick=()=>{setMode('review',true);startQuiz(picks.map(x=>x.o),{review:true});scrollTo({top:0})};
   if(q('homePlan'))q('homePlan').onclick=()=>{setMode('plan');scrollTo({top:0})};
+  if(q('homeGoal'))q('homeGoal').onclick=()=>q('homeBadges').click();
   q('homeBadges').onclick=()=>{setMode('progress');setTimeout(()=>{const b=$('badgeSec');if(b)b.scrollIntoView({block:'start'})},50)};
   $('homeBody').querySelectorAll('[data-task]').forEach(b=>b.onclick=()=>startTask(b.dataset.task));
 }
@@ -2252,7 +2283,7 @@ document.addEventListener('keyup',e=>{if(mode==='cards'&&(e.key===' '||e.code===
 /* ---------- End of a round: score, stars, the 3-passes count ---------- */
 function roundEnd(a,o){
   const counts=o.pass&&countsFor(a);
-  rec(d=>{const x=sub(sub(d,'act'),a);bump(x,'r');if(o.pass)bump(x,'p');x.best=Math.max(x.best||0,o.score);bump(sub(sub(d,'wkr'),S.cur),a);if(counts)bump(sub(sub(d,'actr'),S.cur),a);if(o.rec)o.rec(d,x)});
+  rec(d=>{const x=sub(sub(d,'act'),a);bump(x,'r');if(o.pass)bump(x,'p');if(o.total&&o.score>=o.total)bump(x,'pf');x.best=Math.max(x.best||0,o.score);bump(sub(sub(d,'wkr'),S.cur),a);if(counts)bump(sub(sub(d,'actr'),S.cur),a);if(o.rec)o.rec(d,x)});
   (o.missed||[]).forEach(addMissed);
   const now=passCount(a,S.cur);
   if(counts&&now===3)setTimeout(()=>rtoast('🎯',`${ACTS[a].name} passed 3 times!`,'It now mixes in all your weeks.'),700);
@@ -2882,116 +2913,119 @@ function renderProgress(){
 }
 
 /* ---------- Badges: computed from the history, so they never disagree with it ---------- */
-function badgeVals(){
-  const days=HIST.days,all=Object.values(days),v={},st=wordStats(),th=testHist();
-  const sumAct=(a,k)=>all.reduce((s,d)=>s+(((d.act||{})[a]||{})[k]||0),0),maxAct=(a,k)=>all.reduce((m,d)=>Math.max(m,((d.act||{})[a]||{})[k]||0),0),minAct=(a,k)=>all.reduce((m,d)=>{const x=((d.act||{})[a]||{})[k];return x?Math.min(m,x):m},Infinity);
-  v.days=all.filter(activeDay).length;v.run=bestRun(days);v.min=Math.round(all.reduce((s,d)=>s+(d.min||0),0));v.name=HIST.name?1:0;
-  v.answered=all.reduce((s,d)=>s+((d.ans||{}).t||0),0);v.reviews=all.filter(d=>d.review).length;
-  v.quizBest=maxAct('quiz','best');v.quizRounds=sumAct('quiz','r');
-  v.spellBest=maxAct('spell','best');
-  v.built=sumAct('build','r');v.rhymePerfect=all.some(d=>((d.act||{}).rhyme||{}).best>=15)?1:0;v.sortPerfect=sumAct('sort','perfect');v.abcPerfect=sumAct('abc','perfect');v.proofPerfect=sumAct('proof','perfect');
-  v.matchPerfect=sumAct('match','perfect');v.matchFast=minAct('match','fast');v.memFew=minAct('memory','fewest');v.speedBest=maxAct('speed','best');
-  {const k=new Set();all.forEach(d=>{for(const a in d.act||{})if(d.act[a].p&&ACTS[a])k.add(a)});v.kinds=k.size}
-  v.hat=Object.keys(ACTS).some(a=>WEEKS.some(W=>passCount(a,W.n)>=3))?1:0;
-  {const {f,b}=fcSides();v.both=[...f].filter(i=>b.has(i)).length;v.fcWeeks=WEEKS.filter(W=>W.words.length&&fcGate(W.n).ok).length}
-  v.mastered=Object.keys(st).filter(w=>isMastered(st[w])).length;
-  v.weekDone=WEEKS.filter(W=>W.words.length&&W.words.every(o=>isMastered(st[o.w]))).length;
-  v.known=Object.values(S.known).reduce((s,a)=>s+a.length,0);
-  v.pre=Object.values(th).filter(h=>h.pre).length;v.fin=Object.values(th).filter(h=>h.fin).length;
-  v.passed=WEEKS.filter(W=>weekPassed(W.n,th)).length;
-  v.perfectTest=Object.values(th).some(h=>h.fin&&h.fin.best>=h.fin.total)?1:0;
-  v.firstTry=Object.values(th).filter(h=>h.fin&&h.fin.first>=passMark(h.fin.total)).length;
+/* ---------- Trophies and badges ----------
+   1. a trophy for each week's final test: bronze (passed), silver (90%+ or passed on the first try), gold (every word right)
+   2. step stamps on each week: pretest, flashcards, then each required activity passed 3 times
+   3. one skill badge per activity that levels up bronze → silver → gold
+   4. growth: beat your pretest (Growth Spurt), spell a word right after missing it (Comeback)
+   5. one streak: Daily review days in a row
+   Everything is worked out from the saved history, so earlier progress counts. */
+const TIERS=['bronze','silver','gold','diamond'],TIERNAME={bronze:'Bronze',silver:'Silver',gold:'Gold',diamond:'Diamond'};
+function weekTrophy(n,th=testHist()){const h=th[n];if(!h||!h.fin||!weekPassed(n,th))return null;const f=h.fin,pm=passMark(f.total);
+  return f.best>=f.total?'gold':(f.best>=Math.ceil(f.total*.9)||f.first>=pm)?'silver':'bronze'}
+function weekStamps(n){const h=testHist()[n]||{};return[{k:'pre',name:'Pretest',on:!!h.pre},{k:'cards',name:'Flashcards',on:flashDone(n)},...finalReqs(n).map(r=>({k:r.a,name:r.name,on:r.n>=3,n:r.n}))]}
+const SKILLS=[
+ {id:'spell',name:'Spelling Bee',emo:'🐝',unit:'Spell it rounds with every word right'},
+ {id:'build',name:'Word Builder',emo:'🧱',unit:'Build it rounds with every word right'},
+ {id:'rhyme',name:'Rhyme Star',emo:'🎵',unit:'Rhyme time rounds with no misses'},
+ {id:'sort',name:'Super Sorter',emo:'📦',unit:'Sound sorts with no misses'},
+ {id:'abc',name:'ABC Ace',emo:'🔤',unit:'ABC order rounds with no slips'},
+ {id:'proof',name:'Eagle Eye',emo:'🦅',unit:'Proofreads with no wrong taps'},
+ {id:'meaning',name:'Meaning Master',emo:'📖',unit:'Meanings rounds with every answer right'},
+ {id:'quiz',name:'Quiz Whiz',emo:'🌟',unit:'Quizzes with every answer right'},
+ {id:'match',name:'Perfect Match',emo:'🎯',unit:'Match rounds with no misses'},
+ {id:'memory',name:'Sharp Memory',emo:'🐘',unit:'Memory games passed',key:'p',lv:[3,10,25]},
+ {id:'speed',name:'Lightning Brain',emo:'⚡',unit:'right in one Speed round (best)',best:1,lv:[15,20,25]}];
+const LV=[1,5,15];
+function badgeStats(){const days=HIST.days,ks=Object.keys(days).sort(),all=ks.map(k=>days[k]),th=testHist(),v={};
+  const sumA=(a,k)=>all.reduce((s,d)=>s+(((d.act||{})[a]||{})[k]||0),0),maxA=(a,k)=>all.reduce((m,d)=>Math.max(m,((d.act||{})[a]||{})[k]||0),0);
+  SKILLS.forEach(sk=>{v['skill_'+sk.id]=sk.best?maxA(sk.id,'best'):sk.key?sumA(sk.id,sk.key):Math.max(sumA(sk.id,'pf'),sumA(sk.id,'perfect'))});
   v.growth=Math.max(0,...Object.values(th).filter(h=>h.pre&&h.fin).map(h=>h.fin.best-h.pre.first));
-  return v;
-}
-const BADGES=[
- {id:'name',name:'Name Tag',desc:'Save your name',cat:'start',val:v=>v.name,n:1},
- {id:'first',name:'First Practice',desc:'Practice on your first day',cat:'start',val:v=>v.days,n:1},
- {id:'fcwk',name:'Card Ready',desc:'Study both sides of every card in a week',cat:'start',val:v=>v.fcWeeks,n:1},
- {id:'pre1',name:'Warmed Up',desc:'Take a pretest',cat:'plan',val:v=>v.pre,n:1},
- {id:'fin1',name:'Test Taker',desc:'Take a final test',cat:'plan',val:v=>v.fin,n:1},
- {id:'pass1',name:'Week Champion',desc:'Pass a final test (80% or better)',cat:'plan',val:v=>v.passed,n:1},
- {id:'first1',name:'Nailed It',desc:'Pass a final test on your first try',cat:'plan',val:v=>v.firstTry,n:1},
- {id:'perfect',name:'Perfect Paper',desc:'Spell every word right on a final test',cat:'plan',val:v=>v.perfectTest,n:1},
- {id:'grow5',name:'Growth Spurt',desc:'Beat your pretest by 5 words on the final test',cat:'plan',val:v=>v.growth,n:5,best:1},
- {id:'pass5',name:'Trailblazer',desc:'Pass 5 final tests',cat:'plan',val:v=>v.passed,n:5},
- {id:'pass15',name:'Halfway Hero',desc:'Pass 15 final tests',cat:'plan',val:v=>v.passed,n:15},
- {id:'pass30',name:'Spelling Champion',desc:'Pass all 30 final tests',cat:'plan',val:v=>v.passed,n:30},
- {id:'run3',name:'On a Roll',desc:'Practice 3 days in a row',cat:'streak',val:v=>v.run,n:3},
- {id:'run5',name:'Five Alive',desc:'Practice 5 days in a row',cat:'streak',val:v=>v.run,n:5},
- {id:'run10',name:'Unstoppable',desc:'Practice 10 days in a row',cat:'streak',val:v=>v.run,n:10},
- {id:'days10',name:'Regular',desc:'Practice on 10 different days',cat:'streak',val:v=>v.days,n:10},
- {id:'days30',name:'Season Speller',desc:'Practice on 30 different days',cat:'streak',val:v=>v.days,n:30},
- {id:'min60',name:'Hour of Words',desc:'Practice for 60 minutes in all',cat:'streak',val:v=>v.min,n:60},
- {id:'rev5',name:'Review Regular',desc:'Do the Daily review on 5 days',cat:'streak',val:v=>v.reviews,n:5},
- {id:'ans100',name:'Word Crusher',desc:'Answer 100 questions',cat:'quiz',val:v=>v.answered,n:100},
- {id:'ans500',name:'Answer Machine',desc:'Answer 500 questions',cat:'quiz',val:v=>v.answered,n:500},
- {id:'quiz10',name:'Perfect Quiz',desc:'Score 10 out of 10 on a quiz',cat:'quiz',val:v=>v.quizBest,n:10,best:1},
- {id:'quizr10',name:'Quiz Regular',desc:'Finish 10 quiz rounds',cat:'quiz',val:v=>v.quizRounds,n:10},
- {id:'hat',name:'Hat Trick',desc:'Pass one activity 3 times with a week\'s words',cat:'games',val:v=>v.hat,n:1},
- {id:'explore',name:'Explorer',desc:'Pass every kind of activity at least once',cat:'games',val:v=>v.kinds,n:Object.keys(ACTS).length},
- {id:'spellp',name:'Spelling Bee',desc:'Score 10 out of 10 in Spell it',cat:'games',val:v=>v.spellBest,n:10,best:1},
- {id:'build10',name:'Word Builder',desc:'Finish 10 Build it rounds',cat:'games',val:v=>v.built,n:10},
- {id:'sortp',name:'Super Sorter',desc:'Finish a Sound sort with no misses',cat:'games',val:v=>v.sortPerfect,n:1},
- {id:'abcp',name:'ABC Ace',desc:'Put every ABC order set in order with no slips',cat:'games',val:v=>v.abcPerfect,n:1},
- {id:'proofp',name:'Eagle Eye',desc:'Fix every misspelling with no wrong taps',cat:'games',val:v=>v.proofPerfect,n:1},
- {id:'mperf',name:'Flawless Match',desc:'Finish a Match round with no misses',cat:'games',val:v=>v.matchPerfect,n:1},
- {id:'mfast',name:'Lightning Matcher',desc:'Finish a Match round in 30 seconds or less',cat:'games',val:v=>v.matchFast<=30?1:0,n:1},
- {id:'mem',name:'Sharp Memory',desc:'Finish Memory in 9 turns or fewer',cat:'games',val:v=>v.memFew<=9?1:0,n:1},
- {id:'speed15',name:'Quick Thinker',desc:'Get 15 right in one Speed round',cat:'games',val:v=>v.speedBest,n:15,best:1},
- {id:'speed25',name:'Lightning Brain',desc:'Get 25 right in one Speed round',cat:'games',val:v=>v.speedBest,n:25,best:1},
- {id:'both25',name:'Flip Side',desc:'Study 25 flashcards on both sides',cat:'cards',val:v=>v.both,n:25},
- {id:'both100',name:'Card Collector',desc:'Study 100 flashcards on both sides',cat:'cards',val:v=>v.both,n:100},
- {id:'known10',name:'I Know These',desc:'Mark 10 words "I know this"',cat:'cards',val:v=>v.known,n:10},
- {id:'mast10',name:'Word Rookie',desc:'Master 10 words',cat:'cards',val:v=>v.mastered,n:10},
- {id:'mast50',name:'Word Ranger',desc:'Master 50 words',cat:'cards',val:v=>v.mastered,n:50},
- {id:'mast200',name:'Word Royalty',desc:'Master 200 words',cat:'cards',val:v=>v.mastered,n:200},
- {id:'week',name:'Week Wrapped',desc:'Master every list word in one week',cat:'cards',val:v=>v.weekDone,n:1}
-];
-const BCAT={start:'Getting started',plan:'Tests and weeks',streak:'Practice habits',quiz:'Quiz',games:'Games',cards:'Words'};
-function earnedBadges(){const v=badgeVals();return{v,ids:BADGES.filter(b=>b.val(v)>=b.n).map(b=>b.id)}}
-/* Badge art (from Root Detective): each category has its own shape and colors; locked badges are grey outlines with a lock */
+  {const missed=new Set(),back=new Set();all.forEach(d=>{Object.keys(d.right||{}).forEach(w=>{if(missed.has(w))back.add(w)});Object.keys(d.miss||{}).forEach(w=>missed.add(w))});v.comeback=back.size}
+  {let best=0,run=0,prev=null;ks.forEach(k=>{if(!days[k].review)return;const t=new Date(k+'T12:00:00');run=prev&&Math.round((t-prev)/864e5)===1?run+1:1;prev=t;best=Math.max(best,run)});v.revRun=best}
+  return v}
+/* every badge with levels: {id, name, emo, cat, unit, lv:[...], val} */
+function badgeList(){const v=badgeStats();
+  return[...SKILLS.map(sk=>({id:'skill_'+sk.id,name:sk.name,emo:sk.emo,cat:'games',unit:sk.unit,lv:sk.lv||LV,val:v['skill_'+sk.id],best:sk.best})),
+    {id:'growth',name:'Growth Spurt',emo:'📈',cat:'plan',unit:'more words on a final test than on its pretest',lv:[5,10,15],val:v.growth,best:1},
+    {id:'comeback',name:'Comeback',emo:'💪',cat:'cards',unit:'words spelled right after missing them',lv:[5,20,50],val:v.comeback},
+    {id:'revrun',name:'Daily Reviewer',emo:'☀️',cat:'streak',unit:'Daily reviews in a row',lv:[3,7,14,30],val:v.revRun,best:1}]}
+const levelOf=b=>b.lv.filter(x=>b.val>=x).length;
+/* everything earned so far, as ids like "trophy-3-gold" or "growth-2" (used for the pop-ups and the count) */
+function earnedBadges(){const th=testHist(),ids=[];WEEKS.forEach(W=>{const t=weekTrophy(W.n,th);if(t)TIERS.slice(0,TIERS.indexOf(t)+1).forEach(x=>ids.push(`trophy-${W.n}-${x}`))});
+  const list=badgeList();list.forEach(b=>{for(let i=1;i<=levelOf(b);i++)ids.push(`${b.id}-${i}`)});return{ids,list}}
+const badgeCount=()=>{const th=testHist();return WEEKS.filter(W=>weekTrophy(W.n,th)).length+badgeList().reduce((s,b)=>s+levelOf(b),0)};
+/* the nearest badge level not reached yet */
+function nextGoal(){let best=null;badgeList().forEach(b=>{const L=levelOf(b);if(L>=b.lv.length)return;const need=b.lv[L],have=b.val||0,frac=have/need;
+  if(!best||frac>best.frac)best={b,L,need,have,frac}});return best}
+const ONE={rounds:'round',sorts:'sort',Proofreads:'Proofread',Quizzes:'Quiz',games:'game',words:'word',reviews:'review'};
+const unitFor=(b,n)=>{const u=b.unit.replace(/ \(best\)$/,'');return n===1?u.replace(/\b(rounds|sorts|Proofreads|Quizzes|games|words|reviews)\b/,m=>ONE[m]):u};
+const goalText=g=>{const t=TIERS[g.L],left=g.need-g.have;return g.b.best?`Get ${g.need} ${unitFor(g.b,g.need)} for ${TIERNAME[t]} ${g.b.name}`:`${left} more ${unitFor(g.b,left)} for ${TIERNAME[t]} ${g.b.name}`};
+/* Badge art: the shape shows the kind of badge, the colour shows the level */
 const BSHAPE=(()=>{const poly=(n,r1,r2,cy,rot=0)=>{const pts=[];for(let i=0;i<n*(r2?2:1);i++){const a=rot+i*Math.PI/(r2?n:n/2),r=r2&&i%2?r2:r1;pts.push((32+r*Math.sin(a)).toFixed(1)+','+(cy-r*Math.cos(a)).toFixed(1))}return`<polygon points="${pts.join(' ')}"`};
-  return{start:poly(5,28,14,32),streak:poly(12,26,22.5,30),quiz:poly(6,26,0,30,Math.PI/6),games:'<path d="M32 4 54 11v19c0 14-10 23-22 28C20 53 10 44 10 30V11z"',cards:'<rect x="12" y="5" width="40" height="50" rx="7" transform="rotate(-6 32 30)"',plan:'<circle cx="32" cy="30" r="26"'}})();
-const BGRAD={start:['#FFE066','#F59F00'],plan:['#63E6BE','#0B7285'],streak:['#FFA94D','#E8590C'],quiz:['#74C0FC','#1C7ED6'],games:['#FAA2C1','#D6336C'],cards:['#8CE99A','#2B8A3E']};
+  return{streak:poly(12,26,22.5,30),games:'<path d="M32 4 54 11v19c0 14-10 23-22 28C20 53 10 44 10 30V11z"',cards:'<rect x="12" y="5" width="40" height="50" rx="7" transform="rotate(-6 32 30)"',plan:'<circle cx="32" cy="30" r="26"'}})();
+const BGRAD={bronze:['#F7C08A','#B4622D'],silver:['#F1F3F5','#8F99A3'],gold:['#FFE066','#E8A200'],diamond:['#C5F6FA','#1098AD']};
 (()=>{const g=Object.entries(BGRAD).map(([k,[a,b]])=>`<linearGradient id="bg-${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>`).join('');
   const d=document.createElement('div');d.setAttribute('aria-hidden','true');d.style.cssText='position:absolute;width:0;height:0;overflow:hidden';
-  d.innerHTML=`<svg width="0" height="0"><defs>${g}<linearGradient id="bg-rib" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4263EB"/><stop offset="1" stop-color="#9C2B4C"/></linearGradient></defs></svg>`;
+  d.innerHTML=`<svg width="0" height="0"><defs>${g}<linearGradient id="bg-rib" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9C2B4C"/><stop offset="1" stop-color="#5E1730"/></linearGradient></defs></svg>`;
   document.body.appendChild(d)})();
-const BEMO={name:['👋'],first:['✏️'],fcwk:['🗃️'],pre1:['📝'],fin1:['✅'],pass1:['🏆','1'],first1:['🎯','1st'],perfect:['💯'],grow5:['📈','+5'],pass5:['🥾','5'],pass15:['⛰️','15'],pass30:['👑','30'],
-  run3:['🔥','3'],run5:['🔥','5'],run10:['🚀','10'],days10:['📅','10'],days30:['🗓️','30'],min60:['⏰','60m'],rev5:['☀️','5'],
-  ans100:['💪','100'],ans500:['🤖','500'],quiz10:['🌟','10/10'],quizr10:['📝','10'],
-  hat:['🎩','3x'],explore:['🧭'],spellp:['🐝'],build10:['🧱','10'],sortp:['📦'],abcp:['🔤'],proofp:['🦅'],mperf:['🎯'],mfast:['⚡','30s'],mem:['🐘'],speed15:['🏃','15'],speed25:['🌩️','25'],
-  both25:['🔄','25'],both100:['🗂️','100'],known10:['✔️','10'],mast10:['🌱','10'],mast50:['🌳','50'],mast200:['🏰','200'],week:['🎁']};
-function medal(b,on,small){const sh=BSHAPE[b.cat]||BSHAPE.quiz,cy=b.cat==='start'?33:30,[emo,tag]=BEMO[b.id]||['★'],hasTag=tag&&!small,ey=hasTag?cy-4:cy+1,tw=tag?Math.max(16,[...tag].length*6.2+8):0;
+function medal(b,tier,small){const on=!!tier,sh=BSHAPE[b.cat]||BSHAPE.games,cy=30,emo=b.emo||'★';
   const inner=`<g transform="translate(32 ${cy}) scale(.76) translate(-32 -${cy})">${sh} class="bring"/></g>`;
   const rib=on&&!small?`<path class="brib" d="M21 40 14 62l7-4 4 5 6-19z"/><path class="brib" d="M43 40l7 22-7-4-4 5-6-19z"/>`:'';
   const lock=on||small?'':`<g class="block"><circle cx="53" cy="12" r="9"/><rect x="48.8" y="11.2" width="8.4" height="6.4" rx="1.4"/><path d="M50.7 11.2V9a2.3 2.3 0 0 1 4.6 0v2.2"/></g>`;
   const glint=on?`<ellipse class="bglint" cx="24" cy="${cy-12}" rx="8" ry="3.5" transform="rotate(-35 24 ${cy-12})"/>`:'';
-  return`<span class="medal ${on?'on':''} ${small?'sm':''}" aria-hidden="true"><svg viewBox="0 0 64 66">${rib}${on?`<g transform="translate(0 2.5)">${sh} class="bshadow"/></g>`:''}${sh} class="bs" ${on?`style="fill:url(#bg-${b.cat})"`:''}/>${inner}${glint}<text x="32" y="${ey}" class="be" font-size="${small?30:hasTag?22:26}">${emo}</text>${hasTag?`<g class="btag"><rect x="${32-tw/2}" y="${cy+8.5}" width="${tw}" height="12" rx="6"/><text x="32" y="${cy+14.8}">${esc(tag)}</text></g>`:''}${lock}</svg></span>`}
-function badgesHTML(){
-  const {v,ids}=earnedBadges(),got=new Set(ids),cats=[...new Set(BADGES.map(b=>b.cat))];
-  return`<section class="sblock"><div class="gtop"><p class="plabel" style="margin:0">Badges</p><span class="note"><b>${ids.length}</b> of ${BADGES.length} earned</span></div>
-    ${cats.map(c=>`<p class="bcat">${BCAT[c]}</p><div class="bgrid">${BADGES.filter(b=>b.cat===c).map(b=>{const on=got.has(b.id),val=b.val(v);
-      const prog=on?'Earned':b.best?(val?`Best so far: ${val}`:'Not yet'):`${Math.min(val,b.n)} / ${b.n}`;
-      const p=on?100:Math.round(100*Math.min(val,b.n)/b.n);
-      return`<div class="badge ${on?'on':''}" title="${esc(b.desc)}">${medal(b,on)}<b>${esc(b.name)}</b><small>${esc(b.desc)}</small>${on?'<em>Earned!</em>':`<div class="bprog"><i style="width:${p}%"></i></div><small class="bp">${esc(prog)}</small>`}</div>`}).join('')}</div>`).join('')}
-  </section>`;
-}
-/* new-badge toast */
-let BSEEN=new Set(store.get('sc-badges-seen',null)||[]);
-if(!store.get('sc-badges-init',false)){earnedBadges().ids.forEach(i=>BSEEN.add(i));store.set('sc-badges-seen',[...BSEEN]);store.set('sc-badges-init',true)}
+  return`<span class="medal ${on?'on':''} ${small?'sm':''}" aria-hidden="true"><svg viewBox="0 0 64 66">${rib}${on?`<g transform="translate(0 2.5)">${sh} class="bshadow"/></g>`:''}${sh} class="bs" ${on?`style="fill:url(#bg-${tier})"`:''}/>${inner}${glint}<text x="32" y="${cy+1}" class="be" font-size="${small?30:26}">${emo}</text>${lock}</svg></span>`}
+/* a little trophy for each week, coloured by its level; an unfinished week is drawn as an outline */
+function trophyArt(tier,n,part){const f=tier?`url(#bg-${tier})`:'none',k=tier?'on':part?'part':'';
+  return`<svg class="wtro ${k}" viewBox="0 0 48 52" aria-hidden="true"><path class="tc" d="M12 6h24v9c0 9-5.5 15-12 15S12 24 12 15z" style="fill:${f}"/><path class="th" d="M12 10H6c0 6 3 9 7 9M36 10h6c0 6-3 9-7 9"/><path class="tc" d="M21 30h6v7h-6z" style="fill:${f}"/><rect class="tb" x="13" y="37" width="22" height="9" rx="2"/><text x="24" y="42.2">${n}</text>${part?`<path class="tpart" d="M12 15c0 9 5.5 15 12 15s12-6 12-15" style="stroke-dasharray:${Math.round(part*60)} 60"/>`:''}</svg>`}
+function badgesHTML(){const th=testHist(),{list}=earnedBadges(),cur=S.cur;
+  const shown=WEEKS.filter(W=>W.words.length),more=NW-shown.length;
+  const weeks=shown.map(W=>{const t=weekTrophy(W.n,th),has=W.words.length>0,st=has&&!t&&isUnlocked(W.n)?weekStamps(W.n):null,part=st?st.filter(x=>x.on).length/(st.length+1):0;
+    return`<div class="wslot ${t||''} ${has?'':'soon'} ${W.n===cur?'cur':''}" title="Week ${W.n}${t?`: ${TIERNAME[t]} trophy`:has?'':' (coming soon)'}">${trophyArt(t,W.n,part)}<small>${t?TIERNAME[t]:has?(st?`${Math.round(part*100)}%`:'locked'):'soon'}</small></div>`}).join('');
+  const stamps=hasList(cur)&&!weekTrophy(cur,th)?weekStamps(cur):null;
+  return`<section class="sblock"><div class="gtop"><p class="plabel" style="margin:0">Trophy shelf</p><span class="note"><b>${WEEKS.filter(W=>weekTrophy(W.n,th)).length}</b> of ${WEEKS.filter(W=>W.words.length).length} weeks</span></div>
+      <p class="note" style="margin:0">Pass a week's final test for <b>Bronze</b>. 90% or a first-try pass makes it <b>Silver</b>, and every word right makes it <b>Gold</b>.</p>
+      <div class="tshelf">${weeks}${more?`<div class="wslot soon" title="Weeks still to come">${trophyArt(null,'…')}<small>${more} more</small></div>`:''}</div>
+      ${stamps?`<p class="plabel" style="margin:6px 0 0">Week ${cur} steps</p><div class="stamps">${stamps.map(x=>`<span class="stamp2 ${x.on?'on':''}"><i aria-hidden="true">${x.on?'✓':x.n!=null?x.n+'/3':'·'}</i>${esc(x.name)}</span>`).join('')}<span class="stamp2 fin"><i aria-hidden="true">🏆</i>Final test</span></div>`:''}
+    </section>
+    <section class="sblock"><div class="gtop"><p class="plabel" style="margin:0">Badges</p><span class="note">Each one levels up: Bronze → Silver → Gold</span></div>
+      <div class="bgrid">${list.map(b=>{const L=levelOf(b),t=L?TIERS[L-1]:null,next=b.lv[L],prev=L?b.lv[L-1]:0;
+        const p=next?Math.round(100*Math.max(0,Math.min((b.val||0)-0,next))/next):100;
+        return`<div class="badge ${t?'on':''}" title="${esc(b.name)}">${medal(b,t)}<b>${esc(b.name)}</b><small class="blv">${t?`${TIERNAME[t]}`:'Not yet'}</small>
+          <span class="bpips" aria-label="Level ${L} of ${b.lv.length}">${b.lv.map((x,i)=>`<i class="${i<L?TIERS[i]:''}"></i>`).join('')}</span>
+          ${next?`<div class="bprog"><i style="width:${p}%"></i></div><small class="bp">${b.best?`Best ${b.val||0} · ${TIERNAME[TIERS[L]]} at ${next}`:`${b.val||0} / ${next} ${esc(unitFor(b,next))}`}</small>`:`<em>Top level!</em>`}</div>`}).join('')}</div>
+    </section>`}
+/* new trophy / badge pop-up */
+let BSEEN=new Set(store.get('sc-badges2-seen',null)||[]);
+if(!store.get('sc-badges2-init',false)){earnedBadges().ids.forEach(i=>BSEEN.add(i));store.set('sc-badges2-seen',[...BSEEN]);store.set('sc-badges2-init',true)}
 let badgeTimer=null,badgeQueue=[],badgeShowing=false;
 function checkBadges(){clearTimeout(badgeTimer);badgeTimer=setTimeout(()=>{
   const {ids}=earnedBadges(),fresh=ids.filter(i=>!BSEEN.has(i));if(!fresh.length)return;
-  fresh.forEach(i=>BSEEN.add(i));store.set('sc-badges-seen',[...BSEEN]);badgeQueue.push(...fresh);showNextBadge()},900)}
-function showNextBadge(){if(badgeShowing||!badgeQueue.length)return;badgeShowing=true;
-  const id=badgeQueue.shift(),b=BADGES.find(x=>x.id===id);if(!b){badgeShowing=false;return}const t=$('badgeToast');
-  t.innerHTML=`${medal(b,true)}<div><small>New badge!</small><b>${esc(b.name)}</b><span>${esc(b.desc)}</span></div><button class="btn small" id="badgeSee">See badges</button>`;
-  t.hidden=false;t.classList.remove('in');void t.offsetWidth;t.classList.add('in');
+  fresh.forEach(i=>BSEEN.add(i));store.set('sc-badges2-seen',[...BSEEN]);
+  /* one pop-up per thing: only the highest new level of each trophy or badge */
+  const top={};fresh.forEach(i=>{const m=i.match(/^(trophy-\d+|[a-z_]+)-(\w+)$/);if(m)top[m[1]]=i});badgeQueue.push(...Object.values(top));showNextBadge()},900)}
+function badgeInfo(id){let m=id.match(/^trophy-(\d+)-(\w+)$/);
+  if(m){const n=+m[1],t=m[2];return{art:`<span class="medal on tmed">${trophyArt(t,n)}</span>`,kick:'New trophy!',title:`${TIERNAME[t]} trophy, week ${n}`,sub:t==='gold'?'Every word right on the final test!':t==='silver'?'A great final test!':'You passed the final test!'}}
+  m=id.match(/^(.+)-(\d+)$/);const b=m&&badgeList().find(x=>x.id===m[1]);if(!b)return null;const L=+m[2],t=TIERS[L-1];
+  return{art:medal(b,t),kick:L>1?'Level up!':'New badge!',title:`${TIERNAME[t]} ${b.name}`,sub:`${b.lv[L-1]} ${unitFor(b,b.lv[L-1])}`}}
+function showNextBadge(){if(badgeShowing||!badgeQueue.length)return;
+  const info=badgeInfo(badgeQueue.shift());if(!info)return showNextBadge();badgeShowing=true;const t=$('badgeToast');
+  t.innerHTML=`${info.art}<div><small>${esc(info.kick)}</small><b>${esc(info.title)}</b><span>${esc(info.sub)}</span></div><button class="btn small" id="badgeSee">See all</button><button type="button" class="tclose" id="badgeX" aria-label="Close">×</button>`;
+  t.hidden=false;t.style.transform='';t.style.opacity='';t.classList.remove('in');void t.offsetWidth;t.classList.add('in');
   FX.shower();FX.play('win');
-  $('badgeSee').onclick=()=>{t.hidden=true;badgeShowing=false;badgeQueue=[];setMode('progress');setTimeout(()=>{const s=$('badgeSec');if(s)s.scrollIntoView({block:'start'})},50)};
-  clearTimeout(t._t);t._t=setTimeout(()=>{t.hidden=true;badgeShowing=false;showNextBadge()},4200)}
+  const done=()=>{clearTimeout(t._t);t.hidden=true;badgeShowing=false;showNextBadge()};
+  $('badgeSee').onclick=()=>{clearTimeout(t._t);t.hidden=true;badgeShowing=false;badgeQueue=[];setMode('progress');setTimeout(()=>{const s=$('badgeSec');if(s)s.scrollIntoView({block:'start'})},50)};
+  $('badgeX').onclick=done;swipeAway(t,done);
+  clearTimeout(t._t);t._t=setTimeout(done,5200)}
+/* swipe a pop-up away (sideways or down) */
+function swipeAway(el,onGone){if(el._swipe)return el._swipe.cb=onGone;const st=el._swipe={cb:onGone};
+  el.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;st.x=e.clientX;st.y=e.clientY;st.on=true;st.dx=st.dy=0;el.style.transition='none';try{el.setPointerCapture(e.pointerId)}catch(_){}});
+  el.addEventListener('pointermove',e=>{if(!st.on)return;st.dx=e.clientX-st.x;st.dy=Math.max(0,e.clientY-st.y);const far=Math.max(Math.abs(st.dx),st.dy*1.4);
+    el.style.transform=`translate(calc(-50% + ${st.dx}px),${st.dy}px)`;el.style.opacity=String(Math.max(.2,1-far/260))});
+  const end=()=>{if(!st.on)return;st.on=false;el.style.transition='transform .22s ease-out,opacity .22s';
+    if(Math.abs(st.dx)>70||st.dy>45){el.style.transform=`translate(calc(-50% + ${st.dx?Math.sign(st.dx)*480:0}px),${st.dy>45&&Math.abs(st.dx)<=70?160:st.dy}px)`;el.style.opacity='0';setTimeout(()=>{el.style.transform='';el.style.opacity='';el.style.transition='';st.cb&&st.cb()},220)}
+    else{el.style.transform='';el.style.opacity='';setTimeout(()=>el.style.transition='',230)}};
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end)}
 
 /* ---------- Name ---------- */
 let editingName=false;

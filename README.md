@@ -3,14 +3,20 @@
 A 30-week spelling practice app for kids, built as the sister app of Root Detective. It has the same design, fonts, components and progress system. It is one `index.html` with no build step and works offline. The voice can play recorded MP3s from `audio/`.
 
 ## Pages
-- **Home**: greeting from the trophy mascot, pills for 🔥 days in a row, ⭐ words mastered, 🏅 badges and 🔓 week reached, then one **Next up** card that follows the week's plan. Below that are this week's words (tap one to hear it) and the Practice tiles.
+- **Home**: greeting from the trophy mascot, pills for 🔥 days in a row, ⭐ words mastered, 🏆 awards and 🔓 week reached, the **next badge** to aim for, then one **Next up** card that follows the week's plan. Below that are this week's words (tap one to hear it) and the Practice tiles.
 - **Plan**: the Monday–Friday plan for the current week, with check marks, and all 30 weeks along a winding road. Tap a week to make it your week, open its flashcards or take its final test.
 - **Flashcards**: Root Detective's card. It has position dots, a 3D flip, swipe (the card and its Listen button move together), Back / Flip / Next, "I know this", Shuffle and "Next to flip". The front shows the word. The back shows the spelling pattern, the meaning, the sentence, the Chinese and Korean meanings and the letters.
 - **Daily review**: a 10-question quiz on the words due today (missed, weak or not practised lately), plus the list of every missed word with a "Practice these words" round.
 - **Activities**: Spell it, Build it, Rhyme time, Sound sort (one word at a time on a big card that says itself and stays in view; boxes are grouped by sound, one row per sound with a box for each spelling; tap a box or drag the card there; the spelling lights up in the word, each box can be heard, and after 2 misses the right box glows), ABC order, Proofread (10 passages a week, each with 6 misspellings; every passage comes up once before any repeats).
 - **Games**: Quiz (hear the word or read the sentence, then pick the right spelling), Meanings (read a meaning and pick the word, see a word and pick its meaning, or pick the word that fits a sentence; the Chinese and Korean can be shown as a hint), Match (word ↔ meaning), Memory (word ↔ rhyme or simple definition) and Speed round (60 seconds of "Is this spelled right?").
 - **Tests**: the Pretest and the Final test for the current week.
-- **Progress**: name, streak, stats, passes per activity this week, tests by week, words that need work, 42 badges and a day-by-day history.
+- **Progress**: name, streak, stats, passes per activity this week, tests by week, words that need work, the trophy shelf and badges, and a day-by-day history.
+- **Trophies and badges**:
+  - A **trophy for each week's final test**: Bronze for passing, Silver for 90% or a first-try pass, Gold for every word right. They sit on a shelf on Progress.
+  - **Week steps**: stamps for the pretest, the flashcards and each required activity (3 passes), shown for the current week.
+  - **Skill badges**, one per activity, that level up Bronze → Silver → Gold (e.g. Super Sorter: 1, 5, 15 sorts with no misses; Lightning Brain: 15, 20, 25 right in one Speed round).
+  - **Growth Spurt** (beat your pretest by 5, 10, 15 words), **Comeback** (5, 20, 50 words spelled right after missing them) and **Daily Reviewer** (3, 7, 14, 30 reviews in a row).
+  - Everything is worked out from the saved history, so earlier progress counts. Pop-ups can be swiped away or closed.
 
 Header: Sound on/off and Display options (text size, easier reading, calm mode, read-aloud buttons).
 
