@@ -16,7 +16,7 @@ A 30-week spelling practice app for kids, built as the sister app of Root Detect
   - **Week steps**: stamps for the pretest, the flashcards and each required activity (3 passes), shown for the current week.
   - **Skill badges**, one per activity, that level up Bronze → Silver → Gold (e.g. Super Sorter: 1, 5, 15 sorts with no misses; Lightning Brain: 15, 20, 25 right in one Speed round).
   - **Growth Spurt** (beat your pretest by 5, 10, 15 words), **Comeback** (5, 20, 50 words spelled right after missing them) and **Daily Reviewer** (3, 7, 14, 30 reviews in a row).
-  - Everything is worked out from the saved history, so earlier progress counts. Pop-ups can be swiped away or closed.
+  - Everything is worked out from the saved history, so earlier progress counts. Pop-ups can be swiped away left or right, or closed.
 
 Header: Sound on/off and Display options (text size, easier reading, calm mode, read-aloud buttons).
 
