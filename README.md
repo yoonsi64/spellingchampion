@@ -5,10 +5,10 @@ A 30-week spelling practice app for kids, built as the sister app of Root Detect
 ## Pages
 - **Home**: greeting from the trophy mascot, pills for 🔥 days in a row, ⭐ words mastered, 🏅 badges and 🔓 week reached, then one **Next up** card that follows the week's plan. Below that are this week's words (tap one to hear it) and the Practice tiles.
 - **Plan**: the Monday–Friday plan for the current week, with check marks, and all 30 weeks along a winding road. Tap a week to make it your week, open its flashcards or take its final test.
-- **Flashcards**: Root Detective's card. It has position dots, a 3D flip, swipe (the card and its Listen button move together), Back / Flip / Next, "I know this", Shuffle and "Next to flip". The front shows the word. The back shows the spelling pattern, the sentence and the letters.
+- **Flashcards**: Root Detective's card. It has position dots, a 3D flip, swipe (the card and its Listen button move together), Back / Flip / Next, "I know this", Shuffle and "Next to flip". The front shows the word. The back shows the spelling pattern, the meaning, the sentence, the Chinese and Korean meanings and the letters.
 - **Daily review**: a 10-question quiz on the words due today (missed, weak or not practised lately), plus the list of every missed word with a "Practice these words" round.
 - **Activities**: Spell it, Build it, Rhyme time, Sound sort, ABC order, Proofread.
-- **Games**: Quiz (hear the word or read the sentence, then pick the right spelling), Match (word ↔ sentence with a blank), Memory (word ↔ sentence clue or rhyme) and Speed round (60 seconds of "Is this spelled right?").
+- **Games**: Quiz (hear the word or read the sentence, then pick the right spelling), Match (word ↔ meaning), Memory (word ↔ sentence clue or rhyme) and Speed round (60 seconds of "Is this spelled right?").
 - **Tests**: the Pretest and the Final test for the current week.
 - **Progress**: name, streak, stats, passes per activity this week, tests by week, words that need work, 42 badges and a day-by-day history.
 

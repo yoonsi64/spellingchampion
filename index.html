@@ -577,10 +577,6 @@ body.on-home #filter{display:none}
 .hhello{margin:0;font-weight:700;color:var(--muted)}
 .mascot{width:96px;height:96px;flex:none;animation:bob 3s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-4px) rotate(-3deg)}}
-.m-eyes{fill:#1B2433}
-.m-shine{fill:#fff}
-.m-smile{fill:none;stroke:#1B2433;stroke-width:3.5;stroke-linecap:round}
-.m-cheek{fill:#F7A1B5;opacity:.8}
 .hkick{margin:0;font-size:.8rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .btn.big{font-size:1.2rem;padding:14px 22px;border-radius:14px;align-self:flex-start}
 .hgames{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
@@ -886,20 +882,33 @@ html.nospeak .say,html.nosay .say,html.nospeak .say-btn,html.nosay .say-btn{disp
 @media (hover:hover) and (pointer:fine) and (min-width:560px){.modetabs{grid-template-columns:repeat(8,minmax(0,1fr))}}
 
 /* the trophy mascot (fixed colours: reads on light and dark backgrounds) */
-.m-cup{fill:#F6B92B;stroke:#A8680F;stroke-width:2.5;stroke-linejoin:round}
-.m-rim{fill:#FFD95A;stroke:#A8680F;stroke-width:2.5}
-.m-armo{fill:none;stroke:#A8680F;stroke-width:10.5;stroke-linecap:round}
-.m-arm{fill:none;stroke:#F6B92B;stroke-width:5.5;stroke-linecap:round}
-.m-stem{fill:#E9A21C;stroke:#A8680F;stroke-width:2.5;stroke-linejoin:round}
-.m-base{fill:#8A5530;stroke:#55300F;stroke-width:2.5;stroke-linejoin:round}
-.m-base2{fill:#A86A3D;stroke:#55300F;stroke-width:2.5}
-.m-plate{fill:#FFD95A;stroke:#A8680F;stroke-width:1.2}
-.m-eyes{fill:#2B1D0E}.m-shine{fill:#fff}.m-smile{fill:none;stroke:#2B1D0E;stroke-width:3.5;stroke-linecap:round}.m-cheek{fill:#FF8FA3;opacity:.8}
-.m-gloss{fill:none;stroke:#FFF4C9;stroke-width:4.5;stroke-linecap:round;opacity:.85}
-.m-star{fill:#FFE066;stroke:#C98A0B;stroke-width:1.2;stroke-linejoin:round;transform-origin:104px 12px;animation:twinkle 2.4s ease-in-out infinite}
+.m-shadow{fill:#1B2433;opacity:.12}
+.m-cup{fill:url(#mGold);stroke:#9A5B0A;stroke-width:2.5;stroke-linejoin:round}
+.m-rim{fill:url(#mGoldV);stroke:#9A5B0A;stroke-width:2.5}
+.m-in{fill:#D98E10;opacity:.75}
+.m-gloss{fill:none;stroke:#FFF6CF;stroke-width:4.5;stroke-linecap:round;opacity:.9}
+.m-armo{fill:none;stroke:#9A5B0A;stroke-width:10;stroke-linecap:round}
+.m-arm{fill:none;stroke:#F6B92B;stroke-width:5;stroke-linecap:round}
+.m-hand{fill:#FFD34D;stroke:#9A5B0A;stroke-width:2.5}
+.m-stem{fill:url(#mGold);stroke:#9A5B0A;stroke-width:2.5;stroke-linejoin:round}
+.m-knob{fill:#FFD95A;stroke:#9A5B0A;stroke-width:2.2}
+.m-step{fill:#3F519A;stroke:#1E2A55;stroke-width:2.5;stroke-linejoin:round}
+.m-base{fill:url(#mBase);stroke:#1E2A55;stroke-width:2.5}
+.m-plate{fill:#FFD95A;stroke:#9A5B0A;stroke-width:1.2}
+.m-brow{fill:none;stroke:#5A3507;stroke-width:2.6;stroke-linecap:round}
+.m-eyes{fill:#2B1D0E}.m-shine{fill:#fff}
+.m-mouth{fill:#7A2E12;stroke:#2B1D0E;stroke-width:2.4;stroke-linejoin:round}
+.m-tongue{fill:#FF7F93}
+.m-cheek{fill:#FF8FA3;opacity:.75}
+.m-star{fill:#FFE066;stroke:#C98A0B;stroke-width:1.1;stroke-linejoin:round;transform-origin:60px 5px;animation:twinkle 2.4s ease-in-out infinite}
+.m-spark{fill:#FFCF3A;transform-box:fill-box;transform-origin:center;animation:twinkle 2.4s ease-in-out infinite}
+.m-spark.s1{animation-delay:-.8s}.m-spark.s2{animation-delay:-1.6s}
+.m-pstar{fill:#C98A0B}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .m-shadow{fill:#000;opacity:.35}:root:not([data-theme="light"]) .m-base,:root:not([data-theme="light"]) .m-step{stroke:#7E92D6}}
+:root[data-theme="dark"] .m-shadow{fill:#000;opacity:.35}:root[data-theme="dark"] .m-base,:root[data-theme="dark"] .m-step{stroke:#7E92D6}
 @keyframes twinkle{0%,100%{scale:.7;opacity:.55}50%{scale:1.1;opacity:1}}
-@media (prefers-reduced-motion: reduce){.m-star{animation:none}}
-html.calm .m-star{animation:none}
+@media (prefers-reduced-motion: reduce){.m-star,.m-spark{animation:none}}
+html.calm .m-star,html.calm .m-spark{animation:none}
 
 /* the longer title fits one line on phones */
 @media (max-width:480px){h1{font-size:1.6rem}}
@@ -942,7 +951,14 @@ html.calm .m-star{animation:none}
 
 /* Flashcards: the back shows the spelling pattern, the sentence and the letters */
 .heads em.pspell{font-style:normal;background:var(--fc);border-radius:6px;padding:0 6px}
-.fcback{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:16px 4px 18px;text-align:center}
+.fcback{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:14px 4px 16px;text-align:center}
+.fcmean{margin:0;font-size:clamp(1.1rem,4.2vw,1.35rem);font-weight:700;line-height:1.35;max-width:30ch;text-wrap:pretty}
+.fclbl{display:block;font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.fclang{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:34ch}
+.fclang p{margin:0;padding:6px 12px 7px;border-radius:12px;background:color-mix(in srgb,var(--fc) 38%,transparent);font-size:1.08rem;line-height:1.35;text-wrap:pretty}
+.fclang p .fclbl{display:inline;margin:0 7px 0 0;letter-spacing:.04em;font-size:.78rem;color:var(--ink);opacity:.7}
+[lang="zh-Hans"]{font-family:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",var(--body)}
+[lang="ko"]{font-family:"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",var(--body)}
 .fcsent{margin:0;font-size:clamp(1.15rem,4.4vw,1.5rem);line-height:1.45;max-width:30ch;text-wrap:pretty}
 .fcsent mark{background:transparent;color:inherit;padding:0;text-decoration:underline;text-decoration-color:var(--fc);text-decoration-thickness:5px;text-underline-offset:4px}
 .fcletters{margin:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
@@ -1040,6 +1056,12 @@ html.nospeak .mlist li{padding:10px 0}
 </style>
 </head>
 <body>
+<!-- trophy mascot colours, kept outside any hidden section so they always render -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+    <linearGradient id="mGold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFE27A"/><stop offset=".45" stop-color="#F8BE2E"/><stop offset="1" stop-color="#E39A12"/></linearGradient>
+    <linearGradient id="mGoldV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE98F"/><stop offset="1" stop-color="#F2AE22"/></linearGradient>
+    <linearGradient id="mBase" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4B5FA6"/><stop offset="1" stop-color="#2E3D78"/></linearGradient>
+  </defs></svg>
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="btoast" id="badgeToast" hidden role="status" aria-live="polite"></div>
 <div class="rtoast" id="rToast" hidden role="status" aria-live="polite"></div>
@@ -1147,7 +1169,8 @@ html.nospeak .mlist li{padding:10px 0}
 /* =====================================================================
    WORD LISTS — 30 weeks. To add a week, fill in its entry in WEEK_DATA.
    words: the 20 list words. review / challenge: extra words for the test.
-   Each word: { w:"word", s:"Sentence using the word.", say:"(optional) how the voice should say it" }
+   Each word: { w:"word", s:"Sentence using the word.", m:"what it means in that sentence (fits \"word means ...\")",
+                zh:"Chinese meaning", ko:"Korean meaning", say:"(optional) how the voice should say it" }
    rhymes:  [cue, [three options], answer]   (Rhyme time)
    sort:    [{sound:"short a", spell:"a", words:[...]}]   (Sound sort)
    abc:     five words to put in reverse ABC order
@@ -1157,35 +1180,60 @@ const WEEK_DATA = {
   1: {
     title: "Short vowels",
     words: [
-      {w:"jut", s:"The rock seemed to jut out over the water."},
-      {w:"nick", s:"There is a small nick on the edge of the table."},
-      {w:"tenth", s:"Today is my brother's tenth birthday."},
-      {w:"shrug", s:"When I asked where the cat went, she gave a shrug."},
-      {w:"stuff", s:"Please put your stuff in your backpack."},
-      {w:"sense", s:"It makes sense to wear a coat when it is cold."},
-      {w:"damp", s:"My socks were damp after the walk in the rain."},
-      {w:"cot", s:"We slept on a cot at the campsite."},
-      {w:"fling", s:"Watch me fling the ball across the yard."},
-      {w:"notch", s:"He cut a notch in the stick with his knife."},
-      {w:"gush", s:"Water began to gush out of the broken pipe."},
-      {w:"scan", s:"Scan the page to find your name."},
-      {w:"batch", s:"Dad baked a batch of cookies for the party."},
-      {w:"rough", s:"The bark of the old tree feels rough."},
-      {w:"stump", s:"We sat on a tree stump to eat lunch."},
-      {w:"tough", s:"The last puzzle was tough to solve."},
-      {w:"laugh", s:"The funny joke made everyone laugh."},
-      {w:"guess", s:"Can you guess what is in the box?"},
-      {w:"lead", say:"led", s:"The old pipes in the house were made of lead, a heavy gray metal."},
-      {w:"dove", say:"duv", s:"A white dove landed on the fence."}
+      {w:"jut", s:"The rock seemed to jut out over the water.",
+       m:"to stick out past the edge of something", zh:"突出；伸出", ko:"튀어나오다"},
+      {w:"nick", s:"There is a small nick on the edge of the table.",
+       m:"a small cut or chip on an edge", zh:"小缺口；刻痕", ko:"작은 흠집; 이 빠진 자국"},
+      {w:"tenth", s:"Today is my brother's tenth birthday.",
+       m:"the one that comes after ninth", zh:"第十", ko:"열 번째"},
+      {w:"shrug", s:"When I asked where the cat went, she gave a shrug.",
+       m:"lifting your shoulders to show you don't know or don't care", zh:"耸肩", ko:"어깨를 으쓱하기"},
+      {w:"stuff", s:"Please put your stuff in your backpack.",
+       m:"your things", zh:"东西；物品", ko:"물건; 소지품"},
+      {w:"sense", s:"It makes sense to wear a coat when it is cold.",
+       m:"good, clear thinking. When something makes sense, it is easy to understand and a smart idea", zh:"道理；（make sense）说得通，有道理", ko:"분별, 이치; (make sense) 말이 되다, 이치에 맞다"},
+      {w:"damp", s:"My socks were damp after the walk in the rain.",
+       m:"a little bit wet", zh:"潮湿的；微湿的", ko:"축축한; 약간 젖은"},
+      {w:"cot", s:"We slept on a cot at the campsite.",
+       m:"a small, narrow bed that can fold up", zh:"折叠床；行军床", ko:"접이식 간이침대"},
+      {w:"fling", s:"Watch me fling the ball across the yard.",
+       m:"to throw something hard", zh:"用力扔；抛", ko:"힘껏 던지다"},
+      {w:"notch", s:"He cut a notch in the stick with his knife.",
+       m:"a small V-shaped cut", zh:"V形切口；刻痕", ko:"V자 모양으로 새긴 홈"},
+      {w:"gush", s:"Water began to gush out of the broken pipe.",
+       m:"to pour out fast, in a big stream", zh:"涌出；喷出", ko:"콸콸 쏟아져 나오다"},
+      {w:"scan", s:"Scan the page to find your name.",
+       m:"to look over something quickly to find what you need", zh:"浏览；扫视", ko:"훑어보다"},
+      {w:"batch", s:"Dad baked a batch of cookies for the party.",
+       m:"a group of things made at the same time", zh:"一批；一炉", ko:"한 번에 만든 양; 한 판"},
+      {w:"rough", s:"The bark of the old tree feels rough.",
+       m:"bumpy and not smooth", zh:"粗糙的", ko:"거친; 울퉁불퉁한"},
+      {w:"stump", s:"We sat on a tree stump to eat lunch.",
+       m:"the bottom of a tree that is left after the tree is cut down", zh:"树桩", ko:"그루터기"},
+      {w:"tough", s:"The last puzzle was tough to solve.",
+       m:"hard to do", zh:"困难的；棘手的", ko:"어려운; 힘든"},
+      {w:"laugh", s:"The funny joke made everyone laugh.",
+       m:"to make happy sounds when something is funny", zh:"笑；大笑", ko:"웃다"},
+      {w:"guess", s:"Can you guess what is in the box?",
+       m:"to give an answer when you are not sure", zh:"猜；猜测", ko:"추측하다; 알아맞히다"},
+      {w:"lead", say:"led", s:"The old pipes in the house were made of lead, a heavy gray metal.",
+       m:"a soft, heavy, gray metal", zh:"铅", ko:"납"},
+      {w:"dove", say:"duv", s:"A white dove landed on the fence.",
+       m:"a gentle bird, often white, that looks like a small pigeon", zh:"鸽子", ko:"비둘기"}
     ],
     review: [
-      {w:"past", s:"We walked past the library on our way home."},
-      {w:"dock", s:"The boat is tied to the dock."},
-      {w:"plum", s:"I ate a sweet, juicy plum."}
+      {w:"past", s:"We walked past the library on our way home.",
+       m:"going by something and beyond it", zh:"经过；路过", ko:"~을 지나서"},
+      {w:"dock", s:"The boat is tied to the dock.",
+       m:"a platform by the water where boats are tied up", zh:"码头", ko:"부두; 선착장"},
+      {w:"plum", s:"I ate a sweet, juicy plum.",
+       m:"a small, round, juicy fruit with a pit inside", zh:"李子", ko:"자두"}
     ],
     challenge: [
-      {w:"cinch", s:"The math quiz was a cinch for her."},
-      {w:"blond", s:"My cousin has curly blond hair."}
+      {w:"cinch", s:"The math quiz was a cinch for her.",
+       m:"something very easy to do", zh:"轻而易举的事", ko:"아주 쉬운 일; 식은 죽 먹기"},
+      {w:"blond", s:"My cousin has curly blond hair.",
+       m:"a light yellow color, used for hair", zh:"金色的（头发）", ko:"금발의"}
     ],
     rhymes: [
       ["hut",["jut","jet","hat"],"jut"],
@@ -1285,7 +1333,7 @@ const dictateText=o=>`${sayOf(o)}. ${sentenceFor(o)} ${sayOf(o)}.`;
 const testLine=(k,o)=>`Number ${k+1}. ${sayOf(o)}. ${sentenceFor(o)} ${sayOf(o)}.`;
 function backText(o,n){
   const pat=patternOf(o.w,n);
-  return `${sayOf(o)}. ${pat?`${pat.sound}, spelled ${pat.spell.split(" or ").map(s=>s.split("").join(" ")).join(" or ")}. `:""}${sentenceFor(o)} ${o.w.split("").join(", ")}.`;
+  return `${sayOf(o)}. ${o.m?`${sayOf(o)} means ${o.m}. `:''}${pat?`${pat.sound}, spelled ${pat.spell.split(" or ").map(s=>s.split("").join(" ")).join(" or ")}. `:""}${sentenceFor(o)} ${o.w.split("").join(", ")}.`;
 }
 function rhymeLine(cue,ans){const w=findWord(ans);return `${cue}, ${w?sayOf(w):ans}.`}
 const sortSay=w=>{const o=findWord(w);return o?sayOf(o):w};
@@ -1535,7 +1583,7 @@ const ACTS={
   spell:{name:'Spell it',desc:'Hear the word, then type it.',pass:'8 of 10'},
   build:{name:'Build it',desc:'Tap the letters in the right order.',pass:'6 of 8'},
   quiz:{name:'Quiz',desc:'Pick the right spelling.',pass:'8 of 10'},
-  match:{name:'Match',desc:'Match each word to its sentence.',pass:'2 misses or fewer'},
+  match:{name:'Match',desc:'Match each word to its meaning.',pass:'2 misses or fewer'},
   memory:{name:'Memory',desc:'Flip tiles to pair words and clues.',pass:'12 turns or fewer'},
   rhyme:{name:'Rhyme time',desc:'Pick the spelling word that rhymes.',pass:'80%',needs:'rhymes'},
   sort:{name:'Sound sort',desc:'Sort words by sound and spelling pattern.',pass:'80%',needs:'sort'},
@@ -1573,20 +1621,30 @@ function bestRun(days){const ks=Object.keys(days).filter(k=>activeDay(days[k])).
 
 /* ---------- The mascot: a gold trophy ---------- */
 const MASCOT=`<svg class="mascot" viewBox="0 0 120 120" aria-hidden="true">
-  <path class="m-armo" d="M33 33H23c-8 0-11 6-10 12 1 8 9 13 21 13"/><path class="m-arm" d="M33 33H23c-8 0-11 6-10 12 1 8 9 13 21 13"/>
-  <path class="m-armo" d="M87 33h10c8 0 11 6 10 12-1 8-9 13-21 13"/><path class="m-arm" d="M87 33h10c8 0 11 6 10 12-1 8-9 13-21 13"/>
-  <path class="m-base" d="M37 92h46l3 16H34z"/>
-  <rect class="m-base2" x="42" y="85" width="36" height="9" rx="2.5"/>
-  <rect class="m-plate" x="50" y="97" width="20" height="6" rx="2"/>
-  <path class="m-stem" d="M53 70h14l2 16H51z"/>
-  <path class="m-cup" d="M31 25h58v13c0 20-13 35-29 35S31 58 31 38z"/>
-  <rect class="m-rim" x="26" y="18" width="68" height="10" rx="5"/>
-  <path class="m-gloss" d="M39 33c0 11 3 20 9 27"/>
-  <g class="m-eyes"><ellipse cx="50" cy="44" rx="4" ry="5.4"/><ellipse cx="70" cy="44" rx="4" ry="5.4"/></g>
-  <circle class="m-shine" cx="51.5" cy="42" r="1.5"/><circle class="m-shine" cx="71.5" cy="42" r="1.5"/>
-  <path class="m-smile" d="M51 55q9 8 18 0"/>
-  <ellipse class="m-cheek" cx="42" cy="53" rx="4" ry="2.6"/><ellipse class="m-cheek" cx="78" cy="53" rx="4" ry="2.6"/>
-  <path class="m-star" d="M104 4l2.2 5 5.3.6-4 3.6 1.1 5.2-4.6-2.7-4.6 2.7 1.1-5.2-4-3.6 5.3-.6z"/>
+  <ellipse class="m-shadow" cx="60" cy="113" rx="30" ry="4"/>
+  <path class="m-armo" d="M30 40C17 40 12 31 14 21"/><path class="m-arm" d="M30 40C17 40 12 31 14 21"/>
+  <circle class="m-hand" cx="14" cy="18" r="5.2"/>
+  <path class="m-armo" d="M90 40c13 0 18-9 16-19"/><path class="m-arm" d="M90 40c13 0 18-9 16-19"/>
+  <circle class="m-hand" cx="106" cy="18" r="5.2"/>
+  <path class="m-base" d="M33 96h54a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H33a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3z"/>
+  <rect class="m-plate" x="47" y="100" width="26" height="7" rx="2"/><path class="m-pstar" d="M60 100.9l.9 1.9 2.1.2-1.6 1.4.5 2.1-1.9-1.1-1.9 1.1.5-2.1-1.6-1.4 2.1-.2z"/>
+  <path class="m-step" d="M40 88h40l3 8H37z"/>
+  <path class="m-stem" d="M54 72h12l-1 9 7 7H48l7-7z"/>
+  <ellipse class="m-knob" cx="60" cy="80" rx="8" ry="3.2"/>
+  <path class="m-cup" d="M27 22h66v12c0 23-14 40-33 40S27 57 27 34z"/>
+  <path class="m-gloss" d="M35 30c0 15 4 26 11 34"/>
+  <ellipse class="m-rim" cx="60" cy="22" rx="35" ry="6.5"/>
+  <ellipse class="m-in" cx="60" cy="21.5" rx="29" ry="3.6"/>
+  <path class="m-brow" d="M42 36q5-4 10 0M68 36q5-4 10 0"/>
+  <g class="m-eyes"><ellipse cx="47" cy="45" rx="5" ry="6.4"/><ellipse cx="73" cy="45" rx="5" ry="6.4"/></g>
+  <circle class="m-shine" cx="48.8" cy="42.6" r="2"/><circle class="m-shine" cx="74.8" cy="42.6" r="2"/>
+  <circle class="m-shine" cx="45.6" cy="47.6" r=".9"/><circle class="m-shine" cx="71.6" cy="47.6" r=".9"/>
+  <path class="m-mouth" d="M51 54h18q0 10-9 10t-9-10z"/>
+  <path class="m-tongue" d="M55 61q5-4 10 0q-2 3-5 3t-5-3z"/>
+  <ellipse class="m-cheek" cx="39" cy="54" rx="4.6" ry="2.8"/><ellipse class="m-cheek" cx="81" cy="54" rx="4.6" ry="2.8"/>
+  <path class="m-star" d="M60 0l1.6 3.4 3.7.4-2.8 2.5.8 3.7L60 8.2 56.7 10l.8-3.7-2.8-2.5 3.7-.4z"/>
+  <path class="m-spark s1" d="M10 58l1.2 3 3 1.2-3 1.2-1.2 3-1.2-3-3-1.2 3-1.2z"/>
+  <path class="m-spark s2" d="M110 60l1 2.4 2.4 1-2.4 1-1 2.4-1-2.4-2.4-1 2.4-1z"/>
 </svg>`;
 const LOCK_ICON=`<svg class="slock" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>`;
 
@@ -1812,11 +1870,11 @@ function renderCard(){
    if(wasBack){void f.offsetWidth;requestAnimationFrame(()=>requestAnimationFrame(()=>f.classList.remove('noflip')))}}
   $('front').innerHTML=`<div class="band">${KIND_BAND[o.kind]}</div>
     <div class="bigwrap"><div class="big" style="font-size:${size}">${esc(o.w)}</div>${knownSet(deckWeek).has(o.w)?'<div class="alts">✓ You know this one</div>':''}</div>
-    <div class="hint">Tap the card to see it in a sentence</div>
+    <div class="hint">Tap the card to see what it means</div>
     <div class="foot"><span class="wktag">Week ${o.week}</span><span class="tab">${TAB}</span></div>`;
   $('back').innerHTML=`<div class="band">${KIND_BAND[o.kind]}</div>
     <div class="heads"><div><b>${pat?`${esc(pat.sound)} spelled <em class="pspell">${esc(pat.spell)}</em>`:esc(o.w)}</b>${pat?'':`<i>${o.kind==='list'?'List word':o.kind==='review'?'Review word':'Challenge word'}</i>`}</div></div>
-    <div class="fcback"><p class="fcsent">${markHTML(o)}</p><p class="fcletters" aria-label="${esc(o.w.split('').join(' '))}">${o.w.split('').map(c=>`<span>${esc(c)}</span>`).join('')}</p></div>
+    <div class="fcback">${o.m?`<p class="fcmean"><span class="fclbl">Meaning</span>${esc(o.m)}</p>`:''}<p class="fcsent">${markHTML(o)}</p>${o.zh||o.ko?`<div class="fclang">${o.zh?`<p lang="zh-Hans"><span class="fclbl" lang="zh-Hans">中文</span>${esc(o.zh)}</p>`:''}${o.ko?`<p lang="ko"><span class="fclbl" lang="ko">한국어</span>${esc(o.ko)}</p>`:''}</div>`:''}<p class="fcletters" aria-label="${esc(o.w.split('').join(' '))}">${o.w.split('').map(c=>`<span>${esc(c)}</span>`).join('')}</p></div>
     <div class="foot"><span class="wktag">Week ${o.week}</span><span class="tab">${TAB}</span></div>`;
   $('known').setAttribute('aria-pressed',knownSet(deckWeek).has(o.w));
   if(mode==='cards')setTimeout(()=>fcMark('f'),0);
@@ -2038,15 +2096,17 @@ function quizResults(){
 /* ---------- Match: pair each word with its sentence ---------- */
 function pickWords(a,n){const p=poolFor(a),out=[],seen=new Set();for(const o of draw(a,p,Math.min(p.length,n*2),wkey)){if(out.length>=n)break;if(seen.has(o.w)||seen.has(o.s))continue;seen.add(o.w);seen.add(o.s);out.push(o)}return out}
 let M=null;
+/* the meaning's first sentence ("good, clear thinking") is enough to match on */
+const shortMean=o=>(o.m||o.s).split(/\.\s/)[0].replace(/\.$/,'');
 function newMatch(){const cs=pickWords('match',6);if(cs.length<2)return emptyAct('match','Not enough words yet.');
   M={cs,left:shuf(cs),right:shuf(cs),done:new Set(),sel:null,miss:0,t0:Date.now(),streak:0,best:0,missed:new Set()};renderMatch()}
 function renderMatch(){
   const fin=M.done.size===M.cs.length,secs=Math.round(((M.t1||Date.now())-M.t0)/1000);
   const isSel=(side,w)=>!!(M.sel&&M.sel.side===side&&M.sel.w===w);
-  $('matchBody').innerHTML=`<div class="wcard"><div class="gtop"><b>Match each word to its sentence</b><span class="grp">${fin?'':streakPill(M.streak)}<span class="note">${M.done.size} of ${M.cs.length} matched · ${plural(M.miss,'miss','misses')}</span></span></div>
+  $('matchBody').innerHTML=`<div class="wcard"><div class="gtop"><b>Match each word to its meaning</b><span class="grp">${fin?'':streakPill(M.streak)}<span class="note">${M.done.size} of ${M.cs.length} matched · ${plural(M.miss,'miss','misses')}</span></span></div>
    <div class="mcols"><div class="mcol">${M.left.map(o=>`<button class="mbtn part ${kindClass(o)} ${M.done.has(o.w)?'done':''} ${isSel('l',o.w)?'sel':''}" data-l="${esc(o.w)}" aria-pressed="${isSel('l',o.w)}" ${M.done.has(o.w)?'disabled':''}>${esc(o.w)}</button>`).join('')}</div>
-   <div class="mcol">${M.right.map(o=>`<button class="mbtn msent ${M.done.has(o.w)?'ok done':''} ${isSel('r',o.w)?'sel':''}" data-r="${esc(o.w)}" aria-pressed="${isSel('r',o.w)}" ${M.done.has(o.w)?'disabled':''}>${M.done.has(o.w)?markHTML(o):blankHTML(o)}</button>`).join('')}</div></div>
-   ${fin?'':`<p class="note" style="margin:0;text-align:center">Tap a word and the sentence it fits, in either order.</p>`}</div>`;
+   <div class="mcol">${M.right.map(o=>`<button class="mbtn msent ${M.done.has(o.w)?'ok done':''} ${isSel('r',o.w)?'sel':''}" data-r="${esc(o.w)}" aria-pressed="${isSel('r',o.w)}" ${M.done.has(o.w)?'disabled':''}>${esc(shortMean(o))}</button>`).join('')}</div></div>
+   ${fin?'':`<p class="note" style="margin:0;text-align:center">Tap a word and its meaning, in either order.</p>`}</div>`;
   const pick=(side,w)=>{
     if(!M.sel||M.sel.side===side){M.sel=isSel(side,w)?null:{side,w};renderMatch();const e=$('matchBody').querySelector(`[data-${side}="${CSS.escape(w)}"]`);if(e)e.focus({preventScroll:true});return}
     const lw=side==='l'?w:M.sel.w,rw=side==='r'?w:M.sel.w;
