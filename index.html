@@ -1803,10 +1803,13 @@ function fcLocked(){const g=fcGate();if(g.ok)return false;return avail().every(n
    2. the flashcards, both sides of every card (only the flashcards open)
    3. the required activities, each passed 3 times (only those, plus the flashcards)
    4. the final test opens, and so does everything else.
+   Daily review is always open, but only once a day. */
+const reviewDone=()=>((HIST.days[dayKey()]||{}).review||0)>0;
+/*
    A week that's already passed, or has no words yet, is fully open. */
 const pretestDone=(n=S.cur)=>{const h=testHist()[n];return !!(h&&h.pre)};
-const ALWAYS_OPEN=['home','plan','tests','progress'];
-const FINAL_REQ=['sort','abc','proof','build','spell'];
+const ALWAYS_OPEN=['home','plan','tests','progress','review'];
+const FINAL_REQ=['spell','build','rhyme','sort','abc','proof'];
 function finalReqs(n=S.cur){const W=WK(n);return FINAL_REQ.filter(a=>{const k=ACTS[a].needs;return !k||(Array.isArray(W[k])?W[k].length:W[k])}).map(a=>({a,name:ACTS[a].name,n:Math.min(3,passCount(a,n))}))}
 const finalOpen=(n=S.cur)=>weekPassed(n,testHist())||finalReqs(n).every(r=>r.n>=3);
 function weekStep(n=S.cur){if(!hasList(n)||weekPassed(n,testHist()))return'open';if(!pretestDone(n))return'pre';if(!flashDone(n))return'cards';if(!finalOpen(n))return'req';return'open'}
@@ -1987,7 +1990,7 @@ function renderHome(){
       <div class="grp"><button class="btn primary big" id="homeNewWeek">Go to week ${fw} →</button><button class="linkish" id="homePlan">See the plan</button></div></div>`}
   else if(!hasList(cur)){next=`<div class="hnext soon"><p class="hkick">🕒 Coming soon</p><h3>Week ${cur} words are on their way</h3>
       <p class="note">${avail().length?`Keep your streak going: review earlier words and play any game while you wait.`:`The word lists aren't ready yet.`}</p>
-      <div class="grp">${picks.length?`<button class="btn primary big" id="homeReview">Start today's review →</button>`:''}<button class="linkish" id="homePlan">See the plan</button></div></div>`}
+      <div class="grp">${picks.length&&!revDone?`<button class="btn primary big" id="homeReview">Start today's review →</button>`:''}<button class="linkish" id="homePlan">See the plan</button></div></div>`}
   else if(nt&&nt[0]==='cards'){const fn=g.ids.length;next=`<div class="hnext"><p class="hkick">🗂️ Next up</p><h3>Study the week ${cur} flashcards</h3>
       <p class="note">Look at both sides of every card to unlock this week's activities.</p>
       <div class="fg-bar" style="max-width:none"><i style="width:${fn?Math.round(g.done/fn*100):0}%"></i></div><p class="note" style="margin:0"><b>${g.done} of ${fn}</b> cards studied on both sides</p>
@@ -2003,7 +2006,7 @@ function renderHome(){
       <div class="grp"><button class="btn primary big" data-task="test">Start the final test →</button><button class="linkish" id="homePlan">See the plan</button></div></div>`}
   else{next=`<div class="hnext"><p class="hkick">${revDone?'✓ Today\'s review is done':'Next up'}</p><h3>${revDone||!picks.length?'Pick any activity to keep practicing':`Today's review: ${picks.length} words`}</h3>
       ${!revDone&&picks.length?`<div class="chips">${picks.slice(0,6).map(x=>`<span class="chip ${kindClass(x.o)}">${esc(x.o.w)}</span>`).join('')}${picks.length>6?`<span class="chip">+${picks.length-6}</span>`:''}</div>`:''}
-      <div class="grp">${picks.length?`<button class="btn ${revDone?'':'primary big'}" id="homeReview">${revDone?'Review again':'Start today\'s review →'}</button>`:''}<button class="linkish" id="homePlan">See the plan</button></div></div>`}
+      <div class="grp">${picks.length?`${revDone?'':`<button class="btn primary big" id="homeReview">Start today's review →</button>`}`:''}<button class="linkish" id="homePlan">See the plan</button></div></div>`}
   const why=lockWhy(),showDots=hasList(cur)&&flashDone(cur);
   $('homeBody').innerHTML=`<div class="home">
     <div class="hhero">${MASCOT}<div class="hh-text"><p class="hhello">${hello}, <b>${HIST.name?esc(HIST.name):'champion'}</b>!</p>
@@ -2657,20 +2660,20 @@ function reviewPick(n=10){const st=wordStats(),p=uniqWords(avail().filter(w=>!(w
     const score=(t?(1-acc)*3:1.1)+Math.min(daysSince(s&&s.last),14)/7+(t?0:.3)+(S.missed[o.w]?1.2:0)+Math.random()*.25;return{o,score,t,acc}});
   return scored.sort((a,b)=>b.score-a.score).slice(0,Math.min(n,p.length))}
 function renderReview(){
-  const picks=reviewPick(10),done=((HIST.days[dayKey()]||{}).review||0)>0;
+  const picks=reviewPick(10),done=reviewDone();
   const items=Object.entries(S.missed).sort((a,b)=>b[1]-a[1]).map(([w,c])=>({o:findWord(w),c})).filter(x=>x.o);
   $('reviewBody').innerHTML=`<div class="qcard">
     <div class="gtop"><b style="font-size:1.25rem">Today's review</b>${done?'<span class="streak">✓ Done today</span>':''}</div>
     <p class="note" style="margin:0">A quick 10-question quiz on the words you need most right now: words you've missed, and words you haven't practiced in a while.</p>
     ${picks.length?`<div class="chips">${picks.map(x=>`<span class="chip ${kindClass(x.o)}">${esc(x.o.w)} <small>${x.t?Math.round(x.acc*100)+'%':'new'}</small></span>`).join('')}</div>
-    <div><button class="btn primary big" id="startReview">${done?'Review again':'Start today\'s review'} →</button></div>`:'<p class="note">No words to review yet.</p>'}
+    ${done?'<p class="note" style="margin:0"><b>Done for today!</b> Come back tomorrow for a new review.</p>':`<div><button class="btn primary big" id="startReview">Start today's review →</button></div>`}`:'<p class="note">No words to review yet.</p>'}
   </div>
   <div class="qcard"><div class="gtop"><b style="font-size:1.15rem">Words you missed</b><span class="note">${plural(items.length,'word')}</span></div>
     ${items.length?`<ul class="mlist">${items.map(x=>`<li>${sayBtn(sayOf(x.o),`Hear ${x.o.w}`)}<b>${esc(x.o.w)}</b><span class="note">Week ${x.o.week}</span><span class="pill">missed ${x.c}×</span></li>`).join('')}</ul>
-      <div><button class="btn" id="practiceMissed">Practice these words</button></div><p class="note" style="margin:0">Spell a word right on the first try to take one miss off the list.</p>`
+      ${done?'':`<div><button class="btn" id="practiceMissed">Practice these words</button></div><p class="note" style="margin:0">Spell a word right on the first try to take one miss off the list. This counts as today's review.</p>`}`
     :`<p class="note" style="margin:0">No missed words. Words you miss in any activity show up here.</p>`}</div>`;
-  if($('startReview'))$('startReview').onclick=()=>{startQuiz(picks.map(x=>x.o),{review:true});scrollTo({top:0})};
-  if($('practiceMissed'))$('practiceMissed').onclick=()=>{startSpell(shuf(items.map(x=>x.o)).slice(0,12),true);scrollTo({top:0})};
+  if($('startReview'))$('startReview').onclick=()=>{if(reviewDone())return renderReview();startQuiz(picks.map(x=>x.o),{review:true});scrollTo({top:0})};
+  if($('practiceMissed'))$('practiceMissed').onclick=()=>{if(reviewDone())return renderReview();startSpell(shuf(items.map(x=>x.o)).slice(0,12),true);scrollTo({top:0})};
 }
 
 /* ---------- Progress: name, streak, badges, stats, per-week passes and tests, day by day ---------- */

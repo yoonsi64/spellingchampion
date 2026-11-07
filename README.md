@@ -19,8 +19,9 @@ Header: Sound on/off and Display options (text size, easier reading, calm mode, 
 - **Each new week opens in steps** (a week that's already passed, or has no words yet, is fully open):
   1. **Pretest.** Until it's taken, only Home, Plan, Tests and Progress are open. It doesn't count toward passing.
   2. **Flashcards.** Then only the flashcards open; each card counts once both of its sides have been seen.
-  3. **Required activities.** Then only Sound sort, ABC order, Proofread, Build it and Spell it open (plus the flashcards). Each must be **passed 3 times** with that week's words.
-  4. **Final test.** It opens once all five are done, and so does everything else (Quiz, Match, Memory, Rhyme time, Speed round, Daily review).
+  3. **Required activities.** Then only Spell it, Build it, Rhyme time, Sound sort, ABC order and Proofread open (plus the flashcards). Each must be **passed 3 times** with that week's words.
+  4. **Final test.** It opens once all six are done, and so does everything else (Quiz, Match, Memory, Speed round).
+- **Daily review** is open at every step, once a day: after today's review it says to come back tomorrow.
 - Locked tabs and tiles show a lock badge; opening one explains what to do first.
 - Each activity sticks to the current week until it has been passed 3 times with that week's words, then goes back to all weeks. A note above the activity shows the count.
 - Spell it, Build it and Proofread show the answer after 3 wrong tries.
