@@ -984,12 +984,14 @@ html.calm .m-star,html.calm .m-spark{animation:none}
 @media (max-width:460px){.opts.three{grid-template-columns:1fr}}
 .passline{margin:0;font-weight:700;color:var(--muted)}.passline.ok{color:var(--good)}
 .score small{font-size:.5em;color:var(--muted)}
-/* Build it: one box per letter */
-.slots .lslot{min-width:2.2em;justify-content:center}
-.lslot b{font-size:1.5rem}
-.lslot.empty{display:inline-block;width:2.6em;height:2.9rem;border-bottom:3px solid var(--rule)}
-.tray .tile b{font-size:1.5rem}
-.tray .tile{min-width:2.6em;min-height:3rem;justify-content:center}
+/* Build it: one box per letter, all the same size (--t, set from the space there is). The word sits on one line,
+   or breaks between syllables when it can't fit; the letter tray breaks into the same number of lines. */
+.bslots,.btray{display:flex;flex-direction:column;align-items:center;gap:6px}
+.lrow{display:flex;flex-wrap:nowrap;justify-content:center;gap:6px}
+.bslots .lslot,.btray .tile{box-sizing:border-box;width:var(--t,52px);min-width:0;height:calc(var(--t,52px)*1.12);padding:0;justify-content:center;flex:none}
+.bslots .lslot b,.btray .tile b{font-size:calc(var(--t,52px)*.52)}
+.lslot.hole{display:block;border-radius:10px;border:2px dashed var(--line);background:color-mix(in srgb,var(--card) 60%,transparent)}
+.slots.bslots{min-height:0}
 /* ABC order */
 .abcslots{list-style:none;margin:0;counter-reset:abc}
 .abcslots li{counter-increment:abc;flex-direction:row;gap:6px}
@@ -1173,7 +1175,8 @@ html.nospeak .mlist li{padding:10px 0}
    WORD LISTS — 30 weeks. To add a week, fill in its entry in WEEK_DATA.
    words: the 20 list words. review / challenge: extra words for the test.
    Each word: { w:"word", s:"Sentence using the word.", m:"what it means in that sentence (fits \"word means ...\")",
-                zh:"Chinese meaning", ko:"Korean meaning", say:"(optional) how the voice should say it" }
+                zh:"Chinese meaning", ko:"Korean meaning", say:"(optional) how the voice should say it",
+                syl:"(optional) how Build it splits a long word, e.g. thor-ough-ness" }
    rhymes:  [cue, [three options], answer]   (Rhyme time; the cue must be a different word from the answer)
    sort:    [{sound:"short a", spell:"a", words:[...]}]   (Sound sort)
    abc:     five words to put in reverse ABC order
@@ -2021,27 +2024,58 @@ function startBuild(){const p=poolFor('build');if(!p.length)return emptyAct('bui
   setTimeout(()=>{if(mode==='build'&&BD)SPEAK.say(dictateText(BD.items[BD.i]))},250)}
 function newBuildWord(){const o=BD.items[BD.i];let letters=shuf(o.w.split(''));if(letters.join('')===o.w&&o.w.length>1)letters=letters.reverse();
   Object.assign(BD,{tiles:letters,slots:[],tries:0,state:'ask',fb:''})}
+/* rough syllables from the spelling (a word can set its own with syl:"thor-ough-ness") */
+const DIGR=/^(th|sh|ch|ph|wh|ck|ng|gh|qu)$/,ONSET=/^(bl|br|cl|cr|dr|fl|fr|gl|gr|pl|pr|tr|th|sh|ch|ph|wh|qu|sc|sk|sl|sm|sn|sp|st|sw|tw|wr|kn)$/;
+const SUFFIX=/(ing|ness|less|ful|ment|tion|sion)$/;
+function syllables(w,o){
+  if(o&&o.syl&&o.syl.replace(/-/g,'')===w)return o.syl.split('-');
+  const s=w.toLowerCase(),V=c=>/[aeiouy]/.test(c),vowels=x=>(x.match(/[aeiouy]+/g)||[]).length;
+  {const m=s.match(SUFFIX);if(m&&m.index>0&&vowels(s.slice(0,m.index))>=1&&!(m[1]==='ing'&&/[aeiouy]$/.test(s.slice(0,m.index))))
+    return [...syllables(w.slice(0,m.index)),w.slice(m.index)]}
+  const cuts=[];let i=0;
+  while(i<s.length&&!V(s[i]))i++;
+  while(i<s.length){while(i<s.length&&V(s[i]))i++;const a=i;while(i<s.length&&!V(s[i]))i++;const b=i;
+    if(b>=s.length)break;                                         // last consonants stay with the last vowel
+    if(b===s.length-1&&s[b]==='e'){                               // final e: silent ("-ke") or "-Cle" ("ta-ble", "pick-le")
+      if(s[b-1]==='l'&&b-a>=1&&b-2>=a)cuts.push(s.slice(b-3,b-1)==='ck'?b-1:b-2);
+      break}
+    const cons=s.slice(a,b),n=cons.length;
+    const k=n<=1?0:DIGR.test(cons)?(/^(ck|ng|gh)$/.test(cons)?n:0):n===2?1:ONSET.test(cons.slice(-2))?n-2:n-1;
+    cuts.push(a+k)}
+  const out=[];let p=0;cuts.filter(c=>c>0&&c<s.length).forEach(c=>{if(c>p){out.push(w.slice(p,c));p=c}});out.push(w.slice(p));return out.filter(Boolean)}
+/* letter-box size for the space there is: one line when it fits, otherwise lines that break between syllables */
+function buildLayout(o,W){const L=o.w.length,G=6,MAX=54,MIN=36;W=Math.max(200,W);
+  const fit=Math.floor((W-(L-1)*G)/L);
+  if(fit>=MIN)return{t:Math.min(MAX,fit),rows:[L]};
+  const per=Math.max(1,Math.floor((W+G)/(MIN+G))),rows=[];let cur=0;
+  syllables(o.w,o).forEach(sy=>{let n=sy.length;if(cur&&cur+n>per){rows.push(cur);cur=0}
+    while(n>per){rows.push(per);n-=per}cur+=n});if(cur)rows.push(cur);
+  const most=Math.max(...rows);return{t:Math.min(MAX,Math.floor((W-(most-1)*G)/most)),rows}}
+const inRows=(items,rows)=>{let k=0;return rows.map(n=>`<span class="lrow">${items.slice(k,k+=n).join('')}</span>`).join('')};
 function renderBuild(){
-  const r=BD,o=r.items[r.i],n=r.items.length,L=o.w.length;
-  const slotRow=r.state==='ask'?Array.from({length:L},(_,k)=>k<r.slots.length?`<button type="button" class="tile c-free lslot" data-un="${k}" aria-label="Remove ${esc(r.tiles[r.slots[k]])}"><b>${esc(r.tiles[r.slots[k]])}</b></button>`:`<span class="lslot empty" aria-hidden="true"></span>`).join('')
-    :o.w.split('').map(c=>`<span class="tile c-free lslot"><b>${esc(c)}</b></span>`).join('');
+  const r=BD,o=r.items[r.i],n=r.items.length,L=o.w.length,guessW=r._w||(($('buildBody').clientWidth||340)-80),lay=buildLayout(o,guessW);
+  const slotRow=inRows(r.state==='ask'?Array.from({length:L},(_,k)=>k<r.slots.length?`<button type="button" class="tile c-free lslot" data-un="${k}" aria-label="Remove ${esc(r.tiles[r.slots[k]])}"><b>${esc(r.tiles[r.slots[k]])}</b></button>`:`<span class="lslot hole" aria-hidden="true"></span>`)
+    :o.w.split('').map(c=>`<span class="tile c-free lslot"><b>${esc(c)}</b></span>`),lay.rows);
   $('buildBody').innerHTML=`<div class="wcard">
     ${qtop(`Word ${r.i+1} of ${n}`,r.i,n,`★ ${r.score}`)}
     <p class="wlabel">Build the word you hear</p>
     <div class="spellask" style="justify-content:center"><button type="button" class="bigsay" data-say="${esc(dictateText(o))}" aria-label="Hear the word again">${SPK}<span>Hear the word</span></button></div>
-    <div class="slots ${r.state==='right'?'ok':r.state==='reveal'?'shown':''}" id="bslots" aria-label="Your word">${slotRow}</div>
+    <div class="slots bslots ${r.state==='right'?'ok':r.state==='reveal'?'shown':''}" id="bslots" aria-label="Your word" style="--t:${lay.t}px">${slotRow}</div>
     ${r.state==='ask'?`<p class="hintline">${r.fb?`<span class="bfb no">${esc(r.fb)}</span>`:`The word has ${L} letters.${r.tries?` Try ${r.tries+1} of 3.`:''}`}</p>
-      <div class="tray">${r.tiles.map((t,k)=>`<button type="button" class="tile c-free" data-i="${k}" ${r.slots.includes(k)?'disabled':''}><b>${esc(t)}</b></button>`).join('')}</div>
+      <div class="tray btray" style="--t:${lay.t}px">${inRows(r.tiles.map((t,k)=>`<button type="button" class="tile c-free" data-i="${k}" ${r.slots.includes(k)?'disabled':''}><b>${esc(t)}</b></button>`),lay.rows)}</div>
       <div class="controls" style="justify-content:center"><button class="btn" id="bclear" ${r.slots.length?'':'disabled'}>Clear</button></div>`
     :`<p class="bfb ${r.state==='right'?'ok':'no'}">${r.state==='right'?(r.tries?'You built it!':'Built on the first try!'):'Here\'s the word. Look at each letter.'}</p><p class="sent" style="text-align:center">${markHTML(o)}</p>
       <div class="controls" style="justify-content:center"><button class="btn primary nextq" id="bnext">${r.i===n-1?'See my score':'Next word →'}</button></div>`}
   </div>`;
+  {const sl=$('bslots'),cs=getComputedStyle(sl),w=sl.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+   if(w>0&&Math.abs(w-guessW)>2&&r._w!==w){r._w=w;return renderBuild()}}
   const body=$('buildBody');
   body.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{r.slots.push(+b.dataset.i);r.fb='';if(r.slots.length===L)buildCheck();else renderBuild()});
   body.querySelectorAll('[data-un]').forEach(b=>b.onclick=()=>{const k=+b.dataset.un;if(k<r.slots.length){r.slots=r.slots.slice(0,k);renderBuild()}});
   if($('bclear'))$('bclear').onclick=()=>{r.slots=[];renderBuild()};
   if($('bnext')){$('bnext').focus({preventScroll:true});$('bnext').onclick=()=>{r.i++;if(r.i>=n)return roundEnd('build',{score:r.score,total:n,pass:r.score>=Math.min(6,Math.ceil(n*.75)),missed:r.missed});newBuildWord();renderBuild();SPEAK.say(dictateText(r.items[r.i]))}}
 }
+addEventListener('resize',()=>{clearTimeout(renderBuild._rt);renderBuild._rt=setTimeout(()=>{if(mode==='build'&&BD&&BD.items&&$('bslots')){BD._w=0;renderBuild()}},150)});
 function buildCheck(){
   const r=BD,o=r.items[r.i],guess=r.slots.map(k=>r.tiles[k]).join('');
   if(guess===o.w){const first=!r.tries;if(first)r.score++;r.state='right';answer(o.w,first);renderBuild();const sl=$('bslots');FX.burst(sl,40);FX.cheer(sl,FX.praise(0));FX.play('good');sl.classList.add('popin');SPEAK.say(sayOf(o))}
