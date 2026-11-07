@@ -7,7 +7,7 @@ A 30-week spelling practice app for kids, built as the sister app of Root Detect
 - **Plan**: the Monday–Friday plan for the current week, with check marks, and all 30 weeks along a winding road. Tap a week to make it your week, open its flashcards or take its final test.
 - **Flashcards**: Root Detective's card. It has position dots, a 3D flip, swipe (the card and its Listen button move together), Back / Flip / Next, "I know this", Shuffle and "Next to flip". The front shows the word. The back shows the spelling pattern, the meaning, the sentence, the Chinese and Korean meanings and the letters.
 - **Daily review**: a 10-question quiz on the words due today (missed, weak or not practised lately), plus the list of every missed word with a "Practice these words" round.
-- **Activities**: Spell it, Build it, Rhyme time, Sound sort, ABC order, Proofread (10 passages a week, each with 6 misspellings; every passage comes up once before any repeats).
+- **Activities**: Spell it, Build it, Rhyme time, Sound sort (drag each word into its box; the spelling pattern lights up in the word, each box can be heard, and after 2 misses the right box glows), ABC order, Proofread (10 passages a week, each with 6 misspellings; every passage comes up once before any repeats).
 - **Games**: Quiz (hear the word or read the sentence, then pick the right spelling), Meanings (read a meaning and pick the word, see a word and pick its meaning, or pick the word that fits a sentence; the Chinese and Korean can be shown as a hint), Match (word ↔ meaning), Memory (word ↔ rhyme or simple definition) and Speed round (60 seconds of "Is this spelled right?").
 - **Tests**: the Pretest and the Final test for the current week.
 - **Progress**: name, streak, stats, passes per activity this week, tests by week, words that need work, 42 badges and a day-by-day history.
@@ -19,8 +19,8 @@ Header: Sound on/off and Display options (text size, easier reading, calm mode, 
 - **Each new week opens in steps** (a week that's already passed, or has no words yet, is fully open):
   1. **Pretest.** Until it's taken, only Home, Plan, Tests and Progress are open. It doesn't count toward passing.
   2. **Flashcards.** Then only the flashcards open; each card counts once both of its sides have been seen.
-  3. **Required activities.** Then only Spell it, Build it, Rhyme time, Sound sort, ABC order and Proofread open (plus the flashcards). Each must be **passed 3 times** with that week's words.
-  4. **Final test.** It opens once all six are done, and so does everything else (Quiz, Meanings, Match, Memory, Speed round).
+  3. **Required activities.** Then only Spell it, Build it, Rhyme time, Sound sort, ABC order, Proofread and Meanings open (plus the flashcards). Each must be **passed 3 times** with that week's words.
+  4. **Final test.** It opens once all seven are done, and so does everything else (Quiz, Match, Memory, Speed round).
 - **Daily review** is open at every step, once a day: after today's review it says to come back tomorrow.
 - Locked tabs and tiles show a lock badge; opening one explains what to do first.
 - Each activity sticks to the current week until it has been passed 3 times with that week's words, then goes back to all weeks. A note above the activity shows the count.

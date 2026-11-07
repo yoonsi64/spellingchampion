@@ -1006,6 +1006,25 @@ html.calm .m-star,html.calm .m-spark{animation:none}
 .abcslots .ph{opacity:.6;font-weight:700;letter-spacing:.1em}
 /* Sound sort: many small bins */
 .sbins{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+.sbar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}.sbar i{display:block;height:100%;background:var(--good);border-radius:inherit;transition:width .35s}
+.stile{touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;transition:transform .15s,opacity .15s}
+.stile.lifted{opacity:.25;transform:scale(.92)}
+.sghost{position:fixed;z-index:50;margin:0;pointer-events:none;box-shadow:0 10px 24px rgba(0,0,0,.25)!important;cursor:grabbing}
+.sbins .bin{position:relative;transition:transform .15s,box-shadow .15s}
+.sbins.armed .bin{box-shadow:0 0 0 2px color-mix(in srgb,var(--ink) 18%,transparent)}
+.sbins .bin.over{transform:scale(1.05);box-shadow:0 0 0 4px var(--primary)}
+.sbins .bin.hint{animation:binglow 1.1s ease-in-out infinite}
+@keyframes binglow{50%{box-shadow:0 0 0 5px var(--hi),0 0 18px var(--hi)}}
+.sbins .bin.gulp{animation:gulp .4s cubic-bezier(.3,1.6,.5,1)}
+@keyframes gulp{40%{transform:scale(1.08)}}
+.sbins .bin.full{box-shadow:inset 0 0 0 3px var(--good)}
+.bhead{position:relative}
+.binsay{position:absolute;top:-4px;right:-4px;width:30px;height:30px;border-radius:50%;border:0;background:color-mix(in srgb,var(--card) 70%,transparent);color:var(--ink);display:grid;place-items:center;padding:0;cursor:pointer}
+.binsay svg{width:16px;height:16px}
+.bcount{font-size:.75rem;font-weight:800;opacity:.6;margin-top:auto}
+.bwords mark.pt{background:transparent;color:var(--primary);font-weight:800;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:2px}
+@media (prefers-reduced-motion:reduce){.sbins .bin.hint,.sbins .bin.gulp{animation:none}.sbins .bin.hint{box-shadow:0 0 0 5px var(--hi)}}
+html.calm .sbins .bin.gulp{animation:none}
 .sbins .bin{min-height:96px}
 .bhead small em{font-style:normal;font-weight:800;font-size:1.15em}
 /* Proofread */
@@ -1572,6 +1591,7 @@ function ALL_LINES(){
   for(const W of WEEKS){if(!hasList(W.n))continue;const n=W.n,all=weekWords(n);
     all.forEach(o=>add(sayOf(o),'word'));
     W.sort.forEach(g=>g.words.forEach(w=>add(sortSay(w),'word')));
+    W.sort.forEach(g=>add(binSay(g),'other'));
     W.rhymes.forEach(r=>add(r[0],'word'));
     all.forEach(o=>add(sentenceFor(o),'sent'));
     all.forEach(o=>add(dictateText(o),'other'));
@@ -1818,7 +1838,7 @@ const reviewDone=()=>((HIST.days[dayKey()]||{}).review||0)>0;
    A week that's already passed, or has no words yet, is fully open. */
 const pretestDone=(n=S.cur)=>{const h=testHist()[n];return !!(h&&h.pre)};
 const ALWAYS_OPEN=['home','plan','tests','progress','review'];
-const FINAL_REQ=['spell','build','rhyme','sort','abc','proof'];
+const FINAL_REQ=['spell','build','rhyme','sort','abc','proof','meaning'];
 function finalReqs(n=S.cur){const W=WK(n);return FINAL_REQ.filter(a=>{const k=ACTS[a].needs;return !k||(Array.isArray(W[k])?W[k].length:W[k])}).map(a=>({a,name:ACTS[a].name,n:Math.min(3,passCount(a,n))}))}
 const finalOpen=(n=S.cur)=>weekPassed(n,testHist())||finalReqs(n).every(r=>r.n>=3);
 function weekStep(n=S.cur){if(!hasList(n)||weekPassed(n,testHist()))return'open';if(!pretestDone(n))return'pre';if(!flashDone(n))return'cards';if(!finalOpen(n))return'req';return'open'}
@@ -2526,21 +2546,74 @@ function renderRhyme(){const r=RH,q=r.items[r.i],n=r.items.length;
 let SO=null;
 function startSort(){const ws=scopeWeeksWith('sort');if(!ws.length)return emptyAct('sort');const n=ws.includes(S.cur)?S.cur:ws[Math.floor(Math.random()*ws.length)];
   const groups=WK(n).sort.map((g,k)=>({...g,k}));
-  SO={week:n,groups,tiles:shuf(groups.flatMap(g=>g.words.map(w=>({w,g:g.k})))),placed:{},sel:null,score:0,wrong:{},missed:[],streak:0};renderSort()}
+  SO={week:n,groups,tiles:shuf(groups.flatMap(g=>g.words.map(w=>({w,g:g.k})))),placed:{},sel:null,score:0,wrong:{},tries:{},missed:[],streak:0,fb:''};renderSort()}
+/* the letters that make the sound, marked inside the word: p[ai]d, sh[a]v[e], t[ow] */
+function patternHTML(w,spell){
+  for(const alt of String(spell).split(' or ')){
+    if(alt.includes('_')){const [x,y]=alt.split('_'),m=w.match(new RegExp(`^(.*?)(${x})([^aeiou]{1,2})(${y})(.*)$`));
+      if(m)return esc(m[1])+`<mark class="pt">${esc(m[2])}</mark>`+esc(m[3])+`<mark class="pt">${esc(m[4])}</mark>`+esc(m[5])}
+    else{const i=w.indexOf(alt);if(i>=0)return esc(w.slice(0,i))+`<mark class="pt">${esc(alt)}</mark>`+esc(w.slice(i+alt.length))}}
+  return esc(w)}
+/* what a box says when you tap its speaker: the same words as the back of a card */
+const binSay=g=>`${g.say||g.sound}, spelled ${g.spell.split(" or ").map(s=>s.split("").map(c=>c==="_"?"consonant":c).join(" ")).join(" or ")}.`;
+/* Sound sort: drag a word onto its box (or tap the word, then the box). Right: it flies in and its spelling
+   lights up. Wrong: the box shakes and the word springs back; after 2 misses on a word, its box glows as a hint. */
 function renderSort(){const r=SO,n=r.tiles.length,np=Object.keys(r.placed).length;
+  const hintG=r.sel!=null&&(r.tries[r.sel]||0)>=2?r.tiles[r.sel].g:null;
   $('sortBody').innerHTML=`<div class="wcard">
     <div class="gtop"><b>Sort each word by its sound and spelling</b><span class="grp">${streakPill(r.streak)}<span class="note">${np} of ${n} sorted · week ${r.week}</span></span></div>
-    <p class="note" style="margin:0;text-align:center">${r.fb?`<span class="bfb no">${esc(r.fb)}</span>`:'Tap a word to hear it, then tap the box it belongs in.'}</p>
-    <div class="tray">${r.tiles.map((t,i)=>r.placed[i]?'':`<button class="tile c-free ${r.sel===i?'selt':''}" data-t="${i}" aria-pressed="${r.sel===i}"><b>${esc(t.w)}</b></button>`).join('')}</div>
-    <div class="bins sbins">${r.groups.map(g=>`<button class="bin ${soundClass(g)}" data-b="${g.k}"><span class="bhead"><b>${esc(g.sound)}</b><small>spelled <em>${esc(g.spell)}</em></small></span>
-      <span class="bwords">${r.tiles.map((t,i)=>r.placed[i]&&t.g===g.k?`<span>${esc(t.w)}</span>`:'').join('')}</span></button>`).join('')}</div></div>`;
-  $('sortBody').querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{r.sel=+b.dataset.t;r.fb='';renderSort();SPEAK.say(sortSay(r.tiles[r.sel].w));const e=$('sortBody').querySelector(`[data-t="${r.sel}"]`);if(e)e.focus({preventScroll:true})});
-  $('sortBody').querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{
-    if(r.sel==null){const t=$('sortBody').querySelector('.tray');t.classList.remove('shake');void t.offsetWidth;t.classList.add('shake');return}
-    const t=r.tiles[r.sel],g=r.groups[+b.dataset.b];
-    if(t.g===g.k){r.placed[r.sel]=1;const first=!r.wrong[t.w];if(first){r.score++;r.streak++}else r.streak=0;answer(t.w,first);r.sel=null;r.fb='';const rr=b.getBoundingClientRect();renderSort();FX.burst(rr,22);FX.cheer(rr,FX.praise(r.streak||1));FX.play('good');
-      if(Object.keys(r.placed).length===n)setTimeout(()=>roundEnd('sort',{score:r.score,total:n,pass:r.score>=Math.ceil(n*.8),missed:r.missed,passText:`${Math.ceil(n*.8)} of ${n}`,rec:(d,x)=>{if(r.score===n)bump(x,'perfect')}}),500)}
-    else{r.wrong[t.w]=true;r.streak=0;if(!r.missed.includes(t.w))r.missed.push(t.w);r.fb=`Not ${g.sound} spelled ${g.spell}. Listen for the vowel sound.`;FX.play('bad');renderSort();const nb=$('sortBody').querySelector(`[data-b="${g.k}"]`);nb.classList.add('shake')}});
+    <div class="sbar" aria-hidden="true"><i style="width:${Math.round(np/n*100)}%"></i></div>
+    <p class="note" style="margin:0;text-align:center">${r.fb?`<span class="bfb ${r.fbc||'no'}">${r.fb}</span>`:r.sel!=null?`Now tap the box for <b>${esc(r.tiles[r.sel].w)}</b>, or drag it there.`:'Drag each word into its box. Tap a word to hear it; tap 🔊 on a box to hear its sound.'}</p>
+    <div class="tray stray">${r.tiles.map((t,i)=>r.placed[i]?'':`<button class="tile c-free stile ${r.sel===i?'selt':''}" data-t="${i}" aria-pressed="${r.sel===i}"><b>${esc(t.w)}</b></button>`).join('')}</div>
+    <div class="bins sbins ${r.sel!=null?'armed':''}">${r.groups.map(g=>{const got=r.tiles.map((t,i)=>r.placed[i]&&t.g===g.k?t:null).filter(Boolean);
+      return`<div class="bin ${soundClass(g)} ${hintG===g.k?'hint':''} ${got.length===g.words.length?'full':''}" role="button" tabindex="0" data-b="${g.k}" aria-label="${esc(g.sound)} spelled ${esc(g.spell)}, ${got.length} of ${g.words.length} words">
+        <span class="bhead"><b>${esc(g.sound)}</b><small>spelled <em>${esc(g.spell)}</em></small><button type="button" class="binsay" data-bs="${g.k}" aria-label="Hear ${esc(g.sound)} spelled ${esc(g.spell)}">${SPK}</button></span>
+        <span class="bwords">${got.map(t=>`<span>${patternHTML(t.w,g.spell)}</span>`).join('')}</span>
+        <span class="bcount" aria-hidden="true">${got.length}/${g.words.length}</span></div>`}).join('')}</div></div>`;
+  const body=$('sortBody');
+  body.querySelectorAll('[data-bs]').forEach(b=>b.onclick=e=>{e.stopPropagation();SPEAK.say(binSay(r.groups[+b.dataset.bs]))});
+  body.querySelectorAll('.bin').forEach(b=>{b.onclick=()=>sortDrop(+b.dataset.b,null);b.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();sortDrop(+b.dataset.b,null)}}});
+  body.querySelectorAll('[data-t]').forEach(el=>sortDrag(el,+el.dataset.t));
+}
+function sortPick(i){const r=SO;r.sel=i;r.fb='';renderSort();SPEAK.say(sortSay(r.tiles[i].w));const e=$('sortBody').querySelector(`[data-t="${i}"]`);if(e)e.focus({preventScroll:true})}
+/* press a word: a short tap picks it (and says it); moving drags a copy that follows the finger */
+function sortDrag(el,i){
+  el.onclick=e=>{if(el._dragged){el._dragged=false;return}sortPick(i)};
+  el.onpointerdown=e=>{if(e.button>0)return;const sx=e.clientX,sy=e.clientY,rect=el.getBoundingClientRect();let ghost=null,over=null;
+    const move=ev=>{const dx=ev.clientX-sx,dy=ev.clientY-sy;
+      if(!ghost){if(Math.hypot(dx,dy)<8)return;ghost=el.cloneNode(true);ghost.classList.add('sghost');Object.assign(ghost.style,{left:rect.left+'px',top:rect.top+'px',width:rect.width+'px'});
+        document.body.appendChild(ghost);el.classList.add('lifted');if(SO.sel!==i){SO.sel=i;SPEAK.say(sortSay(SO.tiles[i].w))}$('sortBody').querySelector('.sbins').classList.add('armed')}
+      ghost.style.transform=`translate(${dx}px,${dy}px) rotate(${Math.max(-8,Math.min(8,dx/12))}deg)`;
+      const hit=document.elementFromPoint(ev.clientX,ev.clientY),bin=hit&&hit.closest&&hit.closest('#sortBody .bin');
+      if(bin!==over){if(over)over.classList.remove('over');over=bin;if(over)over.classList.add('over')}
+      ev.preventDefault()};
+    const up=ev=>{removeEventListener('pointermove',move);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);
+      if(!ghost)return;el._dragged=true;setTimeout(()=>el._dragged=false,50);if(over)over.classList.remove('over');
+      if(over)sortDrop(+over.dataset.b,ghost);
+      else{ghost.animate([{transform:ghost.style.transform},{transform:'translate(0,0)'}],{duration:220,easing:'ease-out'}).onfinish=()=>{ghost.remove();el.classList.remove('lifted');renderSort()}}};
+    addEventListener('pointermove',move,{passive:false});addEventListener('pointerup',up);addEventListener('pointercancel',up)};
+}
+function sortDrop(gk,ghost){const r=SO,n=r.tiles.length;
+  if(r.sel==null){const t=$('sortBody').querySelector('.tray');t.classList.remove('shake');void t.offsetWidth;t.classList.add('shake');if(ghost)ghost.remove();return}
+  const i=r.sel,t=r.tiles[i],g=r.groups[gk],binEl=$('sortBody').querySelector(`.bin[data-b="${gk}"]`),br=binEl.getBoundingClientRect();
+  if(t.g===g.k){
+    const first=!r.wrong[t.w];if(first){r.score++;r.streak++}else r.streak=0;answer(t.w,first);
+    /* fly into the box, then the box takes it in with its pattern lit up */
+    const src=ghost||$('sortBody').querySelector(`[data-t="${i}"]`);let fly=ghost;
+    if(!fly&&src){const sr=src.getBoundingClientRect();fly=src.cloneNode(true);fly.classList.add('sghost');Object.assign(fly.style,{left:sr.left+'px',top:sr.top+'px',width:sr.width+'px'});document.body.appendChild(fly)}
+    const land=()=>{if(fly)fly.remove();r.placed[i]=1;r.sel=null;r.fb=`<b>${esc(t.w)}</b>: ${esc(g.sound)} spelled <b>${esc(g.spell)}</b>`;r.fbc='ok';renderSort();
+      const nb=$('sortBody').querySelector(`.bin[data-b="${gk}"]`);if(nb){nb.classList.add('gulp');const w=nb.querySelector('.bwords span:last-child');if(w)w.classList.add('popin')}
+      FX.burst(br,22);FX.cheer(br,FX.praise(r.streak||1));FX.play('good');
+      if(Object.keys(r.placed).length===n)setTimeout(()=>roundEnd('sort',{score:r.score,total:n,pass:r.score>=Math.ceil(n*.8),missed:r.missed,passText:`${Math.ceil(n*.8)} of ${n}`,rec:(d,x)=>{if(r.score===n)bump(x,'perfect')}}),700)};
+    if(fly&&fly.animate&&!document.documentElement.classList.contains('calm')){const fr=fly.getBoundingClientRect(),cur=fly.style.transform||'translate(0,0)';
+      const dx=br.left+br.width/2-(fr.left+fr.width/2),dy=br.top+br.height*.6-(fr.top+fr.height/2),base=new DOMMatrix(getComputedStyle(fly).transform==='none'?undefined:getComputedStyle(fly).transform);
+      fly.animate([{transform:cur,opacity:1},{transform:`translate(${base.e+dx}px,${base.f+dy}px) scale(.55)`,opacity:.3}],{duration:300,easing:'cubic-bezier(.4,.1,.6,1)',fill:'forwards'}).onfinish=land}
+    else land()}
+  else{
+    r.wrong[t.w]=true;r.tries[i]=(r.tries[i]||0)+1;r.streak=0;if(!r.missed.includes(t.w))r.missed.push(t.w);
+    r.fb=`<b>${esc(t.w)}</b> doesn't go in ${esc(g.sound)} spelled ${esc(g.spell)}. ${r.tries[i]>=2?'Look for the glowing box.':'Listen again for the vowel sound.'}`;r.fbc='no';FX.play('bad');
+    const done=()=>{renderSort();const nb=$('sortBody').querySelector(`.bin[data-b="${gk}"]`);if(nb)nb.classList.add('shake');setTimeout(()=>SPEAK.say(sortSay(t.w)),300)};
+    if(ghost&&ghost.animate){ghost.animate([{transform:ghost.style.transform},{transform:'translate(0,0)'}],{duration:260,easing:'cubic-bezier(.3,1.4,.6,1)'}).onfinish=()=>{ghost.remove();done()}}else done()}
 }
 
 /* ---------- ABC order ---------- */
