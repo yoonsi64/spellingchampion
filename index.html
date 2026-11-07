@@ -1171,7 +1171,7 @@ html.nospeak .mlist li{padding:10px 0}
    words: the 20 list words. review / challenge: extra words for the test.
    Each word: { w:"word", s:"Sentence using the word.", m:"what it means in that sentence (fits \"word means ...\")",
                 zh:"Chinese meaning", ko:"Korean meaning", say:"(optional) how the voice should say it" }
-   rhymes:  [cue, [three options], answer]   (Rhyme time)
+   rhymes:  [cue, [three options], answer]   (Rhyme time; the cue must be a different word from the answer)
    sort:    [{sound:"short a", spell:"a", words:[...]}]   (Sound sort)
    abc:     five words to put in reverse ABC order
    proof:   a passage with misspellings written as [wrong|right]
@@ -1254,8 +1254,7 @@ const WEEK_DATA = {
       ["mess",["gas","guess","goose"],"guess"],
       ["red",["lid","load","lead"],"lead"],
       ["glove",["dove","dive","dime"],"dove"],
-      ["enough",["touch","tough","through"],"tough"],
-      ["tenth",["tent","tense","tenth"],"tenth"]
+      ["enough",["touch","tough","through"],"tough"]
     ],
     sort: [
       {sound:"short a", spell:"a", words:["damp","scan","batch"]},
@@ -1305,7 +1304,7 @@ const NW=30;
 const WEEKS=Array.from({length:NW},(_,i)=>{
   const d=WEEK_DATA[i+1]||{};
   return {n:i+1,title:d.title||"",words:d.words||[],review:d.review||[],challenge:d.challenge||[],
-    rhymes:d.rhymes||[],sort:d.sort||[],abc:d.abc||[],proof:d.proof||""};
+    rhymes:(d.rhymes||[]).filter(r=>String(r[0]).toLowerCase()!==String(r[2]).toLowerCase()),/* a word never "rhymes" with itself */sort:d.sort||[],abc:d.abc||[],proof:d.proof||""};
 });
 const WK=n=>WEEKS[n-1];
 const hasList=n=>!!WK(n)&&WK(n).words.length>0;
