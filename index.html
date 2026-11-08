@@ -955,7 +955,7 @@ html.calm .m-star,html.calm .m-spark{animation:none}
 .wbox{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
 @media (max-width:520px){.wbox{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media (max-width:360px){.wbox{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.wchip{font:inherit;font-weight:700;font-size:1.02rem;color:var(--paper-ink);background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:6px 4px;min-height:40px;text-align:center;overflow-wrap:anywhere;box-shadow:0 2px 0 var(--line);transition:transform .1s}
+.wchip{font:inherit;font-weight:700;font-size:1.02rem;color:var(--paper-ink);background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:6px 6px;min-height:40px;text-align:center;overflow-wrap:anywhere;box-shadow:0 2px 0 var(--line);transition:transform .1s}
 .wchip,.mbtn.part,.bwords span,.spopt,.srword>span,.sortcard b,.tile2.part,.chip{overflow-wrap:normal;word-break:keep-all;white-space:nowrap}
 .wchip:hover{border-color:var(--primary)}.wchip:active{transform:translateY(2px);box-shadow:none}
 .wchip.speaking{animation:popIn .45s cubic-bezier(.3,1.6,.5,1)}
@@ -3769,9 +3769,11 @@ $('nameInput').onkeydown=e=>{if(e.key==='Enter')setName($('nameInput').value)};
 
 /* ---------- Words never wrap mid-word: a word that doesn't fit its pill gets a slightly smaller font instead ---------- */
 const FIT_SEL='.wchip,.mbtn.part,.bwords span,.spopt,.srword>span,.sortcard b,.tile2.part,.chip';
-function fitWords(){document.querySelectorAll(FIT_SEL).forEach(el=>{if(!el.offsetParent||!el.clientWidth)return;
-  el.style.fontSize='';const base=parseFloat(getComputedStyle(el).fontSize);let f=base,n=0;
-  while(el.scrollWidth>el.clientWidth+1&&f>base*.55&&n++<24){f-=.5;el.style.fontSize=f+'px'}})}
+/* the room for text is the pill's width minus its side padding (plus a little air), so a long word stays centred */
+function fitWords(){const rg=document.createRange();document.querySelectorAll(FIT_SEL).forEach(el=>{if(!el.offsetParent||!el.clientWidth)return;
+  el.style.fontSize='';const cs=getComputedStyle(el),base=parseFloat(cs.fontSize),room=el.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight)-4;
+  const tw=()=>{rg.selectNodeContents(el);return rg.getBoundingClientRect().width};let f=base,n=0;
+  while(tw()>room&&f>base*.5&&n++<30){f-=.5;el.style.fontSize=f+'px'}})}
 {let raf=0;const go=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(fitWords)};new MutationObserver(go).observe(document.body,{childList:true,subtree:true});addEventListener('resize',go)}
 
 /* the timer: counts while an activity is on screen and the child has touched it in the last 90 seconds */
