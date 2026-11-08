@@ -20,6 +20,8 @@ A 30-week spelling practice app for kids, built as the sister app of Root Detect
 
 Header: Sound on/off and Display options (text size, easier reading, calm mode, letter keyboard, read-aloud buttons).
 
+**Daily time limit:** 20 minutes of activities a day by default (Home, Plan and Progress don't count; time only counts while the app is on screen and being used). A warning comes at 2 minutes left, a round under way can be finished, and then the activities rest until tomorrow. Grown-ups can change the limit (15–60 min or off) or add 10 minutes for today under Display, protected by a 4-digit PIN they choose the first time.
+
 **Letter keyboard:** on touch screens, Spell it, Proofread and the tests use the app's own a–z keys instead of the device keyboard, so there's no autocorrect or word suggestions. It can be turned off in Display; a physical keyboard always works.
 
 ## Rules
