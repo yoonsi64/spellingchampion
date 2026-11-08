@@ -1023,14 +1023,14 @@ html.calm .m-star,html.calm .m-spark{animation:none}
 .anal .blank{display:inline-block;min-width:4.5em;border-bottom:3px solid var(--primary);vertical-align:-2px}
 .lkbd{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#E8EAED;padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 16px rgba(0,0,0,.12);user-select:none;-webkit-user-select:none;touch-action:manipulation}
 .lkgrid{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));grid-auto-rows:50px;gap:8px 5px;max-width:720px;margin:0 auto}
-.lk{border:0;border-radius:8px;background:#fff;color:#1B1B1F;font:inherit;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:1.55rem;font-weight:400;padding:0;margin:0 1px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;display:grid;place-items:center}
-.lk.mod{background:#D6DAE1;color:#3C4257}
-.lk svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
-.lk.space{font-size:1rem;color:#3C4257}
-.lk.go{background:#D6DAE1;color:#3C4257;border-radius:999px;font-size:1.05rem;font-weight:600}
-.lk.hit{animation:lkhit .15s}
+.lkey{border:0;border-radius:8px;background:#fff;color:#1B1B1F;font:inherit;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:1.55rem;font-weight:400;padding:0;margin:0 1px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;display:grid;place-items:center}
+.lkey.mod{background:#D6DAE1;color:#3C4257}
+.lkey svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.lkey.space{font-size:1rem;color:#3C4257}
+.lkey.go{background:#D6DAE1;color:#3C4257;border-radius:999px;font-size:1.05rem;font-weight:600}
+.lkey.hit{animation:lkhit .15s}
 @keyframes lkhit{50%{background:#B9C0CC}}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .lkbd{background:#202124}:root:not([data-theme="light"]) .lk{background:#3C3D41;color:#E8EAED}:root:not([data-theme="light"]) .lk.mod,:root:not([data-theme="light"]) .lk.go,:root:not([data-theme="light"]) .lk.space{background:#2A2B2F;color:#C4C7CF}:root:not([data-theme="light"]) .lk.space{background:#3C3D41}}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .lkbd{background:#202124}:root:not([data-theme="light"]) .lkey{background:#3C3D41;color:#E8EAED}:root:not([data-theme="light"]) .lkey.mod,:root:not([data-theme="light"]) .lkey.go,:root:not([data-theme="light"]) .lkey.space{background:#2A2B2F;color:#C4C7CF}:root:not([data-theme="light"]) .lkey.space{background:#3C3D41}}
 body.lk-open{padding-bottom:260px}
 body.lk-open #tabWrap{display:none}
 @media (min-width:700px){.lkgrid{grid-auto-rows:56px}}
@@ -2446,15 +2446,15 @@ const LK=(()=>{const SEL='#spIn,#prIn,.testgrid input:not([readonly])';
   const el=document.createElement('div');el.className='lkbd';el.hidden=true;el.setAttribute('role','group');el.setAttribute('aria-label','Letter keyboard');
   /* phone-keyboard layout: letters on a 20-column grid (the a row sits half a key in), ⌫ at the end of the z row,
      then Hide, space, the apostrophe (where a phone keyboard has its period) and the action key */
-  const L=(c,col)=>`<button type="button" class="lk" data-k="${c}" style="grid-column:${col}/span 2">${c}</button>`;
+  const L=(c,col)=>`<button type="button" class="lkey" data-k="${c}" style="grid-column:${col}/span 2">${c}</button>`;
   const DEL='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h11a1.5 1.5 0 0 1 1.5 1.5v11A1.5 1.5 0 0 1 20 19H9l-6.5-7z"/><path d="m11.5 9.5 5 5m0-5-5 5"/></svg>';
   const HIDE='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="11" rx="2"/><path d="M7 8h.01M11 8h.01M15 8h.01M8 11.5h8M9 18.5l3 2.5 3-2.5"/></svg>';
   el.innerHTML=`<div class="lkgrid">${[...rows[0]].map((c,i)=>L(c,1+2*i)).join('')}${[...rows[1]].map((c,i)=>L(c,2+2*i)).join('')}${[...rows[2]].map((c,i)=>L(c,4+2*i)).join('')}
-    <button type="button" class="lk mod" data-k="del" aria-label="Delete" style="grid-column:18/span 3">${DEL}</button>
-    <button type="button" class="lk mod" data-k="hide" aria-label="Hide keyboard" style="grid-column:1/span 3">${HIDE}</button>
-    <button type="button" class="lk space" data-k=" " aria-label="Space" style="grid-column:4/span 11">space</button>
-    <button type="button" class="lk mod" data-k="'" aria-label="Apostrophe" style="grid-column:15/span 2">'</button>
-    <button type="button" class="lk go" data-k="enter" style="grid-column:17/span 4">Check</button></div>`;
+    <button type="button" class="lkey mod" data-k="del" aria-label="Delete" style="grid-column:18/span 3">${DEL}</button>
+    <button type="button" class="lkey mod" data-k="hide" aria-label="Hide keyboard" style="grid-column:1/span 3">${HIDE}</button>
+    <button type="button" class="lkey space" data-k=" " aria-label="Space" style="grid-column:4/span 11">space</button>
+    <button type="button" class="lkey mod" data-k="'" aria-label="Apostrophe" style="grid-column:15/span 2">'</button>
+    <button type="button" class="lkey go" data-k="enter" style="grid-column:17/span 4">Check</button></div>`;
   document.body.appendChild(el);let cur=null;
   /* keep focus in the field while keys are tapped */
   el.addEventListener('pointerdown',e=>e.preventDefault());el.addEventListener('mousedown',e=>e.preventDefault());
