@@ -2589,7 +2589,7 @@ const reviewDone=()=>((HIST.days[dayKey()]||{}).review||0)>0;
    A week that's already passed, or has no words yet, is fully open. */
 const pretestDone=(n=S.cur)=>{const h=testHist()[n];return !!(h&&h.pre)};
 const ALWAYS_OPEN=['home','plan','tests','progress','review'];
-const FINAL_REQ=['spell','build','rhyme','sort','abc','proof','meaning'];
+const FINAL_REQ=['spell','build','quiz','rhyme','sort','abc','proof','meaning','analogy'];
 function finalReqs(n=S.cur){const W=WK(n);return FINAL_REQ.filter(a=>{const k=ACTS[a].needs;return !k||(Array.isArray(W[k])?W[k].length:W[k])}).map(a=>({a,name:ACTS[a].name,n:Math.min(3,passCount(a,n))}))}
 const finalOpen=(n=S.cur)=>weekPassed(n,testHist())||finalReqs(n).every(r=>r.n>=3);
 function weekStep(n=S.cur){if(!hasList(n)||weekPassed(n,testHist()))return'open';if(!pretestDone(n))return'pre';if(!flashDone(n))return'cards';if(!finalOpen(n))return'req';return'open'}
@@ -2746,9 +2746,9 @@ MODES.forEach(x=>$('tab-'+x).onclick=()=>setMode(x));
 /* ---------- Home: greeting, pills, one "Next up" card, practice tiles ---------- */
 const PLAN=[
   {d:'Mon',tasks:[['pretest','Pretest'],['cards','Flashcards'],['meaning','Meanings']]},
-  {d:'Tue',tasks:[['spell','Spell it'],['build','Build it']]},
+  {d:'Tue',tasks:[['spell','Spell it'],['build','Build it'],['quiz','Quiz']]},
   {d:'Wed',tasks:[['rhyme','Rhyme time'],['sort','Sound sort']]},
-  {d:'Thu',tasks:[['abc','ABC order'],['proof','Proofread']]},
+  {d:'Thu',tasks:[['abc','ABC order'],['proof','Proofread'],['analogy','Analogies']]},
   {d:'Fri',tasks:[['test','Final test']]}
 ];
 const DAYNAME={Mon:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday'};
@@ -2827,7 +2827,7 @@ function renderPlan(){
     ${hasList(cur)?`<div class="days">${PLAN.map(day=>`<div class="day"><b>${day.d}</b>${day.tasks.map(([k,l])=>{const ok=taskAvailable(k),dn=taskDone(k);
       const lk=k==='test'?!finalOpen():k==='pretest'?false:k==='cards'?weekStep()==='pre':modeLocked(k);
       return`<button type="button" class="ptask ${dn?'on':''} ${lk?'lk':''}" data-task="${k}" ${ok?'':'disabled'} ${lk?`aria-label="${esc(l)}, locked"`:''}><span class="pcheck ${lk?'plk':''}" aria-hidden="true">${dn?'✓':lk?'🔒':''}</span><span>${esc(l)}</span>${!ok&&!lk?'<small>no sheet yet</small>':''}</button>`}).join('')}</div>`).join('')}</div>
-      <p class="note">Each week goes in steps: the pretest, then the flashcards, then Spell it, Build it, Rhyme time, Sound sort, ABC order, Proofread and Meanings (pass each 3 times). Then the final test opens, along with the other games. Pass it (80%) to open the next week.</p>`
+      <p class="note">Each week goes in steps: the pretest, then the flashcards, then Spell it, Build it, Quiz, Rhyme time, Sound sort, ABC order, Proofread, Meanings and Analogies (pass each 3 times). Then the final test opens, along with the other games. Pass it (80%) to open the next week.</p>`
     :`<p class="note">Week ${cur}'s words are coming soon. The plan appears here when they're ready.</p>`}</div>`;
   h+=`<div class="wmap simple" id="wmap"><svg class="wtrail" id="wtrail" aria-hidden="true"></svg>`;
   let y=36;const pts=[],GAP=150;
