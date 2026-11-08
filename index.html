@@ -2710,7 +2710,7 @@ function renderSpell(autoSay,keepKb){
     <div class="spellask"><button type="button" class="bigsay" data-say="${esc(sayOf(o))}" aria-label="Hear the word again">${SPK}<span>Hear the word</span></button>
       <button type="button" class="btn" data-say="${esc(sentenceFor(o))}">Hear the sentence</button></div>
     ${r.state==='ask'?`<form id="spForm" class="spform" autocomplete="off"><label for="spIn" class="note">Type the word</label>
-      <input id="spIn" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="${SPELL_KB.matches?'Type here':'Tap here to type'}" value="${esc(r.last||'')}">
+      <input id="spIn" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" data-gramm="false" data-lpignore="true" placeholder="${SPELL_KB.matches?'Type here':'Tap here to type'}" value="${esc(r.last||'')}">
       <button class="btn primary" type="submit">Check</button></form>
       <div id="spFb">${r.fb?`<p class="bfb no">${esc(r.fb)}</p>`:r.tries?'':''}${r.tries?`<p class="note" style="margin:6px 0 0">Try ${r.tries+1} of 3</p>`:''}</div>`
     :`<div class="fb ${r.state==='right'?'ok':'no'}" id="spFb"><strong>${r.state==='right'?(r.tries?'Got it!':'Correct on the first try!'):'Here\'s how it\'s spelled. Look closely.'}</strong>
@@ -3141,7 +3141,7 @@ function renderProof(){const r=PR,toks=r.paras.flat(),errs=toks.filter(t=>t.righ
     <p class="target">Find the ${errs.length} misspelled words</p><p class="hintline">Passage ${r.pi+1} of ${r.pn}. Tap each one, then write it correctly.</p>
     <div class="passage">${r.paras.map(p=>`<p>${p.map(t=>t.tap?`<button class="pw ${r.fixed[t.id]?'fixed':(r.open===t.id?'found':'')} ${r.nope===t.id?'nope':''}" data-t="${t.id}" ${r.fixed[t.id]?'aria-disabled="true"':''}>${esc(r.fixed[t.id]?t.right:t.text)}</button>`:esc(t.text)).join('')}</p>`).join('')}</div>
     ${open?`<form class="spform" id="prForm" autocomplete="off"><label for="prIn" class="note">Write <b class="bad-word">${esc(open.text)}</b> correctly${r.tries?` (try ${r.tries+1} of 3)`:''}:</label>
-      <input id="prIn" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="${SPELL_KB.matches?'Type here':'Tap here to type'}"><button class="btn primary" type="submit">Fix it</button></form>`:''}
+      <input id="prIn" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" data-gramm="false" data-lpignore="true" placeholder="${SPELL_KB.matches?'Type here':'Tap here to type'}"><button class="btn primary" type="submit">Fix it</button></form>`:''}
     ${r.fb?`<p class="bfb ${r.fbc}">${esc(r.fb)}</p>`:''}
     <div class="fixlist">${errs.map((t,k)=>`<span class="${r.fixed[t.id]?'on':''}"><i>${k+1}</i>${r.fixed[t.id]?esc(t.right):''}</span>`).join('')}</div>
     ${nFixed===errs.length?`<div class="controls" style="justify-content:center"><button class="btn primary nextq" id="prDone">See my score</button></div>`:''}</div>`;
@@ -3216,7 +3216,7 @@ function renderTestSheet(){
   const r=T,list=r.items,nList=WK(r.week).words.length,nRev=WK(r.week).review.length;
   const ok=k=>norm(r.answers[k])===list[k].w.toLowerCase();
   const score=r.checked?list.filter((o,k)=>ok(k)).length:0;
-  const row=(o,k)=>`<span class="n">${k+1}.</span><input id="t${k}" data-k="${k}" class="${r.checked?(ok(k)?'ok':'bad'):''}" value="${esc(r.answers[k]||'')}" ${r.checked?'readonly':''} autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Word ${k+1}">
+  const row=(o,k)=>`<span class="n">${k+1}.</span><input id="t${k}" data-k="${k}" class="${r.checked?(ok(k)?'ok':'bad'):''}" value="${esc(r.answers[k]||'')}" ${r.checked?'readonly':''} autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" data-gramm="false" data-lpignore="true" aria-label="Word ${k+1}">
     ${r.checked?`<span class="key ${ok(k)?'ok':'bad'}">${ok(k)?'✓':esc(o.w)}</span>`:`<button type="button" class="tsay" data-k="${k}" aria-label="Hear word ${k+1}">${SPK}</button>`}`;
   const title=r.a==='pretest'?'Pretest':'Final test';
   $('testsBody').innerHTML=`<div class="wcard tsheet">
