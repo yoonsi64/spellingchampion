@@ -155,7 +155,7 @@ input:focus-visible{outline:3px solid var(--primary);outline-offset:-3px}
 .fcrail i{position:absolute;inset:0 auto 0 0;background:var(--primary);border-radius:999px}
 .scene{position:relative}
 .fcmove{position:relative;perspective:1400px}
-.fcsay{position:absolute;top:calc((var(--bandh,51px) - 32px)/2);right:calc(var(--bandr,22px) + 8px);height:32px;padding:0 12px 0 3px;border-radius:999px;
+.fcsay{position:absolute;top:calc(var(--bandt,0px) + (var(--bandh,51px) - 32px)/2);right:calc(var(--bandr,22px) + 8px);height:32px;padding:0 12px 0 3px;border-radius:999px;
   border:1.5px solid color-mix(in srgb,var(--fc) 55%,var(--paper-ink) 25%);background:var(--paper);color:var(--paper-ink);
   display:flex;align-items:center;gap:6px;font-weight:800;font-size:.82rem;letter-spacing:.02em;z-index:2;cursor:pointer;
   box-shadow:0 2px 0 color-mix(in srgb,var(--fc) 60%,var(--paper-ink) 30%);transition:transform .1s,box-shadow .1s,background .15s}
@@ -176,6 +176,10 @@ input:focus-visible{outline:3px solid var(--primary);outline-offset:-3px}
   .fcsay{padding:0 3px}
   .fcsay .t{display:none}
 }
+@media (max-width:440px){
+  .ts-xl .fcsay{padding:0 3px}
+  .ts-xl .fcsay .t{display:none}
+}
 .fcnav{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px}
 .fcnav .btn{min-height:54px;font-size:1.05rem;padding:8px 6px;display:flex;align-items:center;justify-content:center;gap:6px}
 .fcnav .btn span{font-size:1.4em;line-height:0;font-weight:800}
@@ -193,7 +197,7 @@ input:focus-visible{outline:3px solid var(--primary);outline-offset:-3px}
 .fcend.show{opacity:1}
 .face{grid-area:1/1;min-height:380px;background:var(--paper);color:var(--paper-ink);border-radius:6px;box-shadow:0 1px 2px rgba(0,0,0,.10),0 8px 22px rgba(0,0,0,.10);padding:0 clamp(14px,4vw,30px);display:flex;flex-direction:column;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;font-family:var(--body)}
 .face.back{transform:rotateY(180deg)}
-.band{margin:0 2%;background:var(--fc);color:var(--paper-ink);border-radius:0 0 18px 18px;text-align:center;font-weight:700;letter-spacing:.05em;font-size:1.2rem;padding:12px 10px 10px}
+.band{margin:0 2%;background:var(--fc);color:var(--paper-ink);border-radius:0 0 18px 18px;text-align:left;padding-left:18px!important;font-weight:700;letter-spacing:.05em;font-size:1.2rem;padding:12px 10px 10px}
 .heads{display:grid;gap:8px;text-align:center;padding:14px 0 10px;border-bottom:3px solid var(--rule)}
 .heads b{display:block;font-size:clamp(1.05rem,3.6vw,1.45rem);line-height:1.2}
 .heads i.form{font-style:normal;font-weight:700;margin-top:2px}
@@ -2438,7 +2442,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-say]');if(
 /* ---------- Display options (from Root Detective) ---------- */
 const DISP=Object.assign({ts:'',easy:false,calm:false,speak:true,kbd:true},store.get('sc-display',{})||{});
 function applyDisp(){const r=document.documentElement;['ts-l','ts-xl'].forEach(c=>r.classList.toggle(c,DISP.ts===c));r.classList.toggle('easy',!!DISP.easy);r.classList.toggle('calm',!!DISP.calm);if(DISP.calm)try{FX.clear()}catch(e){}r.classList.toggle('nospeak',!DISP.speak);
-  $('tsSeg').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.ts===DISP.ts));$('optEasy').checked=!!DISP.easy;$('optCalm').checked=!!DISP.calm;$('optSpeak').checked=!!DISP.speak;$('optKbd').checked=!!DISP.kbd;store.set('sc-display',DISP);try{LK.mark()}catch(e){}}
+  $('tsSeg').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.ts===DISP.ts));$('optEasy').checked=!!DISP.easy;$('optCalm').checked=!!DISP.calm;$('optSpeak').checked=!!DISP.speak;$('optKbd').checked=!!DISP.kbd;store.set('sc-display',DISP);try{LK.mark()}catch(e){}try{if(mode==='cards')requestAnimationFrame(fcSayPlace)}catch(e){}}
 $('tsSeg').querySelectorAll('button').forEach(b=>{b.setAttribute('aria-label',['Normal','Large','Extra large'][[...b.parentNode.children].indexOf(b)]+' text');b.onclick=()=>{DISP.ts=b.dataset.ts;applyDisp()}});
 $('optEasy').onchange=e=>{DISP.easy=e.target.checked;applyDisp()};$('optCalm').onchange=e=>{DISP.calm=e.target.checked;applyDisp()};$('optSpeak').onchange=e=>{DISP.speak=e.target.checked;applyDisp()};$('optKbd').onchange=e=>{DISP.kbd=e.target.checked;applyDisp()};
 
@@ -2914,10 +2918,13 @@ function fcUnlockedNote(w,first){let el=$('fcDone');if(!el){el=document.createEl
   el.innerHTML=first?`<b>🎉 Activities unlocked!</b><span>Now pass ${finalReqs(w).map(r=>r.name).join(', ').replace(/, ([^,]*)$/,' and $1')} 3 times each to open the final test.</span>`:`<b>🎉 Flashcards done!</b><span>Activities now focus on week ${w}.</span>`;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),4200)}
 /* the Listen button sits on the card's coloured band, in the card's colour */
 function fcSayPlace(){const bd=$('front')&&$('front').querySelector('.band'),sc=document.querySelector('#cardArea .scene');if(!bd||!sc||!bd.offsetHeight)return;
-  const r=bd.getBoundingClientRect(),q=sc.getBoundingClientRect();sc.style.setProperty('--bandh',bd.offsetHeight+'px');sc.style.setProperty('--bandr',Math.round(q.right-r.right)+'px');
+  // layout offsets ignore the swipe/flip transforms, so the spot is the same on every card
+  let x=0,y=0,e=bd;while(e&&e!==sc){x+=e.offsetLeft;y+=e.offsetTop;e=e.offsetParent}
+  const bw0=bd.offsetWidth,bh=bd.offsetHeight,cs=getComputedStyle(bd);
+  sc.style.setProperty('--bandh',bh+'px');sc.style.setProperty('--bandr',Math.round(sc.offsetWidth-x-bw0)+'px');sc.style.setProperty('--bandt',Math.round(y)+'px');
   sc.style.setProperty('--fc',getComputedStyle($('flash')).getPropertyValue('--fc'));
-  const b=$('listenCard');const lr=r.left+r.width/2+parseFloat(getComputedStyle(bd).fontSize)*4.2;
-  const room=r.right-lr,bw=b.offsetWidth;b.style.left=room>=bw+16?Math.round(lr+(room-bw)/2-q.left)+'px':'';b.style.right=room>=bw+16?'auto':''}
+}
+document.fonts&&document.fonts.ready.then(()=>{if(mode==='cards')fcSayPlace()});
 addEventListener('resize',()=>{if(mode==='cards')fcSayPlace()});
 function fcSayWatch(){const b=$('listenCard');b.classList.add('playing');clearInterval(b._t);let n=0;
   b._t=setInterval(()=>{n++;if(n>4&&!SPEAK.busy()){b.classList.remove('playing');clearInterval(b._t)}},150)}
