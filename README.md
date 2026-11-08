@@ -18,7 +18,9 @@ A 30-week spelling practice app for kids, built as the sister app of Root Detect
   - **Growth Spurt** (beat your pretest by 5, 10, 15 words), **Comeback** (5, 20, 50 words spelled right after missing them) and **Daily Reviewer** (3, 7, 14, 30 reviews in a row).
   - Everything is worked out from the saved history, so earlier progress counts. Pop-ups can be swiped away left or right, or closed.
 
-Header: Sound on/off and Display options (text size, easier reading, calm mode, read-aloud buttons).
+Header: Sound on/off and Display options (text size, easier reading, calm mode, letter keyboard, read-aloud buttons).
+
+**Letter keyboard:** on touch screens, Spell it, Proofread and the tests use the app's own a–z keys instead of the device keyboard, so there's no autocorrect or word suggestions. It can be turned off in Display; a physical keyboard always works.
 
 ## Rules
 - **Weeks unlock in order.** Week N+1 opens when week N's **Final test is passed with 80%** (20 of 25 for week 1). The pretest doesn't count.

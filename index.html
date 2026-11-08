@@ -1021,6 +1021,17 @@ html.calm .m-star,html.calm .m-spark{animation:none}
 .anal{margin:0;font-size:clamp(1.15rem,4.4vw,1.45rem);font-weight:700;line-height:1.45;text-wrap:pretty}
 .anal em{font-style:normal;font-weight:500;color:var(--muted)}
 .anal .blank{display:inline-block;min-width:4.5em;border-bottom:3px solid var(--primary);vertical-align:-2px}
+.lkbd{position:fixed;left:0;right:0;bottom:0;z-index:70;background:color-mix(in srgb,var(--bg) 92%,var(--ink));padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:7px;box-shadow:0 -6px 20px rgba(0,0,0,.18);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.lkrow{display:flex;justify-content:center;gap:5px}
+.lk{flex:1 1 0;max-width:46px;height:48px;border:0;border-radius:8px;background:var(--card);color:var(--ink);font:inherit;font-size:1.35rem;font-weight:700;box-shadow:0 2px 0 rgba(0,0,0,.18);padding:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.lk.wide{max-width:64px;flex-grow:1.5;font-size:1rem}
+.lk.space{max-width:none;flex-grow:4;font-size:.95rem;color:var(--muted)}
+.lk.go{max-width:96px;flex-grow:2;background:var(--primary);color:var(--primary-ink);font-size:1rem}
+.lk.hit{animation:lkhit .15s}
+@keyframes lkhit{50%{transform:translateY(2px);box-shadow:none;background:var(--hi)}}
+body.lk-open{padding-bottom:250px}
+body.lk-open #tabWrap{display:none}
+@media (min-width:700px){.lk{max-width:58px;height:54px}.lkbd{padding-left:max(8px,calc(50% - 330px));padding-right:max(8px,calc(50% - 330px))}}
 .mdef{margin:0;font-size:clamp(1.2rem,4.6vw,1.5rem);font-weight:700;line-height:1.35;text-wrap:pretty}
 .mword b{font-size:clamp(2rem,9vw,2.8rem);font-weight:800}
 .mopts{grid-template-columns:1fr!important}.mopts .opt{font-size:1.05rem;font-weight:600;text-align:left;line-height:1.3}
@@ -1172,6 +1183,7 @@ html.nospeak .mlist li{padding:10px 0}
           <div class="seg" id="tsSeg"><button type="button" data-ts="">A</button><button type="button" data-ts="ts-l" style="font-size:1.15em">A</button><button type="button" data-ts="ts-xl" style="font-size:1.35em">A</button></div>
           <label class="tog" for="optEasy"><input type="checkbox" id="optEasy"><span><b>Easier reading</b><small>More space between letters, words and lines</small></span></label>
           <label class="tog" for="optCalm"><input type="checkbox" id="optCalm"><span><b>Calm mode</b><small>No confetti, pop-ups or moving effects</small></span></label>
+          <label class="tog" for="optKbd"><input type="checkbox" id="optKbd"><span><b>Letter keyboard</b><small>Spell with the app's own keys on touch screens: no autocorrect or word suggestions</small></span></label>
           <label class="tog" for="optSpeak"><input type="checkbox" id="optSpeak"><span><b>Read aloud buttons</b><small>Show speaker buttons to hear words and sentences</small></span></label>
         </div></div>
     </div>
@@ -2194,11 +2206,41 @@ document.addEventListener('click',e=>{const n=e.target.closest&&e.target.closest
 document.addEventListener('click',e=>{const b=e.target.closest('[data-say]');if(!b||b.disabled)return;e.preventDefault();e.stopPropagation();SPEAK.say(b.dataset.say);b.classList.remove('speaking');void b.offsetWidth;b.classList.add('speaking')},true);
 
 /* ---------- Display options (from Root Detective) ---------- */
-const DISP=Object.assign({ts:'',easy:false,calm:false,speak:true},store.get('sc-display',{})||{});
+const DISP=Object.assign({ts:'',easy:false,calm:false,speak:true,kbd:true},store.get('sc-display',{})||{});
 function applyDisp(){const r=document.documentElement;['ts-l','ts-xl'].forEach(c=>r.classList.toggle(c,DISP.ts===c));r.classList.toggle('easy',!!DISP.easy);r.classList.toggle('calm',!!DISP.calm);if(DISP.calm)try{FX.clear()}catch(e){}r.classList.toggle('nospeak',!DISP.speak);
-  $('tsSeg').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.ts===DISP.ts));$('optEasy').checked=!!DISP.easy;$('optCalm').checked=!!DISP.calm;$('optSpeak').checked=!!DISP.speak;store.set('sc-display',DISP)}
+  $('tsSeg').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.ts===DISP.ts));$('optEasy').checked=!!DISP.easy;$('optCalm').checked=!!DISP.calm;$('optSpeak').checked=!!DISP.speak;$('optKbd').checked=!!DISP.kbd;store.set('sc-display',DISP);try{LK.mark()}catch(e){}}
 $('tsSeg').querySelectorAll('button').forEach(b=>{b.setAttribute('aria-label',['Normal','Large','Extra large'][[...b.parentNode.children].indexOf(b)]+' text');b.onclick=()=>{DISP.ts=b.dataset.ts;applyDisp()}});
-$('optEasy').onchange=e=>{DISP.easy=e.target.checked;applyDisp()};$('optCalm').onchange=e=>{DISP.calm=e.target.checked;applyDisp()};$('optSpeak').onchange=e=>{DISP.speak=e.target.checked;applyDisp()};
+$('optEasy').onchange=e=>{DISP.easy=e.target.checked;applyDisp()};$('optCalm').onchange=e=>{DISP.calm=e.target.checked;applyDisp()};$('optSpeak').onchange=e=>{DISP.speak=e.target.checked;applyDisp()};$('optKbd').onchange=e=>{DISP.kbd=e.target.checked;applyDisp()};
+
+/* ---------- Letter keyboard: on touch screens, spelling fields use the app's own keys, so the device keyboard
+   (with its autocorrect and word suggestions) never opens. A physical keyboard still works as usual. ---------- */
+const LK=(()=>{const SEL='#spIn,#prIn,.testgrid input:not([readonly])';
+  const on=()=>!!DISP.kbd&&!SPELL_KB.matches;
+  const rows=['qwertyuiop','asdfghjkl','zxcvbnm'];
+  const el=document.createElement('div');el.className='lkbd';el.hidden=true;el.setAttribute('role','group');el.setAttribute('aria-label','Letter keyboard');
+  el.innerHTML=rows.map((r,i)=>`<div class="lkrow">${i===2?'<button type="button" class="lk wide" data-k="del" aria-label="Delete">⌫</button>':''}${[...r].map(c=>`<button type="button" class="lk" data-k="${c}">${c}</button>`).join('')}</div>`).join('')
+    +`<div class="lkrow"><button type="button" class="lk wide" data-k="hide">Hide</button><button type="button" class="lk" data-k="'">'</button><button type="button" class="lk space" data-k=" " aria-label="Space">space</button><button type="button" class="lk go" data-k="enter">Check</button></div>`;
+  document.body.appendChild(el);let cur=null;
+  /* keep focus in the field while keys are tapped */
+  el.addEventListener('pointerdown',e=>e.preventDefault());el.addEventListener('mousedown',e=>e.preventDefault());
+  function mark(){document.querySelectorAll(SEL).forEach(i=>{if(on())i.setAttribute('inputmode','none');else i.removeAttribute('inputmode')});if(!on())hide()}
+  function show(i){cur=i;el.hidden=false;document.body.classList.add('lk-open');
+    const go=el.querySelector('[data-k="enter"]');go.textContent=i.closest('.testgrid')?'Next':i.id==='prIn'?'Fix it':'Check';
+    setTimeout(()=>{const r=i.getBoundingClientRect(),top=innerHeight-el.offsetHeight;if(r.bottom>top-12||r.top<60)scrollBy({top:r.bottom-(top-90),behavior:'smooth'})},30)}
+  function hide(){el.hidden=true;document.body.classList.remove('lk-open');cur=null}
+  document.addEventListener('focusin',e=>{const i=e.target;if(on()&&i.matches&&i.matches(SEL)){i.setAttribute('inputmode','none');show(i)}else if(!el.contains(i))hide()});
+  document.addEventListener('focusout',e=>{setTimeout(()=>{const a=document.activeElement;if(!a||!a.matches||!a.matches(SEL))hide()},60)});
+  el.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b||!cur)return;const k=b.dataset.k,i=cur;
+    try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}
+    if(k==='hide'){i.blur();hide();return}
+    if(k==='enter'){if(i.form)i.form.requestSubmit();else i.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));return}
+    const a=i.selectionStart??i.value.length,z=i.selectionEnd??a;
+    if(k==='del'){if(a===z&&a>0)i.setRangeText('',a-1,a,'end');else i.setRangeText('',a,z,'end')}
+    else i.setRangeText(k,a,z,'end');
+    i.dispatchEvent(new Event('input',{bubbles:true}));b.classList.remove('hit');void b.offsetWidth;b.classList.add('hit')});
+  try{SPELL_KB.addEventListener('change',mark)}catch(_){}
+  new MutationObserver(()=>{if(on())document.querySelectorAll(SEL).forEach(i=>{if(i.getAttribute('inputmode')!=='none')i.setAttribute('inputmode','none')});if(cur&&!document.contains(cur))hide()}).observe(document.body,{childList:true,subtree:true});
+  return{mark,on}})();
 function placeDisp(){const pop=$('dispPop'),r=$('dispBtn').getBoundingClientRect(),w=pop.offsetWidth||300;pop.style.top=(r.bottom+6)+'px';pop.style.left=Math.max(16,Math.min(r.right-w,innerWidth-16-w))+'px'}
 $('dispBtn').onclick=()=>{const o=$('dispPop').hidden;$('dispPop').hidden=!o;$('dispBtn').setAttribute('aria-expanded',o);if(o)placeDisp()};
 addEventListener('resize',()=>{if(!$('dispPop').hidden)placeDisp()});addEventListener('scroll',()=>{if(!$('dispPop').hidden){$('dispPop').hidden=true;$('dispBtn').setAttribute('aria-expanded',false)}},{passive:true});
@@ -2710,7 +2752,7 @@ function renderSpell(autoSay,keepKb){
     <div class="spellask"><button type="button" class="bigsay" data-say="${esc(sayOf(o))}" aria-label="Hear the word again">${SPK}<span>Hear the word</span></button>
       <button type="button" class="btn" data-say="${esc(sentenceFor(o))}">Hear the sentence</button></div>
     ${r.state==='ask'?`<form id="spForm" class="spform" autocomplete="off"><label for="spIn" class="note">Type the word</label>
-      <input id="spIn" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" data-gramm="false" data-lpignore="true" placeholder="${SPELL_KB.matches?'Type here':'Tap here to type'}" value="${esc(r.last||'')}">
+      <input id="spIn" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" data-gramm="false" data-lpignore="true" placeholder="${SPELL_KB.matches?'Type here':'Tap here, then use the letters'}" value="${esc(r.last||'')}">
       <button class="btn primary" type="submit">Check</button></form>
       <div id="spFb">${r.fb?`<p class="bfb no">${esc(r.fb)}</p>`:r.tries?'':''}${r.tries?`<p class="note" style="margin:6px 0 0">Try ${r.tries+1} of 3</p>`:''}</div>`
     :`<div class="fb ${r.state==='right'?'ok':'no'}" id="spFb"><strong>${r.state==='right'?(r.tries?'Got it!':'Correct on the first try!'):'Here\'s how it\'s spelled. Look closely.'}</strong>
@@ -3141,7 +3183,7 @@ function renderProof(){const r=PR,toks=r.paras.flat(),errs=toks.filter(t=>t.righ
     <p class="target">Find the ${errs.length} misspelled words</p><p class="hintline">Passage ${r.pi+1} of ${r.pn}. Tap each one, then write it correctly.</p>
     <div class="passage">${r.paras.map(p=>`<p>${p.map(t=>t.tap?`<button class="pw ${r.fixed[t.id]?'fixed':(r.open===t.id?'found':'')} ${r.nope===t.id?'nope':''}" data-t="${t.id}" ${r.fixed[t.id]?'aria-disabled="true"':''}>${esc(r.fixed[t.id]?t.right:t.text)}</button>`:esc(t.text)).join('')}</p>`).join('')}</div>
     ${open?`<form class="spform" id="prForm" autocomplete="off"><label for="prIn" class="note">Write <b class="bad-word">${esc(open.text)}</b> correctly${r.tries?` (try ${r.tries+1} of 3)`:''}:</label>
-      <input id="prIn" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" data-gramm="false" data-lpignore="true" placeholder="${SPELL_KB.matches?'Type here':'Tap here to type'}"><button class="btn primary" type="submit">Fix it</button></form>`:''}
+      <input id="prIn" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" data-gramm="false" data-lpignore="true" placeholder="${SPELL_KB.matches?'Type here':'Tap here, then use the letters'}"><button class="btn primary" type="submit">Fix it</button></form>`:''}
     ${r.fb?`<p class="bfb ${r.fbc}">${esc(r.fb)}</p>`:''}
     <div class="fixlist">${errs.map((t,k)=>`<span class="${r.fixed[t.id]?'on':''}"><i>${k+1}</i>${r.fixed[t.id]?esc(t.right):''}</span>`).join('')}</div>
     ${nFixed===errs.length?`<div class="controls" style="justify-content:center"><button class="btn primary nextq" id="prDone">See my score</button></div>`:''}</div>`;
