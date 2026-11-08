@@ -1094,8 +1094,14 @@ body.lk-open #tabWrap{display:none}
 .sbox.over{transform:scale(1.06);box-shadow:0 0 0 4px var(--primary)}
 .sbox.hint{animation:binglow 1.1s ease-in-out infinite}
 .sbox.gulp{animation:gulp .4s cubic-bezier(.3,1.6,.5,1)}
-.sbox.full{box-shadow:inset 0 0 0 3px var(--good)}
-@media (prefers-reduced-motion:reduce){.sbox.hint,.sbox.gulp,.sortcard.cardin{animation:none}.sbox.hint{box-shadow:0 0 0 5px var(--hi)}}
+/* a box with all its words in turns gold */
+.sbox.full{background:var(--gold);box-shadow:inset 0 0 0 3px var(--hi),0 2px 0 rgba(0,0,0,.12)}
+.sbox.full .bcount{opacity:.85}
+.sbox.full .bwords span,.sbox.full .binsay{background:color-mix(in srgb,var(--card) 55%,transparent)}
+.sbox.full.gulp{animation:goldpop .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes goldpop{40%{transform:scale(1.1);box-shadow:inset 0 0 0 3px var(--hi),0 0 0 6px color-mix(in srgb,var(--hi) 55%,transparent),0 0 22px var(--hi)}}
+html.calm .sbox.full.gulp{animation:none}
+@media (prefers-reduced-motion:reduce){.sbox.hint,.sbox.gulp,.sbox.full.gulp,.sortcard.cardin{animation:none}.sbox.hint{box-shadow:0 0 0 5px var(--hi)}}
 @media (min-width:820px){.srow{flex-direction:row;align-items:stretch}.srhead{width:7.5em;display:flex;align-items:center}.srboxes{flex:1}}
 .sbar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}.sbar i{display:block;height:100%;background:var(--good);border-radius:inherit;transition:width .35s}
 .stile{touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;transition:transform .15s,opacity .15s}
@@ -1108,7 +1114,7 @@ body.lk-open #tabWrap{display:none}
 @keyframes binglow{50%{box-shadow:0 0 0 5px var(--hi),0 0 18px var(--hi)}}
 .sbins .bin.gulp{animation:gulp .4s cubic-bezier(.3,1.6,.5,1)}
 @keyframes gulp{40%{transform:scale(1.08)}}
-.sbins .bin.full{box-shadow:inset 0 0 0 3px var(--good)}
+.sbins .bin.full{background:var(--gold);box-shadow:inset 0 0 0 3px var(--hi)}
 .bhead{position:relative}
 .binsay{position:absolute;top:-4px;right:-4px;width:30px;height:30px;border-radius:50%;border:0;background:color-mix(in srgb,var(--card) 70%,transparent);color:var(--ink);display:grid;place-items:center;padding:0;cursor:pointer}
 .binsay svg{width:16px;height:16px}
