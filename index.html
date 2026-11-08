@@ -1070,7 +1070,7 @@ body.lk-open #tabWrap{display:none}
 .srboxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:8px}
 .sbox{background:var(--card);color:var(--ink);border-radius:12px;padding:8px 6px;min-height:84px;display:flex;flex-direction:column;gap:6px;text-align:center;cursor:pointer;position:relative;transition:transform .15s,box-shadow .15s;box-shadow:0 2px 0 rgba(0,0,0,.12)}
 .sbox .bhead{display:flex;flex-direction:column;align-items:center;padding-right:0}
-.sbox .bhead small{font-size:.7rem;color:var(--muted)}
+.sbox .bhead small{font-size:.7rem;color:var(--muted);padding:0 24px;line-height:1.25}
 .sbox .bhead em{font-style:normal;font-weight:800;font-size:1.25rem;line-height:1.1}
 .sbox .binsay{top:2px;right:2px;width:26px;height:26px;background:color-mix(in srgb,var(--fc) 45%,transparent)}
 .sbox .bwords span{background:color-mix(in srgb,var(--fc) 35%,transparent);font-size:.9rem}
@@ -1284,7 +1284,8 @@ html.nospeak .mlist li{padding:10px 0}
                 zh:"Chinese meaning", ko:"Korean meaning", say:"(optional) how the voice should say it",
                 syl:"(optional) how Build it splits a long word, e.g. thor-ough-ness" }
    rhymes:  [cue, [three options], answer]   (Rhyme time; the cue must be a different word from the answer)
-   sort:    [{sound:"short a", spell:"a", words:[...], say:"(optional) how the voice says the sound"}]   (Sound sort; write a_e for a-consonant-e)
+   sort:    [{sound:"short a", spell:"a", words:[...], say:"(optional) how the voice says the sound"}]
+            for a spelling rule instead of a sound: {sound:"Plural ending", spell:"-es", how:"add", mark:"es", line:"Add e s.", words:[...]}   (Sound sort; write a_e for a-consonant-e)
    abc:     five words to put in reverse ABC order
    analogies: [["Calm is to peace as disorder is to ___.","turmoil"]]   (Analogies; the answer is a spelling word)
    proof:   passages to correct (10 a week), each with misspellings written as [wrong|right] and paragraphs split by \n\n
@@ -1964,8 +1965,231 @@ const WEEK_DATA = {
       "At the zoo, we watched a [stowtt|stout] hippo take a huge [mouthfful|mouthful] of grass. Next to it, a [scrawnny|scrawny] baby goat chased its mother.\n\nA lion [spralls|sprawls] on a warm rock all afternoon. The zookeeper is always [cautios|cautious] when she walks near it. She told us that a lion's front leg has a strong [joynte|joint] that helps it pounce.",
       "Our school chorus has great [renoun|renown] in our town. Every spring we sing next to the [fowntan|fountain] in the town square.\n\nPracticing is hard [wurk|work], and we sing for an hour without a break. Afterward, I have a big [thurst|thirst] and drink a whole bottle of water. My little brother starts to [squerm|squirm] in his seat when the concert goes long, so Mom [brot|brought] him a snack to keep him still."
     ]
+  },
+  7: {
+    title: "Plurals",
+    words: [
+      {w:"rattlers", s:"We heard two rattlers shaking their tails in the desert.",
+       m:"rattlesnakes", zh:"响尾蛇", ko:"방울뱀"},
+      {w:"fangs", s:"The snake showed its sharp fangs.",
+       m:"long, sharp teeth of a snake or other animal", zh:"毒牙；尖牙", ko:"송곳니; 독니"},
+      {w:"countries", s:"Our class collected stamps from many countries.",
+       m:"nations", zh:"国家", ko:"나라들"},
+      {w:"liberties", s:"People in a free country enjoy many liberties.",
+       m:"freedoms", zh:"自由", ko:"자유"},
+      {w:"potatoes", s:"The cook put potatoes and carrots in the stew.",
+       m:"round vegetables that grow under the ground", zh:"土豆", ko:"감자"},
+      {w:"rodeos", s:"Many rodeos have riding and roping events.",
+       m:"shows where cowboys ride horses and bulls and rope cattle", zh:"牛仔竞技表演", ko:"로데오"},
+      {w:"taxes", s:"Our taxes will be used to build new schools.",
+       m:"money that people pay to the government", zh:"税", ko:"세금"},
+      {w:"reptiles", s:"Are crocodiles and alligators reptiles?",
+       m:"cold-blooded animals with scales, like snakes and lizards", zh:"爬行动物", ko:"파충류"},
+      {w:"surroundings", s:"The travelers were happy in their new surroundings.",
+       m:"the things and places all around you", zh:"环境；周围", ko:"환경; 주변"},
+      {w:"beliefs", s:"People have many different beliefs about the world.",
+       m:"accepted truths; things you believe are true", zh:"信念；信仰", ko:"믿음; 신념"},
+      {w:"difficulties", s:"Pioneers faced many difficulties in the wilderness.",
+       m:"problems; things that are hard to deal with", zh:"困难", ko:"어려움"},
+      {w:"batches", s:"Grandma baked three batches of cookies for the party.",
+       m:"bunches or groups made at one time", zh:"批；一炉", ko:"(한 번에 만든) 묶음"},
+      {w:"abilities", s:"She has many abilities, like singing and drawing.",
+       m:"skills; talents", zh:"能力", ko:"능력"},
+      {w:"lashes", s:"Long lashes protect your eyes from dust.",
+       m:"eyelid hairs", zh:"睫毛", ko:"속눈썹"},
+      {w:"identities", s:"The clever criminal had many different identities.",
+       m:"who people are, like their names", zh:"身份", ko:"신원; 정체"},
+      {w:"losses", s:"Our team had two wins and three losses.",
+       m:"defeats; failures", zh:"失败；损失", ko:"패배; 손실"},
+      {w:"possibilities", s:"He searched the paper for job possibilities.",
+       m:"things that might happen or could be chosen", zh:"可能性", ko:"가능성"},
+      {w:"notches", s:"You can use an ax to put notches in a log.",
+       m:"small V-shaped cuts", zh:"凹口；刻痕", ko:"홈; 새김 자국"},
+      {w:"zeroes", s:"The numeral 100 has two zeroes.",
+       m:"the number 0, more than one time", zh:"零（复数）", ko:"영(0)들"},
+      {w:"eddies", s:"Small eddies swirled near the rocks in the river.",
+       m:"small whirls of water or wind", zh:"漩涡", ko:"소용돌이"}
+    ],
+    review: [
+      {w:"brought", s:"She brought cookies to share with the class.",
+       m:"carried or took something along (the past tense of bring)", zh:"带来（bring 的过去式）", ko:"가져왔다 (bring의 과거형)"},
+      {w:"counter", s:"Mom set the groceries on the kitchen counter.",
+       m:"a flat, high surface, like in a kitchen or a store", zh:"柜台；台面", ko:"조리대; 계산대"},
+      {w:"coil", s:"Dad wound the garden hose into a neat coil.",
+       m:"a ring or spiral of something wound around and around", zh:"卷；圈", ko:"고리; 감긴 것"}
+    ],
+    challenge: [
+      {w:"mangoes", s:"We sliced ripe mangoes for a sweet snack.",
+       m:"sweet tropical fruits with orange insides", zh:"芒果", ko:"망고"},
+      {w:"sinews", s:"The runner's sinews were strong from years of training.",
+       m:"tough cords in the body that join muscles to bones", zh:"肌腱", ko:"힘줄"}
+    ],
+    rhymes: [
+      ["hangs", ["fangs", "fans", "fogs"], "fangs"],
+      ["axes", ["texts", "taxes", "takes"], "taxes"],
+      ["patches", ["batches", "bunches", "bushes"], "batches"],
+      ["dashes", ["lashes", "leashes", "lists"], "lashes"],
+      ["blotches", ["notches", "nachos", "niches"], "notches"],
+      ["bosses", ["lasses", "losses", "louses"], "losses"],
+      ["heroes", ["zones", "zeroes", "zebras"], "zeroes"],
+      ["teddies", ["eddies", "edges", "eddy"], "eddies"],
+      ["tomatoes", ["potatoes", "potions", "petals"], "potatoes"],
+      ["battlers", ["rattlers", "rafters", "riddles"], "rattlers"],
+      ["facilities", ["abilities", "activities", "agilities"], "abilities"],
+      ["entities", ["identities", "identifies", "idealists"], "identities"],
+      ["reliefs", ["beliefs", "briefs"], "beliefs"],
+      ["textiles", ["reptiles", "retails", "rectangles"], "reptiles"],
+      ["disabilities", ["possibilities", "positions", "possessions"], "possibilities"]
+    ],
+    sort: [
+      {"sound": "Plural ending", "spell": "-s", "words": ["rattlers", "fangs", "rodeos", "reptiles", "beliefs"], "how": "add", "mark": "s", "line": "Add s.", "color": "a"},
+      {"sound": "Plural ending", "spell": "-es", "words": ["potatoes", "taxes", "batches", "lashes", "losses", "notches", "zeroes"], "how": "add", "mark": "es", "line": "Add e s.", "color": "a"},
+      {"sound": "Plural ending", "spell": "-ies", "words": ["countries", "liberties", "difficulties", "abilities", "identities", "possibilities", "eddies"], "how": "change y to i, add", "mark": "ies", "line": "Change y to i, and add e s.", "color": "a"},
+      {"sound": "Plural ending", "spell": "plural", "words": ["surroundings"], "how": "always", "mark": "", "line": "This word is always plural.", "color": "a"}
+    ],
+    abc: ["surroundings", "possibilities", "potatoes", "reptiles", "rodeos"], abcDir: 1,
+    analogies: [
+      ["Cats is to claws as snakes is to ___.", "fangs"],
+      ["Cities is to states as states is to ___.", "countries"],
+      ["Birds is to feathers as ___ is to scales.", "reptiles"],
+      ["One is to ones as zero is to ___.", "zeroes"],
+      ["Ducks is to quacking as ___ is to rattling.", "rattlers"],
+      ["Wins is to victories as defeats is to ___.", "losses"],
+      ["Nations is to countries as talents is to ___.", "abilities"],
+      ["Sheep is to flocks as cookies is to ___.", "batches"],
+      ["Head is to hairs as eyelids is to ___.", "lashes"],
+      ["Waves is to the ocean as ___ is to a stream.", "eddies"],
+      ["Pay is to workers as ___ is to the government.", "taxes"],
+      ["Chances is to possibilities as problems is to ___.", "difficulties"]
+    ],
+    proof: [
+      "Once upon a time, a handsome prince was held captive in a high tower. Knights from many [countrys|countries] used their powers and [abilitys|abilities] to try to free him, but none could. The tower was surrounded by prickly bushes and guarded by a fierce dragon. How could a prince be rescued from these [surrounding|surroundings]?\n\nA clever princess heard about the prince's [difficultes|difficulties] and decided to rescue him. She didn't wear armor or carry a sword. She simply put on gloves and chopped through the bushes with hedge cutters. And the dragon? Well, she wasn't afraid of flying [reptilies|reptiles] with [fanges|fangs]. She merely ordered the dragon to scram, and it did!",
+      "Our class learned about desert [reptils|reptiles] at the science museum. A guide showed us two [rattlerz|rattlers] behind thick glass. When one opened its mouth, we could see its long [fangz|fangs].\n\nThe guide said these snakes live in many [contries|countries]. They hide among rocks so they blend into their [surroundins|surroundings]. One of their best [abilitees|abilities] is sensing the heat of other animals.",
+      "On Saturday, Dad and I made a big pot of stew. I peeled six [potatos|potatoes] and chopped the carrots. Then we baked two [batchs|batches] of biscuits.\n\nDad cut little [notchs|notches] in the top of each biscuit so they would bake evenly. We burned the first pan, but those were our only [lossess|losses]. For dessert, we sliced sweet [mangeos|mangoes]. Mom said we had real cooking [abilites|abilities].",
+      "Last summer we went to two [rodeoes|rodeos] in Texas. Cowboys came from three different [countrees|countries] to compete. One rider stayed on a bucking bull for eight seconds, and the scoreboard showed three [zeroz|zeroes] when the clock ran out.\n\nIt was so hot that we drank lemonade by the gallon and ate [potatose|potatoes] with every meal. Dad said the trip had a few [dificulties|difficulties], like a flat tire, but it was worth it. My little sister batted her [lashez|lashes] at the rodeo clown and made him laugh.",
+      "In social studies, we learned how people won their [libertys|liberties]. Long ago, many people paid high [taxs|taxes] but had no say in their government.\n\nThey had strong [beleifs|beliefs] about fairness, so they spoke up. They faced many [difficultys|difficulties], but they kept going. Their hard work opened up new [posibilities|possibilities]. Today people in many [countryes|countries] enjoy those freedoms.",
+      "We went canoeing on a winding river. Near the rocks, small [edies|eddies] spun the water in circles, so we had to paddle hard.\n\nOur [surroundigs|surroundings] were beautiful, with tall trees on both banks. We spotted turtles and other [reptyles|reptiles] sunning on logs. Dad cut [notchez|notches] in a stick to mark each mile. We [broght|brought] sandwiches and ate on a flat rock, where a little snake hissed and showed its tiny [fanges|fangs].",
+      "The detective studied the clues. The thief had used three different [identitys|identities], so no one knew his real name. The detective thought about all the [posibilitys|possibilities].\n\nShe found a muddy boot print by the kitchen [countr|counter] and a [coill|coil] of rope under the window. The thief had stolen two [batchez|batches] of cookies! Everyone was amazed by the detective's [abillities|abilities] when she caught him the next day.",
+      "At the zoo's reptile house, I saw lizards, turtles, and two [rattlrs|rattlers]. A sign explained how [reptilles|reptiles] warm up in the sun.\n\nThe zookeeper told us that some of the animals came from faraway [countreys|countries]. Moving them was full of [difficultees|difficulties], but now they are healthy in their new [surroundingz|surroundings]. In the gift shop, I bought a snack of dried [mangose|mangoes].",
+      "In math today, we learned that one million has six [zerose|zeroes]. Then we sorted beans into [batchis|batches] of ten to see how big a thousand is.\n\nNext, our teacher showed us how [taxses|taxes] are added to the price of a toy. She said math opens up endless [possibilitees|possibilities]. We ended with a quiz game about the [libertees|liberties] in the Bill of Rights, and our team had no [losess|losses]!",
+      "The old farmer [brawt|brought] a basket of [potatoss|potatoes] to the market. He set it on the [counterr|counter] next to a [coyl|coil] of rope.\n\nA boy asked about the farmer's [beleefs|beliefs] on growing food. The farmer smiled and said, “Work hard, and there are no limits to the [posibilites|possibilities].”"
+    ]
+  },
+  8: {
+    title: "Inflectional Endings",
+    words: [
+      {w:"jogging", s:"Rick stays in shape by jogging every day.",
+       m:"running at a slow, steady pace", zh:"慢跑", ko:"조깅하는 것"},
+      {w:"dripping", s:"Water was dripping from the leaky faucet.",
+       m:"falling in small drops; dribbling", zh:"滴落", ko:"뚝뚝 떨어지는"},
+      {w:"skimmed", s:"I skimmed the article to find the main idea.",
+       m:"read or looked over quickly; scanned", zh:"略读；浏览", ko:"훑어봤다"},
+      {w:"accepted", s:"He thanked his supporters when he accepted the award.",
+       m:"took something that was offered; said yes to it", zh:"接受", ko:"받아들였다"},
+      {w:"amusing", s:"The clown told an amusing story.",
+       m:"funny and entertaining", zh:"有趣的", ko:"재미있는"},
+      {w:"easing", s:"The car was easing into the parking spot.",
+       m:"moving slowly and gently; sliding", zh:"缓缓移动", ko:"천천히 움직이는"},
+      {w:"regretted", s:"I regretted lending my jacket to a careless friend.",
+       m:"felt sorry about something you did", zh:"后悔", ko:"후회했다"},
+      {w:"forbidding", s:"The sign was forbidding dogs on the beach.",
+       m:"not allowing; disallowing", zh:"禁止", ko:"금지하는"},
+      {w:"referred", s:"Marta referred to an encyclopedia for information.",
+       m:"looked at something to get information", zh:"参考；查阅", ko:"참고했다"},
+      {w:"injured", s:"The boy was injured when he fell off his bike.",
+       m:"hurt", zh:"受伤的", ko:"다친"},
+      {w:"deserved", s:"He worked hard and deserved the raise.",
+       m:"earned something by what you did", zh:"应得", ko:"받을 자격이 있었다"},
+      {w:"applied", s:"Kendra filled out several forms when she applied for a job.",
+       m:"asked for something in writing, like a job", zh:"申请", ko:"지원했다"},
+      {w:"relied", s:"The farmer relied on the rain to water his crops.",
+       m:"depended on someone or something", zh:"依靠", ko:"의지했다"},
+      {w:"renewing", s:"Amy is now renewing all her library books online.",
+       m:"making something new again, or keeping it longer", zh:"续借；更新", ko:"갱신하는"},
+      {w:"complicated", s:"The confusing game has complicated rules.",
+       m:"hard to understand; not simple", zh:"复杂的", ko:"복잡한"},
+      {w:"qualified", s:"She is qualified to teach swimming lessons.",
+       m:"having the right skills; suitable", zh:"有资格的；合格的", ko:"자격이 있는"},
+      {w:"threatening", s:"Dark, threatening clouds rolled in before the storm.",
+       m:"looking like it may cause harm; hostile", zh:"威胁的", ko:"위협적인"},
+      {w:"gnarled", s:"The gnarled old tree had twisted branches.",
+       m:"rough and twisted", zh:"多节的；扭曲的", ko:"울퉁불퉁하고 뒤틀린"},
+      {w:"envied", s:"I envied her talent for learning new languages.",
+       m:"wanted what someone else has", zh:"羡慕；嫉妒", ko:"부러워했다"},
+      {w:"fascinated", s:"The children were fascinated by the magic show.",
+       m:"very interested; amazed", zh:"着迷的", ko:"매료된"}
+    ],
+    review: [
+      {w:"difficulties", s:"Pioneers faced many difficulties in the wilderness.",
+       m:"problems; things that are hard to deal with", zh:"困难", ko:"어려움"},
+      {w:"notches", s:"You can use an ax to put notches in a log.",
+       m:"small V-shaped cuts", zh:"凹口；刻痕", ko:"홈; 새김 자국"},
+      {w:"rodeos", s:"Many rodeos have riding and roping events.",
+       m:"shows where cowboys ride horses and bulls and rope cattle", zh:"牛仔竞技表演", ko:"로데오"}
+    ],
+    challenge: [
+      {w:"adoring", s:"The adoring fans cheered for the singer.",
+       m:"loving very much", zh:"爱慕的；崇拜的", ko:"흠모하는"},
+      {w:"diaries", s:"My sister keeps her old diaries in a box.",
+       m:"books where you write about your days", zh:"日记本", ko:"일기장"}
+    ],
+    rhymes: [
+      ["logging", ["jogging", "jugging", "joking"], "jogging"],
+      ["shipping", ["dripping", "drooping", "drapping"], "dripping"],
+      ["trimmed", ["skimmed", "skinned", "skipped"], "skimmed"],
+      ["choosing", ["amusing", "amazing", "amassing"], "amusing"],
+      ["pleasing", ["easing", "eating", "erasing"], "easing"],
+      ["petted", ["regretted", "regarded", "rejected"], "regretted"],
+      ["kidding", ["forbidding", "forbidden", "forgetting"], "forbidding"],
+      ["stirred", ["referred", "reflect", "reformed"], "referred"],
+      ["preserved", ["deserted", "deserved", "designed"], "deserved"],
+      ["replied", ["applied", "appealed", "applause"], "applied"],
+      ["denied", ["relied", "related", "relaxed"], "relied"],
+      ["chewing", ["renewing", "reviewing", "renaming"], "renewing"],
+      ["snarled", ["gnarled", "gnawed", "snailed"], "gnarled"],
+      ["intercepted", ["accepted", "excited", "accented"], "accepted"],
+      ["satisfied", ["qualified", "quantified", "quarreled"], "qualified"]
+    ],
+    sort: [
+      {"sound": "Adding -ed", "spell": "-ed", "words": ["accepted", "gnarled"], "how": "no change, add", "mark": "ed", "line": "Add e d, with no spelling change.", "color": "e"},
+      {"sound": "Adding -ed", "spell": "-ed", "words": ["injured", "deserved", "complicated", "fascinated"], "how": "drop final e, add", "mark": "ed", "line": "Drop the final e, and add e d.", "color": "e"},
+      {"sound": "Adding -ed", "spell": "-ed", "words": ["skimmed", "regretted", "referred"], "how": "double the consonant, add", "mark": "med or tted or rred", "line": "Double the final consonant, and add e d.", "color": "e"},
+      {"sound": "Adding -ed", "spell": "-ied", "words": ["applied", "relied", "qualified", "envied"], "how": "change y to i, add", "mark": "ied", "line": "Change y to i, and add e d.", "color": "e"},
+      {"sound": "Adding -ing", "spell": "-ing", "words": ["renewing", "threatening"], "how": "no change, add", "mark": "ing", "line": "Add i n g, with no spelling change.", "color": "i"},
+      {"sound": "Adding -ing", "spell": "-ing", "words": ["amusing", "easing"], "how": "drop final e, add", "mark": "ing", "line": "Drop the final e, and add i n g.", "color": "i"},
+      {"sound": "Adding -ing", "spell": "-ing", "words": ["jogging", "dripping", "forbidding"], "how": "double the consonant, add", "mark": "gging or pping or dding", "line": "Double the final consonant, and add i n g.", "color": "i"}
+    ],
+    abc: ["injured", "easing", "gnarled", "jogging", "envied"],
+    analogies: [
+      ["Swimming is to a pool as ___ is to a track.", "jogging"],
+      ["Leak is to leaking as drip is to ___.", "dripping"],
+      ["Read carefully is to studied as read quickly is to ___.", "skimmed"],
+      ["Boring is to dull as funny is to ___.", "amusing"],
+      ["Said no is to refused as said yes is to ___.", "accepted"],
+      ["Allowing is to permitting as banning is to ___.", "forbidding"],
+      ["Healthy is to well as hurt is to ___.", "injured"],
+      ["Easy is to simple as hard is to ___.", "complicated"],
+      ["Bored is to uninterested as amazed is to ___.", "fascinated"],
+      ["Smooth is to a young tree as ___ is to an old tree.", "gnarled"],
+      ["Friendly is to welcoming as hostile is to ___.", "threatening"],
+      ["Hoped is to wished as trusted is to ___.", "relied"],
+      ["Glad is to celebrated as sorry is to ___.", "regretted"],
+      ["Won is to gained as earned is to ___.", "deserved"]
+    ],
+    proof: [
+      "The room was filling up. Some of the best scientists in the world were [easeing|easing] into their seats. Dr. Lee [skimed|skimmed] his notes one last time to make sure he was ready. Was he [qualifyed|qualified] to speak in front of these men and women? Yes, he thought he was.\n\nDr. Lee opened his talk with an [amussing|amusing] story. It relaxed him, even though it didn't get a big laugh. Then he began to present his ideas to the group. He [refered|referred] to studies that had been done, as well as his own experiments. Within minutes, the audience was [fascinateed|fascinated].",
+      "Every morning before school, Rick goes [joging|jogging] around the park. Last week it was raining, and his clothes were [driping|dripping] wet when he got home.\n\nHe [injerd|injured] his ankle on a slippery step, so he [relyed|relied] on his bike for a few days. His mom [aplied|applied] ice to his ankle every night. Rick said he [regreted|regretted] not wearing better shoes.",
+      "The rules of the new board game were very [complecated|complicated]. My brother [skimmd|skimmed] the booklet and said it looked easy.\n\nAfter an hour, we were [fasinated|fascinated] by the game, and my sister [envyed|envied] my high score. Mom said the game was [amuzing|amusing], and she [acsepted|accepted] our invitation to play again tomorrow.",
+      "I am [renuing|renewing] my library books online so I can keep them longer. The librarian said I am [qualafied|qualified] to use the computers by myself now.\n\nFor my report, I [referd|referred] to a big dictionary. A sign on the wall was [forbiding|forbidding] food and drinks, so I left my snack in my bag. Outside the window stood a [gnarld|gnarled] old oak tree. After two hours of work, I felt I [deservd|deserved] a break.",
+      "Dark, [threatning|threatening] clouds rolled across the sky. Soon rain was [dripin|dripping] from the roof.\n\nMom was [easinng|easing] the car into the garage when thunder boomed. My little brother was scared, so Dad told an [amuseing|amusing] story to calm him. When the power went out, we [relyd|relied] on flashlights. Luckily, nobody was [injurd|injured].",
+      "Maya [applyed|applied] to enter the science fair. Her project showed how a [gnarlled|gnarled] old tree can still grow new leaves.\n\nThe judges were [facinated|fascinated] by her poster. They said her research was [complicatted|complicated] but clear. When Maya [acceptid|accepted] her blue ribbon, everyone agreed she [diserved|deserved] it.",
+      "Our puppy loves [jogeing|jogging] beside me in the park. Yesterday he jumped into a pond and came out [drippinng|dripping] wet.\n\nAt home, Mom put up a gate [forbbiding|forbidding] him from the kitchen while he dried off. He looked so sad that I [reggretted|regretted] it right away. My friend [envyd|envied] me for having such a funny dog, and she said his tricks were very [amuseng|amusing].",
+      "Coach Lin [acepted|accepted] an award for the best team in the league. She said every player [deservved|deserved] a medal.\n\nShe [relide|relied] on hard work, not luck. Last season was [complacated|complicated] because two players were [injurred|injured]. Still, we never gave up, and the crowd was [fascenated|fascinated] by our comeback.",
+      "My aunt [qualifyd|qualified] for a big bike race across the state. She trains every morning, and she has never [regrettd|regretted] it.\n\nThe night before the race, she [skiimed|skimmed] the map one more time. The route had many [threatenning|threatening] hills, but she rode up every one. We were her [adorring|adoring] fans at the finish line. She has filled two [diarys|diaries] with notes about her rides.",
+      "The pioneers faced many [dificultys|difficulties] on the trail west. Each night, the leader cut [nochez|notches] in a stick to count the days.\n\nThey [relyied|relied] on their oxen to pull the heavy wagons. At the end of the trail, the town held [rodeoze|rodeos] to celebrate. The pioneers were [fasinatted|fascinated] by the cowboys, and they felt they had [dezerved|deserved] a party."
+    ]
   }
-  // 7: { title:"...", words:[...], review:[...], challenge:[...], rhymes:[...], sort:[...], abc:[...], abcDir:1 (for ABC order; default reverse), analogies:[["A is to B as C is to ___.","answer"]], proof:[...] },
+  // 9: { title:"...", words:[...], review:[...], challenge:[...], rhymes:[...], sort:[...], abc:[...], abcDir:1 (for ABC order; default reverse), analogies:[["A is to B as C is to ___.","answer"]], proof:[...] },
 };
 
 /* ---------- Shared helpers ---------- */
@@ -3093,7 +3317,7 @@ function renderSort(autoSay){document.querySelectorAll('.sghost').forEach(x=>x.r
   const cur=r.tiles.findIndex((t,i)=>!r.placed[i]);r.sel=cur<0?null:cur;
   const hintG=r.sel!=null&&(r.tries[r.sel]||0)>=2?r.tiles[r.sel].g:null,t=r.sel!=null?r.tiles[r.sel]:null;
   $('sortBody').innerHTML=`<div class="wcard">
-    <div class="gtop"><b>Sort each word by its sound and spelling</b><span class="grp">${streakPill(r.streak)}<span class="note">${np} of ${n} sorted · week ${r.week}</span></span></div>
+    <div class="gtop"><b>${r.groups.some(g=>g.how)?'Sort each word by its spelling rule':'Sort each word by its sound and spelling'}</b><span class="grp">${streakPill(r.streak)}<span class="note">${np} of ${n} sorted · week ${r.week}</span></span></div>
     <div class="sbar" aria-hidden="true"><i style="width:${Math.round(np/n*100)}%"></i></div>
     ${t?`<div class="scard-wrap"><button class="tile c-free stile sortcard" data-t="${r.sel}" aria-label="${esc(t.w)}. Tap to hear it again, or drag it to its box."><b>${esc(t.w)}</b></button>
       <button type="button" class="binsay scsay" data-hear="1" aria-label="Hear ${esc(t.w)}">${SPK}</button></div>`:''}
