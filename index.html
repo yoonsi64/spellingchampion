@@ -3224,7 +3224,7 @@ function renderTestSheet(){
     ${r.checked?`<div class="tres"><p class="score">${score}<small>/${list.length}</small></p><span class="stamp ${score>=r.passAt?'ok':'bad'}">${r.a==='pretest'?'Pretest':score>=r.passAt?'Passed':'Practice'}</span></div>
         ${r.a==='test'?`<p class="note" style="margin:0">Pass mark: ${r.passAt} of ${list.length} (80%).${score>=r.passAt?'':` ${r.passAt-score} more right to pass.`}</p>`:`<p class="note" style="margin:0">Pretest done. Study the words you missed this week.</p>`}
         ${r.unlock||''}`
-      :`<p class="note" style="margin:0">Tap <b>Read next</b>. You'll hear the word, a sentence, and the word again. Write it on the line. When you finish, unfold the paper to check.</p>
+      :`<p class="note" style="margin:0">Tap a line (or <b>Read next</b>) to hear its word, a sentence, and the word again. Write it on the line. When you finish, unfold the paper to check.</p>
         <div class="grp"><button class="bigsay nextq" id="tRead">${SPK}<span>Read next</span></button><span class="note">${r.a==='test'?`Pass mark: ${r.passAt} of ${list.length}`:'The pretest does not count'}</span></div>`}
     <div class="testgrid">${list.map((o,k)=>(k===nList&&nRev?`<p class="sect plabel">Review words</p>`:'')+(k===nList+nRev?`<p class="sect plabel">Challenge words</p>`:'')+row(o,k)).join('')}</div>
     ${r.checked?`<div class="grp"><button class="btn primary" id="tAgain">Take it again</button><button class="btn" data-home>Home</button>${r.newWeek?`<button class="btn" id="tGoNew">Go to week ${r.newWeek} →</button>`:''}</div>`
@@ -3232,8 +3232,8 @@ function renderTestSheet(){
   </div>`;
   const body=$('testsBody');
   body.querySelectorAll('.testgrid input').forEach(inp=>{inp.addEventListener('input',()=>{r.answers[+inp.dataset.k]=inp.value;const s=body.querySelector('.tsheet .gtop .note');if(s)s.textContent=`${r.answers.filter(Boolean).length}/${list.length} written`});
-    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();readNext()}});inp.addEventListener('focus',()=>{r.at=+inp.dataset.k})});
-  body.querySelectorAll('.tsay').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;r.at=k;SPEAK.say(testLine(k,list[k]));$('t'+k).focus({preventScroll:true})});
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();readNext()}});inp.addEventListener('focus',()=>{const k=+inp.dataset.k;r.at=k;if(r.checked)return;if(r.quiet){r.quiet=false;return}SPEAK.say(testLine(k,list[k]))})});
+  body.querySelectorAll('.tsay').forEach(b=>b.onclick=()=>{const k=+b.dataset.k,i=$('t'+k);r.at=k;SPEAK.say(testLine(k,list[k]));if(document.activeElement!==i){r.quiet=true;i.focus({preventScroll:true})}});
   if($('tRead'))$('tRead').onclick=readNext;
   if($('tUnfold'))$('tUnfold').onclick=unfoldTest;
   if($('tQuit'))$('tQuit').onclick=()=>{T=null;renderTests()};
@@ -3242,7 +3242,7 @@ function renderTestSheet(){
 }
 function readNext(){const r=T,list=r.items;let k=list.findIndex((_,i)=>!r.answers[i]&&i>(r.at??-1));if(k<0)k=list.findIndex((_,i)=>!r.answers[i]);
   if(k<0){rtoast('✏️','Every line has a word.','Unfold the paper to check.');return}
-  r.at=k;SPEAK.say(testLine(k,list[k]));const i=$('t'+k);i.focus({preventScroll:true});i.scrollIntoView({block:'center',behavior:'smooth'})}
+  r.at=k;SPEAK.say(testLine(k,list[k]));const i=$('t'+k);if(document.activeElement!==i){r.quiet=true;i.focus({preventScroll:true})}i.scrollIntoView({block:'center',behavior:'smooth'})}
 function unfoldTest(){const r=T,list=r.items;
   if(!r.answers.filter(Boolean).length&&!r.warned){r.warned=true;rtoast('✏️','No words written yet.','Tap Unfold again to check anyway.');return}
   const was=unlockedWeeks();r.checked=true;
