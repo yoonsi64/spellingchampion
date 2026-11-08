@@ -615,7 +615,9 @@ body.on-home #filter{display:none}
 @keyframes bob{50%{transform:translateY(-4px) rotate(-3deg)}}
 .hkick{margin:0;font-size:.8rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .btn.big{font-size:1.2rem;padding:14px 22px;border-radius:14px;align-self:flex-start}
-.hgames{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.hgames{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:1fr;gap:8px}
+.hgame{justify-content:center;min-width:0}
+.hgame>span:not(.hgdots){display:block;max-width:100%;white-space:nowrap;overflow-wrap:normal;padding:0 2px}
 .hgame{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px 4px;font:inherit;font-size:.82rem;font-weight:700;color:var(--ink);line-height:1.15;min-height:76px}
 .hgame:hover{border-color:var(--primary)}
 .hgame:active{transform:scale(.96)}
@@ -3739,7 +3741,7 @@ $('nameSave').onclick=()=>setName($('nameInput').value);
 $('nameInput').onkeydown=e=>{if(e.key==='Enter')setName($('nameInput').value)};
 
 /* ---------- Words never wrap mid-word: a word that doesn't fit its pill gets a slightly smaller font instead ---------- */
-const FIT_SEL='.wchip,.mbtn.part,.bwords span,.spopt,.srword>span,.sortcard b,.tile2.part,.chip';
+const FIT_SEL='.hgame>span:not(.hgdots),.wchip,.mbtn.part,.bwords span,.spopt,.srword>span,.sortcard b,.tile2.part,.chip';
 /* the room for text is the pill's width minus its side padding (plus a little air), so a long word stays centred */
 function fitWords(){const rg=document.createRange();document.querySelectorAll(FIT_SEL).forEach(el=>{if(!el.offsetParent||!el.clientWidth)return;
   el.style.fontSize='';const cs=getComputedStyle(el),base=parseFloat(cs.fontSize),room=el.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight)-4;
