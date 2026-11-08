@@ -852,6 +852,10 @@ html.nospeak .say,html.nosay .say,html.nospeak .say-btn,html.nosay .say-btn{disp
 .modetabs button.gated::after{content:"";position:absolute;top:5px;right:9px;width:14px;height:14px;border-radius:50%;background:var(--muted) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round'%3E%3Crect x='6' y='11' width='12' height='9' rx='2' fill='white'/%3E%3Cpath d='M9 11V8a3 3 0 0 1 6 0v3'/%3E%3C/svg%3E") center/9px no-repeat}
 .fcdone{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:60;transform:translate(-50%,20px);opacity:0;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--ink);color:var(--card);padding:10px 18px;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.25);transition:opacity .25s,transform .25s;text-align:center;max-width:calc(100vw - 32px)}
 .fcdone.show{opacity:1;transform:translate(-50%,0)}
+/* every pop-up notification can be swiped away sideways */
+.rtoast,.fcdone.show{touch-action:pan-y;cursor:grab}
+.fcdone.show{pointer-events:auto}
+
 .fcdone span{font-size:.86rem;opacity:.9}
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]) h1 mark,:root:not([data-theme="light"]) .prompt .r{background:none;text-decoration:underline;text-decoration-color:var(--hi);text-decoration-thickness:.13em;text-underline-offset:.16em;text-decoration-skip-ink:none}
@@ -2686,7 +2690,7 @@ const starRow=n=>`<p class="stars" aria-label="${n} of 3 stars">${[1,2,3].map(i=
 const streakPill=n=>n>=2?`<span class="streak bump" aria-live="polite">★ ${n} in a row</span>`:'';
 function celebrateWin(){FX.shower();FX.play('win')}
 /* small notice at the top of the screen */
-function rtoast(ico,title,sub){const t=$('rToast');t.innerHTML=`<span aria-hidden="true">${ico}</span><div><b>${esc(title)}</b>${sub?`<span>${esc(sub)}</span>`:''}</div>`;t.hidden=false;t.classList.remove('in');void t.offsetWidth;t.classList.add('in');clearTimeout(t._t);t._t=setTimeout(()=>{t.hidden=true},3400)}
+function rtoast(ico,title,sub){const t=$('rToast');t.innerHTML=`<span aria-hidden="true">${ico}</span><div><b>${esc(title)}</b>${sub?`<span>${esc(sub)}</span>`:''}</div>`;t.hidden=false;t.classList.remove('in');void t.offsetWidth;t.classList.add('in');clearTimeout(t._t);t._t=setTimeout(()=>{t.hidden=true},3400);swipeAway(t,()=>{clearTimeout(t._t);t.hidden=true})}
 
 /* ---------- Progress history: one record per day (Root Detective's HIST.days) ---------- */
 const dayKey=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -3107,7 +3111,7 @@ function fcMark(side){const o=deck[idx];if(!o||mode!=='cards')return;const id=wi
   const g=fcGate(S.cur);updateFcTabs();renderCardsTop();renderFcBar();
   if(!was&&g.ok&&deckWeek===S.cur){try{FX.play('win');FX.shower()}catch(e){}fcUnlockedNote(S.cur,wasLocked)}}
 function fcUnlockedNote(w,first){let el=$('fcDone');if(!el){el=document.createElement('div');el.id='fcDone';el.className='fcdone';el.setAttribute('role','status');document.body.appendChild(el)}
-  el.innerHTML=first?`<b>🎉 Activities unlocked!</b><span>Now pass ${finalReqs(w).map(r=>r.name).join(', ').replace(/, ([^,]*)$/,' and $1')} 3 times each to open the final test.</span>`:`<b>🎉 Flashcards done!</b><span>Activities now focus on week ${w}.</span>`;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),4200)}
+  el.innerHTML=first?`<b>🎉 Activities unlocked!</b><span>Now pass ${finalReqs(w).map(r=>r.name).join(', ').replace(/, ([^,]*)$/,' and $1')} 3 times each to open the final test.</span>`:`<b>🎉 Flashcards done!</b><span>Activities now focus on week ${w}.</span>`;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),4200);swipeAway(el,()=>{clearTimeout(el._t);el.style.transition='none';el.classList.remove('show');requestAnimationFrame(()=>requestAnimationFrame(()=>el.style.transition=''))})}
 /* the Listen button sits on the card's coloured band, in the card's colour */
 function fcSayPlace(){const bd=$('front')&&$('front').querySelector('.band'),sc=document.querySelector('#cardArea .scene');if(!bd||!sc||!bd.offsetHeight)return;
   // layout offsets ignore the swipe/flip transforms, so the spot is the same on every card
