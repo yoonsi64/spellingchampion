@@ -1021,17 +1021,19 @@ html.calm .m-star,html.calm .m-spark{animation:none}
 .anal{margin:0;font-size:clamp(1.15rem,4.4vw,1.45rem);font-weight:700;line-height:1.45;text-wrap:pretty}
 .anal em{font-style:normal;font-weight:500;color:var(--muted)}
 .anal .blank{display:inline-block;min-width:4.5em;border-bottom:3px solid var(--primary);vertical-align:-2px}
-.lkbd{position:fixed;left:0;right:0;bottom:0;z-index:70;background:color-mix(in srgb,var(--bg) 92%,var(--ink));padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:7px;box-shadow:0 -6px 20px rgba(0,0,0,.18);user-select:none;-webkit-user-select:none;touch-action:manipulation}
-.lkrow{display:flex;justify-content:center;gap:5px}
-.lk{flex:1 1 0;max-width:46px;height:48px;border:0;border-radius:8px;background:var(--card);color:var(--ink);font:inherit;font-size:1.35rem;font-weight:700;box-shadow:0 2px 0 rgba(0,0,0,.18);padding:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-.lk.wide{max-width:64px;flex-grow:1.5;font-size:1rem}
-.lk.space{max-width:none;flex-grow:4;font-size:.95rem;color:var(--muted)}
-.lk.go{max-width:96px;flex-grow:2;background:var(--primary);color:var(--primary-ink);font-size:1rem}
+.lkbd{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#E8EAED;padding:8px 4px calc(8px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 16px rgba(0,0,0,.12);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.lkgrid{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));grid-auto-rows:50px;gap:8px 5px;max-width:720px;margin:0 auto}
+.lk{border:0;border-radius:8px;background:#fff;color:#1B1B1F;font:inherit;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:1.55rem;font-weight:400;padding:0;margin:0 1px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;display:grid;place-items:center}
+.lk.mod{background:#D6DAE1;color:#3C4257}
+.lk svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.lk.space{font-size:1rem;color:#3C4257}
+.lk.go{background:#D6DAE1;color:#3C4257;border-radius:999px;font-size:1.05rem;font-weight:600}
 .lk.hit{animation:lkhit .15s}
-@keyframes lkhit{50%{transform:translateY(2px);box-shadow:none;background:var(--hi)}}
-body.lk-open{padding-bottom:250px}
+@keyframes lkhit{50%{background:#B9C0CC}}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .lkbd{background:#202124}:root:not([data-theme="light"]) .lk{background:#3C3D41;color:#E8EAED}:root:not([data-theme="light"]) .lk.mod,:root:not([data-theme="light"]) .lk.go,:root:not([data-theme="light"]) .lk.space{background:#2A2B2F;color:#C4C7CF}:root:not([data-theme="light"]) .lk.space{background:#3C3D41}}
+body.lk-open{padding-bottom:260px}
 body.lk-open #tabWrap{display:none}
-@media (min-width:700px){.lk{max-width:58px;height:54px}.lkbd{padding-left:max(8px,calc(50% - 330px));padding-right:max(8px,calc(50% - 330px))}}
+@media (min-width:700px){.lkgrid{grid-auto-rows:56px}}
 .mdef{margin:0;font-size:clamp(1.2rem,4.6vw,1.5rem);font-weight:700;line-height:1.35;text-wrap:pretty}
 .mword b{font-size:clamp(2rem,9vw,2.8rem);font-weight:800}
 .mopts{grid-template-columns:1fr!important}.mopts .opt{font-size:1.05rem;font-weight:600;text-align:left;line-height:1.3}
@@ -2016,7 +2018,7 @@ function findWord(word){
 function patternOf(word,n){const g=(WK(n).sort||[]).find(g=>g.words.includes(word));return g?g:null}
 const KIND_BAND={list:'LIST WORD',review:'REVIEW WORD',challenge:'CHALLENGE WORD'};
 const kindClass=o=>o.kind==='review'?'c-review':o.kind==='challenge'?'c-challenge':'c-list';
-const soundClass=g=>{if(!g)return's-u';if(/ū/.test(g.sound))return's-u';if(/ů/.test(g.sound))return's-o';if(/ü/.test(g.sound))return's-i';const m=g.sound.match(/\b([aeiou])\b/);return m?'s-'+m[1]:'s-u'};
+const soundClass=g=>{if(!g)return's-u';if(g.color)return's-'+g.color;if(/ū/.test(g.sound))return's-u';if(/ů/.test(g.sound))return's-o';if(/ü/.test(g.sound))return's-i';const m=g.sound.match(/\b([aeiou])\b/);return m?'s-'+m[1]:'s-u'};
 
 /* ---------- What the voice says. Every SPEAK.say text is built by one of these (see ALL_LINES) ---------- */
 const sayOf=o=>o.say||o.w;
@@ -2025,7 +2027,7 @@ const dictateText=o=>`${sayOf(o)}. ${sentenceFor(o)} ${sayOf(o)}.`;
 const testLine=(k,o)=>`Number ${k+1}. ${sayOf(o)}. ${sentenceFor(o)} ${sayOf(o)}.`;
 function backText(o,n){
   const pat=patternOf(o.w,n);
-  return `${sayOf(o)}. ${o.m?`${sayOf(o)} means ${o.m}. `:''}${pat?`${pat.say||pat.sound}, spelled ${pat.spell.split(" or ").map(s=>s.split("").map(c=>c==="_"?"consonant":c).join(" ")).join(" or ")}. `:""}${sentenceFor(o)} ${o.w.split("").join(", ")}.`;
+  return `${sayOf(o)}. ${o.m?`${sayOf(o)} means ${o.m}. `:''}${pat?(pat.line?`${pat.line} `:`${pat.say||pat.sound}, spelled ${pat.spell.split(" or ").map(s=>s.split("").map(c=>c==="_"?"consonant":c).join(" ")).join(" or ")}. `):""}${sentenceFor(o)} ${o.w.split("").join(", ")}.`;
 }
 /* read with a pause at the middle "as": "Calm is to peace, as disorder is to blank." */
 const anaPause=t=>t.replace(/ as /,', as ');
@@ -2218,8 +2220,17 @@ const LK=(()=>{const SEL='#spIn,#prIn,.testgrid input:not([readonly])';
   const on=()=>!!DISP.kbd&&!SPELL_KB.matches;
   const rows=['qwertyuiop','asdfghjkl','zxcvbnm'];
   const el=document.createElement('div');el.className='lkbd';el.hidden=true;el.setAttribute('role','group');el.setAttribute('aria-label','Letter keyboard');
-  el.innerHTML=rows.map((r,i)=>`<div class="lkrow">${i===2?'<button type="button" class="lk wide" data-k="del" aria-label="Delete">⌫</button>':''}${[...r].map(c=>`<button type="button" class="lk" data-k="${c}">${c}</button>`).join('')}</div>`).join('')
-    +`<div class="lkrow"><button type="button" class="lk wide" data-k="hide">Hide</button><button type="button" class="lk" data-k="'">'</button><button type="button" class="lk space" data-k=" " aria-label="Space">space</button><button type="button" class="lk go" data-k="enter">Check</button></div>`;
+  /* phone-keyboard layout: letters on a 20-column grid (the a row sits half a key in), ⌫ at the end of the z row,
+     then Hide, space, the apostrophe (where a phone keyboard has its period) and the action key */
+  const L=(c,col)=>`<button type="button" class="lk" data-k="${c}" style="grid-column:${col}/span 2">${c}</button>`;
+  const DEL='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h11a1.5 1.5 0 0 1 1.5 1.5v11A1.5 1.5 0 0 1 20 19H9l-6.5-7z"/><path d="m11.5 9.5 5 5m0-5-5 5"/></svg>';
+  const HIDE='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="11" rx="2"/><path d="M7 8h.01M11 8h.01M15 8h.01M8 11.5h8M9 18.5l3 2.5 3-2.5"/></svg>';
+  el.innerHTML=`<div class="lkgrid">${[...rows[0]].map((c,i)=>L(c,1+2*i)).join('')}${[...rows[1]].map((c,i)=>L(c,2+2*i)).join('')}${[...rows[2]].map((c,i)=>L(c,4+2*i)).join('')}
+    <button type="button" class="lk mod" data-k="del" aria-label="Delete" style="grid-column:18/span 3">${DEL}</button>
+    <button type="button" class="lk mod" data-k="hide" aria-label="Hide keyboard" style="grid-column:1/span 3">${HIDE}</button>
+    <button type="button" class="lk space" data-k=" " aria-label="Space" style="grid-column:4/span 11">space</button>
+    <button type="button" class="lk mod" data-k="'" aria-label="Apostrophe" style="grid-column:15/span 2">'</button>
+    <button type="button" class="lk go" data-k="enter" style="grid-column:17/span 4">Check</button></div>`;
   document.body.appendChild(el);let cur=null;
   /* keep focus in the field while keys are tapped */
   el.addEventListener('pointerdown',e=>e.preventDefault());el.addEventListener('mousedown',e=>e.preventDefault());
@@ -2646,7 +2657,7 @@ function renderCard(){
     <div class="hint">Tap the card to see what it means</div>
     <div class="foot"><span class="wktag">Week ${o.week}</span><span class="tab">${TAB}</span></div>`;
   $('back').innerHTML=`<div class="band">${KIND_BAND[o.kind]}</div>
-    <div class="heads"><div><b>${pat?`${esc(pat.sound)} spelled <em class="pspell">${esc(pat.spell)}</em>`:esc(o.w)}</b>${pat?'':`<i>${o.kind==='list'?'List word':o.kind==='review'?'Review word':'Challenge word'}</i>`}</div></div>
+    <div class="heads"><div><b>${pat?`${pat.how?`${esc(pat.sound)}: ${esc(pat.how)} <em class="pspell">${esc(pat.spell)}</em>`:`${esc(pat.sound)} spelled <em class="pspell">${esc(pat.spell)}</em>`}`:esc(o.w)}</b>${pat?'':`<i>${o.kind==='list'?'List word':o.kind==='review'?'Review word':'Challenge word'}</i>`}</div></div>
     <div class="fcback">${o.m?`<p class="fcmean"><span class="fclbl">Meaning</span>${esc(o.m)}</p>`:''}<p class="fcsent">${markHTML(o)}</p>${o.zh||o.ko?`<div class="fclang">${o.zh?`<p lang="zh-Hans"><span class="fclbl" lang="zh-Hans">中文</span>${esc(o.zh)}</p>`:''}${o.ko?`<p lang="ko"><span class="fclbl" lang="ko">한국어</span>${esc(o.ko)}</p>`:''}</div>`:''}<p class="fcletters" aria-label="${esc(o.w.split('').join(' '))}">${o.w.split('').map(c=>`<span>${esc(c)}</span>`).join('')}</p></div>
     <div class="foot"><span class="wktag">Week ${o.week}</span><span class="tab">${TAB}</span></div>`;
   $('known').setAttribute('aria-pressed',knownSet(deckWeek).has(o.w));
@@ -3062,6 +3073,8 @@ function startSort(){const ws=scopeWeeksWith('sort');if(!ws.length)return emptyA
   const groups=WK(n).sort.map((g,k)=>({...g,k}));
   SO={week:n,groups,tiles:shuf(groups.flatMap(g=>g.words.map(w=>({w,g:g.k})))),placed:{},sel:null,score:0,wrong:{},tries:{},missed:[],streak:0,fb:''};renderSort(true)}
 /* the letters that make the sound, marked inside the word: p[ai]d, sh[a]v[e], t[ow] */
+/* highlight the ending that shows the rule: catch[es], flipp[ed] (alternatives with "or"; the last match wins) */
+function endMark(w,mark){for(const alt of String(mark).split(' or ').filter(Boolean)){const i=w.lastIndexOf(alt);if(i>=0&&i+alt.length===w.length)return esc(w.slice(0,i))+`<mark class="pt">${esc(alt)}</mark>`}return esc(w)}
 function patternHTML(w,spell){
   for(const alt of String(spell).split(' or ')){
     if(alt.includes('_')){const [x,y]=alt.split('_'),m=w.match(new RegExp(`^(.*?)(${x})([^aeiou]{1,2})(${y})(.*)$`));
@@ -3069,7 +3082,8 @@ function patternHTML(w,spell){
     else{const i=w.indexOf(alt);if(i>=0)return esc(w.slice(0,i))+`<mark class="pt">${esc(alt)}</mark>`+esc(w.slice(i+alt.length))}}
   return esc(w)}
 /* what a box says when you tap its speaker: the same words as the back of a card */
-const binSay=g=>`${g.say||g.sound}, spelled ${g.spell.split(" or ").map(s=>s.split("").map(c=>c==="_"?"consonant":c).join(" ")).join(" or ")}.`;
+const patText=g=>g.how?`${g.sound}: ${g.how} ${g.spell}`:`${g.sound} spelled ${g.spell}`;
+const binSay=g=>g.line?g.line:`${g.say||g.sound}, spelled ${g.spell.split(" or ").map(s=>s.split("").map(c=>c==="_"?"consonant":c).join(" ")).join(" or ")}.`;
 /* Sound sort: one word at a time on a big card (it says itself); tap the box it belongs in, or drag the card there.
    The boxes are grouped by sound: one row per sound, with a small box for each way to spell it.
    Right: the card flies in and the spelling lights up in the word. Wrong: the box shakes and the card springs
@@ -3086,9 +3100,9 @@ function renderSort(autoSay){document.querySelectorAll('.sghost').forEach(x=>x.r
     <p class="note sfb" style="margin:0;text-align:center">${r.fb?`<span class="bfb ${r.fbc||'no'}">${r.fb}</span>`:'Listen to the vowel sound, then tap the box it belongs in (or drag the card there).'}</p>
     <div class="srows ${t?'armed':''}">${sortRows(r.groups).map(row=>`<div class="srow ${soundClass(row.gs[0])}"><div class="srhead"><b>${esc(row.sound)}</b></div>
       <div class="srboxes">${row.gs.map(g=>{const got=r.tiles.map((x,i)=>r.placed[i]&&x.g===g.k?x:null).filter(Boolean);
-        return`<div class="bin sbox ${hintG===g.k?'hint':''} ${got.length===g.words.length?'full':''}" role="button" tabindex="0" data-b="${g.k}" aria-label="${esc(g.sound)} spelled ${esc(g.spell)}, ${got.length} of ${g.words.length} words">
-          <span class="bhead"><small>spelled</small><em>${esc(g.spell)}</em><button type="button" class="binsay" data-bs="${g.k}" aria-label="Hear ${esc(g.sound)} spelled ${esc(g.spell)}">${SPK}</button></span>
-          <span class="bwords">${got.map(x=>`<span>${patternHTML(x.w,g.spell)}</span>`).join('')}</span>
+        return`<div class="bin sbox ${hintG===g.k?'hint':''} ${got.length===g.words.length?'full':''}" role="button" tabindex="0" data-b="${g.k}" aria-label="${esc(patText(g))}, ${got.length} of ${g.words.length} words">
+          <span class="bhead"><small>${esc(g.how||'spelled')}</small><em>${esc(g.spell)}</em><button type="button" class="binsay" data-bs="${g.k}" aria-label="Hear ${esc(patText(g))}">${SPK}</button></span>
+          <span class="bwords">${got.map(x=>`<span>${g.mark!=null?endMark(x.w,g.mark):patternHTML(x.w,g.spell)}</span>`).join('')}</span>
           <span class="bcount" aria-hidden="true">${got.length}/${g.words.length}</span></div>`}).join('')}</div></div>`).join('')}</div></div>`;
   const body=$('sortBody');
   body.querySelectorAll('[data-bs]').forEach(b=>b.onclick=e=>{e.stopPropagation();SPEAK.say(binSay(r.groups[+b.dataset.bs]))});
@@ -3125,7 +3139,7 @@ function sortDrop(gk,ghost){const r=SO,n=r.tiles.length;
     /* fly into the box, then the box takes it in with its pattern lit up */
     const src=ghost||$('sortBody').querySelector(`[data-t="${i}"]`);let fly=ghost;
     if(!fly&&src){const sr=src.getBoundingClientRect();fly=src.cloneNode(true);fly.classList.add('sghost');Object.assign(fly.style,{left:sr.left+'px',top:sr.top+'px',width:sr.width+'px'});document.body.appendChild(fly)}
-    const land=()=>{if(fly)fly.remove();r.placed[i]=1;r.fb=`<b>${esc(t.w)}</b>: ${esc(g.sound)} spelled <b>${esc(g.spell)}</b>`;r.fbc='ok';renderSort(true);const nc=$('sortBody').querySelector('.sortcard');if(nc)nc.classList.add('cardin');
+    const land=()=>{if(fly)fly.remove();r.placed[i]=1;r.fb=`<b>${esc(t.w)}</b>: ${esc(patText(g))}`;r.fbc='ok';renderSort(true);const nc=$('sortBody').querySelector('.sortcard');if(nc)nc.classList.add('cardin');
       const nb=$('sortBody').querySelector(`.sbox[data-b="${gk}"]`);if(nb){nb.classList.add('gulp');const w=nb.querySelector('.bwords span:last-child');if(w)w.classList.add('popin')}
       FX.burst(br,22);FX.play('good');
       if(Object.keys(r.placed).length===n)setTimeout(()=>roundEnd('sort',{score:r.score,total:n,pass:r.score>=Math.ceil(n*.8),missed:r.missed,passText:`${Math.ceil(n*.8)} of ${n}`,rec:(d,x)=>{if(r.score===n)bump(x,'perfect')}}),700)};
@@ -3135,7 +3149,7 @@ function sortDrop(gk,ghost){const r=SO,n=r.tiles.length;
     else land()}
   else{
     r.wrong[t.w]=true;r.tries[i]=(r.tries[i]||0)+1;r.streak=0;if(!r.missed.includes(t.w))r.missed.push(t.w);
-    r.fb=`<b>${esc(t.w)}</b> doesn't go in ${esc(g.sound)} spelled ${esc(g.spell)}. ${r.tries[i]>=2?'Look for the glowing box.':'Listen again for the vowel sound.'}`;r.fbc='no';FX.play('bad');
+    r.fb=`<b>${esc(t.w)}</b> doesn't go in ${esc(patText(g))}. ${r.tries[i]>=2?'Look for the glowing box.':'Listen again for the vowel sound.'}`;r.fbc='no';FX.play('bad');
     const done=()=>{renderSort();const nb=$('sortBody').querySelector(`.sbox[data-b="${gk}"]`);if(nb)nb.classList.add('shake');setTimeout(()=>SPEAK.say(sortSay(t.w)),300)};
     if(ghost&&ghost.animate){ghost.animate([{transform:ghost.style.transform},{transform:'translate(0,0)'}],{duration:260,easing:'cubic-bezier(.3,1.4,.6,1)'}).onfinish=()=>{ghost.remove();done()}}else done()}
 }
