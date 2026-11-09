@@ -139,6 +139,8 @@ input:focus-visible{outline:3px solid var(--primary);outline-offset:-3px}
 .inner{display:grid;transition:transform .5s cubic-bezier(.3,.7,.3,1);transform-style:preserve-3d}
 .flash.flipped .inner{transform:rotateY(180deg)}
 .flash.noflip .inner{transition:none!important}
+/* show only the facing side even where a browser ignores backface-visibility (it would show the front mirrored): swap halfway through the flip */
+.face{transition:visibility 0s linear .25s}.face.back{visibility:hidden}.flash.flipped .face.back{visibility:visible}.flash.flipped .face.front{visibility:hidden}.flash.noflip .face{transition:none!important}
 .slots.shown{border-style:solid;border-color:var(--line);background:var(--card)}
 .slots.shown .tile:disabled{opacity:1}
 .fcbar{display:flex;align-items:center;gap:10px;margin:2px 2px 8px;min-height:26px}
@@ -704,7 +706,7 @@ html.nospeak .say,html.nosay .say,html.nospeak .say-btn,html.nosay .say-btn{disp
 .chipset{display:flex;flex-wrap:wrap;gap:5px}
 .chip{border-radius:7px;padding:2px 8px;font-size:.92rem;font-weight:700;color:var(--paper-ink)}
 @media (prefers-reduced-motion: reduce){
-  .inner,.track i{transition:none}
+  .inner,.face,.track i{transition:none}
 }
 .controls{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center}
 .btn{border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:9px 16px;font-weight:700}
