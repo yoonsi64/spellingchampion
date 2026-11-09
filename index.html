@@ -2734,12 +2734,15 @@ function testHist(){const out={};Object.keys(HIST.days).sort().forEach(k=>{const
   for(const w in t)for(const a of ['pre','fin']){const x=t[w][a];if(!x)continue;const o=out[w]=out[w]||{};const r=o[a]=o[a]||{first:null,best:0,last:0,n:0,total:x.t};
     if(r.first==null)r.first=x.f;r.best=Math.max(r.best,x.s||0);r.last=x.l;r.n+=x.n||1;r.total=x.t||r.total}});return out}
 function weekPassed(n,th){th=th||testHist();const h=th[n];return !!(h&&h.fin&&h.fin.best>=passMark(h.fin.total))}
-function unlockedWeeks(){const th=testHist(),u=[1];for(let n=2;n<=NW;n++){if(weekPassed(n-1,th))u.push(n);else break}return u}
+/* students start at week START_WEEK: the weeks before it are open for review, and the weeks after it open one at a time */
+const START_WEEK=5;
+function unlockedWeeks(){const th=testHist(),u=[];for(let n=1;n<=Math.min(START_WEEK,NW);n++)u.push(n);for(let n=START_WEEK+1;n<=NW;n++){if(weekPassed(n-1,th))u.push(n);else break}return u}
 const isUnlocked=n=>unlockedWeeks().includes(n);
-function frontierWeek(){const th=testHist(),u=unlockedWeeks();return u.find(n=>!weekPassed(n,th))||u[u.length-1]}
+function frontierWeek(){const th=testHist(),u=unlockedWeeks();return u.find(n=>n>=START_WEEK&&!weekPassed(n,th))||u[u.length-1]}
 const avail=()=>unlockedWeeks().filter(hasList);
 function setCur(n){S.cur=n;saveS()}
 if(!isUnlocked(S.cur))setCur(frontierWeek());
+if((S.startAt||1)<START_WEEK){if(S.cur<START_WEEK)S.cur=frontierWeek();S.startAt=START_WEEK;saveS()}
 
 /* ---------- Flashcards first: both sides of every card in the current week ---------- */
 function fcSides(){const f=new Set(),b=new Set();for(const k in HIST.days){const x=HIST.days[k].fc;if(x){(x.f||[]).forEach(i=>f.add(i));(x.b||[]).forEach(i=>b.add(i))}}return{f,b}}
