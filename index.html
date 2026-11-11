@@ -1050,8 +1050,10 @@ html.calm .m-star,html.calm .m-spark{animation:none}
 .lkpop[hidden]{display:none}
 .lkhap{position:fixed;left:-9999px;top:0;opacity:0;pointer-events:none}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .lkbd{background:#202124}:root:not([data-theme="light"]) .lkey{background:#3C3D41;color:#E8EAED}:root:not([data-theme="light"]) .lkey.mod,:root:not([data-theme="light"]) .lkey.go,:root:not([data-theme="light"]) .lkey.space{background:#2A2B2F;color:#C4C7CF}:root:not([data-theme="light"]) .lkey.space{background:#3C3D41}:root:not([data-theme="light"]) .lkey.down{background:#5A5C62}:root:not([data-theme="light"]) .lkpop{background:#4A4B50;color:#fff}}
-body.lk-open{padding-bottom:260px}
-body.lk-open #tabWrap{display:none}
+/* room for the letter keyboard. It stays (lk-pad) after the keyboard closes between words, so the page does not jump back down;
+   it goes when the student changes activity. Only the phone's bottom tab bar hides while typing: the tablet tab strip stays put. */
+body.lk-open,body.lk-pad{padding-bottom:260px}
+@media (hover:none) and (pointer:coarse) and (max-width:700px){body.lk-open #tabWrap{display:none}}
 @media (min-width:700px){.lkgrid{grid-auto-rows:56px}}
 .mdef{margin:0;font-size:clamp(1.2rem,4.6vw,1.5rem);font-weight:700;line-height:1.35;text-wrap:pretty}
 .mword b{font-size:clamp(2rem,9vw,2.8rem);font-weight:800}
@@ -2647,7 +2649,7 @@ const LK=(()=>{const SEL='#spIn,#prIn,.testgrid input:not([readonly])';
   function show(i){cur=i;el.hidden=false;document.body.classList.add('lk-open');
     const go=el.querySelector('[data-k="enter"]');go.textContent=i.closest('.testgrid')?'Next':i.id==='prIn'?'Fix it':'Check';
     setTimeout(()=>{const r=i.getBoundingClientRect(),top=innerHeight-el.offsetHeight;if(r.bottom>top-12||r.top<60)scrollBy({top:r.bottom-(top-90),behavior:'smooth'})},30)}
-  function hide(){el.hidden=true;document.body.classList.remove('lk-open');cur=null}
+  function hide(){if(!el.hidden)document.body.classList.add('lk-pad');el.hidden=true;document.body.classList.remove('lk-open');cur=null}
   document.addEventListener('focusin',e=>{const i=e.target;if(on()&&i.matches&&i.matches(SEL)){i.setAttribute('inputmode','none');show(i)}else if(!el.contains(i))hide()});
   document.addEventListener('focusout',e=>{setTimeout(()=>{const a=document.activeElement;if(!a||!a.matches||!a.matches(SEL))hide()},60)});
   /* haptics: vibrate() on Android; on iPhone (no vibrate) toggling a hidden switch control gives a light tap */
@@ -2855,6 +2857,7 @@ let mode='home';
 function setMode(m,noStart){
   if(m!=='speed')stopSpeedIfLeaving();
   if(m!==mode){try{FX.clear()}catch(e){}try{SPEAK.stop()}catch(e){}}
+  if(m!==mode)document.body.classList.remove('lk-pad');
   mode=m;const locked=modeLocked(m);
   MODES.forEach(x=>{$(x).hidden=x!==m||locked;$('tab-'+x).setAttribute('aria-selected',x===m)});
   $('fcGate').hidden=!locked;if(locked)({pre:renderPreGate,cards:renderFcGate,req:renderReqGate}[weekStep()]||renderFcGate)();
